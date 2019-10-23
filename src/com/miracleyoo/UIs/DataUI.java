@@ -57,14 +57,14 @@ public class DataUI {
     private final int[] slice = {0,5};
 
     // Column names for the OperandTable
-    private String[] columnNames = {"First Name",
+    private static String[] columnNames = {"First Name",
             "Last Name",
             "Sport",
             "# of Years",
             "Vegetarian"};
 
     // Total data for the OperandTable
-    private Object[][] fullData = {
+    static private Object[][] fullData = {
             {"Kathy", "Smith",
                     "Snowboarding", 5, Boolean.FALSE},
             {"John", "Doe",
@@ -88,7 +88,7 @@ public class DataUI {
     };
 
     // Data which will be shown on the table
-    private Object[][] rawData = Arrays.copyOfRange(fullData, 0, 5);
+    private static Object[][] rawData = Arrays.copyOfRange(fullData, 0, 5);
 
     private void update() {
         if(slice[0]>=fullData.length-1){
@@ -101,7 +101,7 @@ public class DataUI {
         OperandTable.setModel(dataModel);
     }
 
-    private DataUI() {
+    DataUI(Object[][] rawData, String[] columnNames) {
         // Configure the table
         TableModel dataModel = new DefaultTableModel(rawData,columnNames);
         OperandTable.setModel(dataModel);
@@ -131,7 +131,7 @@ public class DataUI {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("App");
-        frame.setContentPane(new DataUI().PanelMain);
+        frame.setContentPane(new DataUI(rawData, columnNames).PanelMain);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);

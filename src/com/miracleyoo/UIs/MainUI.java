@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import com.miracleyoo.utils.*;
 
@@ -15,6 +16,7 @@ public class MainUI {
     private JLabel FileSelectedCap;
     private JLabel FileSelectedVal;
     private File selectedFile;
+    private Map< String, List<Object[]>> listFlagMap;
 
     private MainUI() {
         assert ChooseFileBtn != null;
@@ -29,7 +31,9 @@ public class MainUI {
                 System.out.println(jfc.getSelectedFile().getName());
                 ParseFile parser = new ParseFile();
                 try {
-                    parser.parseFile(file);
+                    listFlagMap = parser.parseFile(file);
+                    Object[][] dataListArray = listFlagMap.get("dataList").toArray(new Object[0][0]);
+                    new DataUI(dataListArray, new String[]{"PC","Operand"});
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }

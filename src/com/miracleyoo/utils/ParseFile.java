@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Map;
 
 public class ParseFile {
-    public void parseFile(File selectedFile) throws IOException {
+    public Map< String, List<Object[]>> parseFile(File selectedFile) throws IOException {
         InputStream selectedFileStream = new FileInputStream(selectedFile);
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(selectedFileStream));
-        List<String[]> dataList = new ArrayList<>();
-        List<String[]> textList = new ArrayList<>();
+        List<Object[]> dataList = new ArrayList<>();
+        List<Object[]> textList = new ArrayList<>();
 
-        Map< String, List<String[]>> listFlagMap = new HashMap< String, List<String[]>>();
+        Map< String, List<Object[]>> listFlagMap = new HashMap< String, List<Object[]>>();
         Map< String, Integer> listCounter = new HashMap<String, Integer>();
         listFlagMap.put("dataList", dataList);
         listFlagMap.put("textList", textList);
@@ -32,10 +32,11 @@ public class ParseFile {
                     listFlag = "textList";
                 }
                 else{
-                    listFlagMap.get(listFlag).add(new String[]{Integer.toHexString(listCounter.get(listFlag)), str});
+                    listFlagMap.get(listFlag).add(new Object[]{Integer.toHexString(listCounter.get(listFlag)), str});
                 }
             }
             System.out.println(str);
         }
+        return listFlagMap;
     }
 }
