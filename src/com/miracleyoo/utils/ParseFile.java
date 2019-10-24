@@ -19,7 +19,7 @@ public class ParseFile {
         listFlagMap.put("dataList", dataList);
         listFlagMap.put("textList", textList);
         listCounter.put("dataList", 0);
-        listCounter.put("textList", 0);
+        listCounter.put("textList", -4);
         String listFlag = "dataList";
 
         String str = null;
@@ -32,10 +32,13 @@ public class ParseFile {
                     listFlag = "textList";
                 }
                 else{
-                    listFlagMap.get(listFlag).add(new Object[]{Integer.toHexString(listCounter.get(listFlag)), str});
+                    if(listFlag.equals("textList")){
+                        listCounter.put(listFlag, listCounter.get(listFlag) + 4);
+                    }
+                    listFlagMap.get(listFlag).add(new Object[]{String.format("%04X", listCounter.get(listFlag)), str.strip()});
                 }
+                System.out.println(str);
             }
-            System.out.println(str);
         }
         return listFlagMap;
     }

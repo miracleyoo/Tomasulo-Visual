@@ -31,14 +31,23 @@
           </grid>
         </constraints>
       </hspacer>
-      <component id="98827" class="javax.swing.JTable" binding="OperandTable">
+      <scrollpane id="f9529">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="50"/>
+          <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="400" height="150"/>
           </grid>
         </constraints>
         <properties/>
-      </component>
+        <border type="none"/>
+        <children>
+          <component id="98827" class="javax.swing.JTable" binding="OperandTable">
+            <constraints/>
+            <properties>
+              <preferredScrollableViewportSize width="400" height="150"/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
     </children>
   </grid>
 </form>

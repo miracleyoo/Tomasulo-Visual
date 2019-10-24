@@ -32,7 +32,7 @@ public class MainUI {
                 ParseFile parser = new ParseFile();
                 try {
                     listFlagMap = parser.parseFile(file);
-                    Object[][] dataListArray = listFlagMap.get("dataList").toArray(new Object[0][0]);
+                    Object[][] dataListArray = listFlagMap.get("textList").toArray(new Object[0][0]);
                     new DataUI(dataListArray, new String[]{"PC","Operand"});
                 } catch (IOException ex) {
                     ex.printStackTrace();
@@ -75,8 +75,6 @@ public class MainUI {
                 jfc.setFileSelectionMode(JFileChooser.FILES_ONLY );
                 jfc.showDialog(new JLabel(), "Choose");
                 File file=jfc.getSelectedFile();
-//                System.out.println("==> File:"+file.getAbsolutePath());
-//                System.out.println(jfc.getSelectedFile().getName());
                 FileSelectedVal.setText(file.getAbsolutePath());
                 selectedFile = file;
             }
@@ -126,6 +124,7 @@ public class MainUI {
         // Add menu bar to frame
         frame.setJMenuBar(mainUI.addMenuBar());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        UICommonUtils.makeFrameToCenter(frame);
         frame.pack();
         frame.setVisible(true);
     }
