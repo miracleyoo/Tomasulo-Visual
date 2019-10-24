@@ -1,4 +1,4 @@
-/*
+/**
  *  Support custom painting on a panel in the form of
  *
  *  a) images - that can be scaled, tiled or painted at original size

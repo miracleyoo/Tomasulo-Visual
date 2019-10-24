@@ -1,3 +1,7 @@
+/**
+ * A Frame class which provide a boarder-less Frame.
+ * Also, drag the window by mouse event is implemented.
+ * */
 package com.miracleyoo.utils;
 
 import java.awt.Color;

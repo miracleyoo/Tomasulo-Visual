@@ -244,6 +244,7 @@ public class DataUI {
             }
         });
 
+        // Initiate the DataUI window
         JFrame frame = new JFrame("Operands");
         frame.setContentPane(PanelMain);
         frame.setJMenuBar(addMenuBar());
