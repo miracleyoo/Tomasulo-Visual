@@ -2,8 +2,6 @@ package com.miracleyoo.UIs;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
@@ -16,33 +14,36 @@ public class DataUI {
     private JTable OperandTable;
     private final int[] slice = {0,5};
 
-    // Column names for the OperandTable
-    private static String[] columnNames;
-
     // Total data for the OperandTable
     static private Object[][] fullData,rawData;
-
-    private void update() {
+    static private String[] columnNames;
+    static final int[] columnWidths = new int[]{10, 300};
+    private void update(DefaultTableModel dataModel) {
         if(slice[0]>=fullData.length-1){
-            rawData = null; //new Object[][]{{"", "", "", "", ""}};
+            rawData = null;
         }
         else {
             rawData = Arrays.copyOfRange(fullData, slice[0], slice[1]);
         }
-        TableModel dataModel = new DefaultTableModel(rawData,columnNames);
-        OperandTable.setModel(dataModel);
+        dataModel.setDataVector(rawData, columnNames);
+        dataModel.fireTableDataChanged();
+        TableUtils.setAllMinColumnSize(OperandTable, columnWidths);
+        TableUtils.setAllPreferredColumnSize(OperandTable, columnWidths);
     }
 
     DataUI(Object[][] inputTotalData, String[] inputColumnNames) {
         // Configure the table
         fullData = inputTotalData;
-        columnNames = inputColumnNames;
+        // Column names for the OperandTable
         rawData = Arrays.copyOfRange(fullData, slice[0], slice[1]);
-        TableModel dataModel = new DefaultTableModel(rawData, columnNames);
+        columnNames = inputColumnNames;
+        DefaultTableModel dataModel = new DefaultTableModel(rawData, columnNames);
 
         OperandTable.setModel(dataModel);
-//        OperandTable.setPreferredScrollableViewportSize(new Dimension(200, 30));
         OperandTable.setFillsViewportHeight(true);
+
+        TableUtils.setAllMinColumnSize(OperandTable, columnWidths);
+        TableUtils.setAllPreferredColumnSize(OperandTable, columnWidths);
 
         // Execute one step button action
         ExecuteOneStepBtn.addActionListener(new ActionListener() {
@@ -50,7 +51,7 @@ public class DataUI {
             public void actionPerformed(ActionEvent e) {
                 slice[0]++;
                 slice[1]++;
-                update();
+                update(dataModel);
             }
         });
 
@@ -60,13 +61,14 @@ public class DataUI {
             public void actionPerformed(ActionEvent e) {
                 slice[0]+=3;
                 slice[1]+=3;
-                update();
+                update(dataModel);
             }
         });
 
         JFrame frame = new JFrame("Operands");
         frame.setContentPane(PanelMain);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 180);
         UICommonUtils.makeFrameToCenter(frame);
         frame.setVisible(true);
     }

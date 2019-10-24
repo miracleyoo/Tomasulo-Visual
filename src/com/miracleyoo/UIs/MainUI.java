@@ -1,9 +1,11 @@
 package com.miracleyoo.UIs;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -29,9 +31,8 @@ public class MainUI {
                 File file=jfc.getSelectedFile();
                 System.out.println("==> File:"+file.getAbsolutePath());
                 System.out.println(jfc.getSelectedFile().getName());
-                ParseFile parser = new ParseFile();
                 try {
-                    listFlagMap = parser.parseFile(file);
+                    listFlagMap = ParseFile.parseFile(file);
                     Object[][] dataListArray = listFlagMap.get("textList").toArray(new Object[0][0]);
                     new DataUI(dataListArray, new String[]{"PC","Operand"});
                 } catch (IOException ex) {
@@ -71,12 +72,30 @@ public class MainUI {
         fileItems.get("Open").addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFileChooser jfc=new JFileChooser();
-                jfc.setFileSelectionMode(JFileChooser.FILES_ONLY );
-                jfc.showDialog(new JLabel(), "Choose");
-                File file=jfc.getSelectedFile();
-                FileSelectedVal.setText(file.getAbsolutePath());
-                selectedFile = file;
+                FileDialog fd = new FileDialog(new JFrame(), "Choose a file", FileDialog.LOAD);
+                fd.setDirectory("~/Downloads/");
+                fd.setFilenameFilter((dir, name) -> name.endsWith(".s"));
+                fd.setVisible(true);
+                String fileName = fd.getFile();
+                String filePath = fd.getDirectory();
+                if (fileName == null)
+                    System.out.println("You cancelled the choice");
+                else
+                    System.out.println("You chose " + filePath + fileName);
+                try {
+                    listFlagMap = ParseFile.parseFile(new File(filePath+fileName));
+                    Object[][] dataListArray = listFlagMap.get("textList").toArray(new Object[0][0]);
+                    new DataUI(dataListArray, new String[]{"PC","Operand"});
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        fileItems.get("Exit").addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
             }
         });
 
@@ -124,6 +143,7 @@ public class MainUI {
         // Add menu bar to frame
         frame.setJMenuBar(mainUI.addMenuBar());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(600, 200);
         UICommonUtils.makeFrameToCenter(frame);
         frame.pack();
         frame.setVisible(true);

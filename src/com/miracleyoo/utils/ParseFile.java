@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ParseFile {
-    public Map< String, List<Object[]>> parseFile(File selectedFile) throws IOException {
+    public static Map< String, List<Object[]>> parseFile(File selectedFile) throws IOException {
         InputStream selectedFileStream = new FileInputStream(selectedFile);
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(selectedFileStream));
         List<Object[]> dataList = new ArrayList<>();
