@@ -34,7 +34,7 @@ public class DataUI {
     private static final int[] operandColumnWidths = new int[]{50, 500};
     private static final int[] registerColumnWidths = new int[]{20, 50};
     private static final int[] dataColumnWidths = new int[]{50, 500};
-    private static final int[] frameSize = new int[]{700, 300};
+    private static final int[] frameSize = new int[]{700, 320};
     private static final int[] operandSlice = {0,5};
 
     private void update(DefaultTableModel dataModel) {

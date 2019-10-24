@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.miracleyoo.utils.*;
@@ -17,6 +16,10 @@ public class MainUI {
     private JLabel FileSelectedCap;
     private String selectedFileName;
     private Map< String, List<Object[]>> listFlagMap;
+
+//    static private JLabel backgroundLabel;
+    static private JFrame frame = new NoneFrame();
+    static int[] frameSize= new int[]{500,200};
 
     private MainUI() {
         assert ChooseFileBtn != null;
@@ -39,6 +42,7 @@ public class MainUI {
                     Object[][] operandListArray = listFlagMap.get("textList").toArray(new Object[0][0]);
                     Object[][] dataListArray = listFlagMap.get("dataList").toArray(new Object[0][0]);
                     new DataUI(operandListArray, dataListArray);
+                    frame.dispose();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -46,14 +50,11 @@ public class MainUI {
         });
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("App");
+    public static void main(String[] args){
         MainUI mainUI = new MainUI();
         frame.setContentPane(mainUI.PanelMain);
-
-        // Add menu bar to frame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 200);
+        frame.setSize(frameSize[0], frameSize[1]);
         UICommonUtils.makeFrameToCenter(frame);
 //        frame.pack();
         frame.setVisible(true);
