@@ -15,33 +15,33 @@ import java.util.Map;
 import com.miracleyoo.utils.*;
 
 public class DataUI {
-    private JPanel PanelMain;
-    private JButton ExecuteOneStepBtn;
-    private JButton ExecuteMultipleStepBtn;
-    private JTable OperandTable;
-    private JTable RegisterTable;
-    private JTable DataTable;
-    private JLabel StatisticsLabel;
+    private JPanel PanelMain;               // Main Panel
+    private JButton ExecuteOneStepBtn;      // Execute One Step Button
+    private JButton ExecuteMultipleStepBtn; // Execute Multiple Steps Button
+    private JTable OperandTable;            // Table of operands
+    private JTable RegisterTable;           // Table of registers
+    private JTable DataTable;               // Table of data
+    private JLabel StatisticsLabel;         // Label to show statistics data
 
-
-    // Total data for the OperandTable
+    // Define the data, models, infos of all panels
     static private Object[][] operandFullData, operandRawData, dataFullData;
-    static private Object[][] registerData= new Object[32][2];
-    static private String[] operandColumnNames,registerColumnNames, dataColumnNames;
+    static private Object[][] registerData = new Object[32][4];
+    static private String[] operandColumnNames, registerColumnNames, dataColumnNames;
     static private DefaultTableModel operandModel, registerModel, dataModel;
     static private int[] statisticsInfo = new int[9];
 
+    // Define some const
     private static final int[] operandColumnWidths = new int[]{50, 500};
-    private static final int[] registerColumnWidths = new int[]{20, 50};
+    private static final int[] registerColumnWidths = new int[]{20, 80, 20, 80};
     private static final int[] dataColumnWidths = new int[]{50, 500};
-    private static final int[] frameSize = new int[]{700, 320};
-    private static final int[] operandSlice = {0,5};
+    private static final int[] frameSize = new int[]{800, 600};
+    private static final int[] operandSlice = {0, 5};
 
+    // Update the operand model when data are updated
     private void update(DefaultTableModel dataModel) {
-        if(operandSlice[0]>= operandFullData.length-1){
+        if (operandSlice[0] >= operandFullData.length - 1) {
             operandRawData = null;
-        }
-        else {
+        } else {
             operandRawData = Arrays.copyOfRange(operandFullData, operandSlice[0], operandSlice[1]);
         }
         dataModel.setDataVector(operandRawData, operandColumnNames);
@@ -51,10 +51,10 @@ public class DataUI {
     }
 
     // Initialize the operand Table
-    private void initOperandTable(Object[][] inputTotalData){
+    private void initOperandTable(Object[][] inputTotalData) {
         operandFullData = inputTotalData;
         operandRawData = Arrays.copyOfRange(operandFullData, operandSlice[0], operandSlice[1]);
-        operandColumnNames = new String[]{"PC","Operand"};
+        operandColumnNames = new String[]{"PC", "Operand"};
         operandModel = new DefaultTableModel(operandRawData, operandColumnNames);
 
         OperandTable.setModel(operandModel);
@@ -65,12 +65,14 @@ public class DataUI {
     }
 
     // Initialize the register Table
-    private void initRegisterTable(){
-        registerColumnNames = new String[]{"Reg", "Value"};
-        for(int i=0; i<32; i++){
-            System.out.println("R"+ i +"=");
-            registerData[i][0] = "R"+ i +"=";
-            registerData[i][1] = 0;
+    private void initRegisterTable() {
+        registerColumnNames = new String[]{"IntReg", "Value", "FloatReg", "Value"};
+        for (int i = 0; i < 32; i++) {
+            System.out.println("R" + i + "=");
+            registerData[i][0] = "R" + i + "=";
+            registerData[i][1] = String.format("%08d", 0);
+            registerData[i][2] = "F" + i + "=";
+            registerData[i][3] = String.format("%.8f", 0.0);
         }
         registerModel = new DefaultTableModel(registerData, registerColumnNames);
 
@@ -82,7 +84,7 @@ public class DataUI {
     }
 
     // Initialize the Data Table
-    private void initDataTable(Object[][] inputData){
+    private void initDataTable(Object[][] inputData) {
         dataFullData = inputData;
         dataColumnNames = new String[]{"PC", "Content"};
         dataModel = new DefaultTableModel(dataFullData, dataColumnNames);
@@ -95,9 +97,9 @@ public class DataUI {
     }
 
     // Initialize Statistics Panel
-    private void initStatisticsPanel(){
+    private void initStatisticsPanel() {
         StatisticsLabel.setText(
-                        "<html><font color='red'>Execution</font><br>" +
+                "<html><font color='red'>Execution</font><br>" +
                         statisticsInfo[0] + " Cycles<br>" +
                         statisticsInfo[1] + " Instructions<br><br>" +
                         "<font color='red'>Stalls<br></font>" +
@@ -109,7 +111,7 @@ public class DataUI {
                         statisticsInfo[7] + " Branch Mis-prediction Stalls<br><br>" +
                         "<font color='red'>Code Size</font><br>" +
                         statisticsInfo[8] + " Bytes"
-                );
+        );
     }
 
     // Define the menu bar
@@ -133,15 +135,15 @@ public class DataUI {
 
         // Add menu items to menu mFile
         String[] fileItemNames = {"Open", "Reset", "Full Reset", "Exit"};
-        Map< String, JMenuItem> fileItems = new HashMap< String, JMenuItem>();
-        for (String itemName:fileItemNames){
+        Map<String, JMenuItem> fileItems = new HashMap<String, JMenuItem>();
+        for (String itemName : fileItemNames) {
             fileItems.put(itemName, new JMenuItem(itemName));
             mFile.add(fileItems.get(itemName));
         }
 
         // Add listener to Open, here a *.s file is needed, if the file chooser successfully get
         // a *.s file, it will open DataUI and pass the opened file to it.
-        fileItems.get("Open").addActionListener(new ActionListener(){
+        fileItems.get("Open").addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 FileDialog fd = new FileDialog(new JFrame(), "Choose a file", FileDialog.LOAD);
@@ -166,7 +168,7 @@ public class DataUI {
             }
         });
 
-        fileItems.get("Exit").addActionListener(new ActionListener(){
+        fileItems.get("Exit").addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
@@ -175,8 +177,8 @@ public class DataUI {
 
         // Add menu items to menu mExec
         String[] execItemNames = {"Single Cycle", "Multi Cycles", "Run to", "Stop"};
-        Map< String, JMenuItem> execItems = new HashMap< String, JMenuItem>();
-        for (String itemName:execItemNames){
+        Map<String, JMenuItem> execItems = new HashMap<String, JMenuItem>();
+        for (String itemName : execItemNames) {
             execItems.put(itemName, new JMenuItem(itemName));
             mExec.add(execItems.get(itemName));
         }
@@ -184,24 +186,24 @@ public class DataUI {
         // Add menu items to menu mConf
         // Here may need some other Configures
         String[] confItemNames = {"Architecture", "Multi-Step"};
-        Map< String, JMenuItem> confItems = new HashMap< String, JMenuItem>();
-        for (String itemName:confItemNames){
+        Map<String, JMenuItem> confItems = new HashMap<String, JMenuItem>();
+        for (String itemName : confItemNames) {
             confItems.put(itemName, new JMenuItem(itemName));
             mConf.add(confItems.get(itemName));
         }
 
         // Add menu items to menu mWind
         String[] windItemNames = {"Code", "Statistics", "Data", "Registers", "Pipeline", "Cycles", "Terminal"};
-        Map< String, JMenuItem> windItems = new HashMap< String, JMenuItem>();
-        for (String itemName:windItemNames){
+        Map<String, JMenuItem> windItems = new HashMap<String, JMenuItem>();
+        for (String itemName : windItemNames) {
             windItems.put(itemName, new JMenuItem(itemName));
             mWind.add(windItems.get(itemName));
         }
 
         // Add menu items to menu mHelp
         String[] helpItemNames = {"About Tomasulo Visual"};
-        Map< String, JMenuItem> helpItems = new HashMap< String, JMenuItem>();
-        for (String itemName:helpItemNames){
+        Map<String, JMenuItem> helpItems = new HashMap<String, JMenuItem>();
+        for (String itemName : helpItemNames) {
             helpItems.put(itemName, new JMenuItem(itemName));
             mHelp.add(helpItems.get(itemName));
         }
@@ -236,8 +238,8 @@ public class DataUI {
         ExecuteMultipleStepBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                operandSlice[0]+=3;
-                operandSlice[1]+=3;
+                operandSlice[0] += 3;
+                operandSlice[1] += 3;
                 update(operandModel);
             }
         });

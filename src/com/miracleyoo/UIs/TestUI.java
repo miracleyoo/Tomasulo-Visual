@@ -1,3 +1,11 @@
+/**
+ * Functionality: A cool welcome interface. It will ask user to select
+ *   a *.s file and parse the file into a list of map. Each line will be
+ *   put into the corresponding array as a item.
+ * Feature: It initialize a window which is boarder-less and mouse-drag-able.
+ *   Also, a automatically scalable background image is added.
+ * */
+
 package com.miracleyoo.UIs;
 
 import com.miracleyoo.utils.BackgroundPanel;
@@ -17,33 +25,38 @@ import java.util.List;
 import java.util.Map;
 
 public class TestUI {
-    private JButton ChooseFileBtn;
-    private JButton ExitBtn;
-    private BackgroundPanel panel;
-    private JLabel FileSelectedCap;
-    private String selectedFileName;
-    private Map< String, List<Object[]>> listFlagMap;
-    private static JFrame frame = new NoneFrame();
-    private static int[] frameSize= new int[]{500,250};
+    private JButton ChooseFileBtn;     // The button used to choose a *.s file.
+    private JButton ExitBtn;           // The exit button on the top-right.
+    private BackgroundPanel MainPanel; // The main panel.
+    private JLabel FileSelectedCap;    // Welcome label.
+    private String selectedFileName;   // The name of the user selected file.
+    private Map< String, List<Object[]>> listFlagMap;   // The result of parse file.
+    private static JFrame MainFrame = new NoneFrame();      // The main frame.
+    private static int[] frameSize= new int[]{500,250}; // The main frame size.
 
     private TestUI() throws IOException {
+        // Initialize the MainPanel
         BufferedImage img = null;
         img = ImageIO.read(new File("Assets/image_01.jpg"));
-        panel = new BackgroundPanel(img, BackgroundPanel.SCALED, 1.0f, 0.5f);
+        MainPanel = new BackgroundPanel(img, BackgroundPanel.SCALED, 1.0f, 0.5f);
         GradientPaint paint = new GradientPaint(0, 0, Color.BLUE, 600, 0, Color.RED);
-        panel.setPaint(paint);
+        MainPanel.setPaint(paint);
 
+        // Initialize the FileSelectedCap
         FileSelectedCap = new JLabel("<html><font color='white'>Welcome! Please select a *.s file to start!</font></html>");
         FileSelectedCap.setHorizontalAlignment(SwingConstants.CENTER);
         FileSelectedCap.setVerticalAlignment(SwingConstants.CENTER);
         FileSelectedCap.setFont(new Font("Dialog", Font.BOLD, 20));
 
+        // Initialize the ChooseFileBtn
         ChooseFileBtn = new JButton();
-        ChooseFileBtn.setText("<html><font color='white'>Select *.s File</font></html>");
+        ChooseFileBtn.setText("<html><font color='white'>Select a *.s file to start</font></html>");
+        ChooseFileBtn.setFont(new Font("Dialog", Font.BOLD, 15));
         ChooseFileBtn.setOpaque(false);
         ChooseFileBtn.setContentAreaFilled(false);
         ChooseFileBtn.setBorderPainted(false);
 
+        // Initialize the ExitBtn
         ExitBtn = new JButton();
         ExitBtn.setText("<html><font color='white'>X</font></html>");
         ExitBtn.setFont(new Font("Dialog", Font.PLAIN, 12));
@@ -51,7 +64,7 @@ public class TestUI {
         ExitBtn.setContentAreaFilled(false);
         ExitBtn.setBorderPainted(false);
 
-
+        // Action on ChooseFileBtn
         ChooseFileBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -66,46 +79,46 @@ public class TestUI {
                 else
                     System.out.println("You chose " + filePath + fileName);
                 try {
-                    selectedFileName = filePath+fileName;
+                    // Load and try to parse the file
+                    selectedFileName = filePath + fileName;
                     listFlagMap = ParseFile.parseFile(new File(selectedFileName));
                     Object[][] operandListArray = listFlagMap.get("textList").toArray(new Object[0][0]);
                     Object[][] dataListArray = listFlagMap.get("dataList").toArray(new Object[0][0]);
                     new DataUI(operandListArray, dataListArray);
-                    frame.dispose();
+                    MainFrame.dispose();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
             }
         });
-         ExitBtn.addActionListener(new ActionListener(){
-             @Override
-             public void actionPerformed(ActionEvent e) {
+
+        // Action on ExitBtn: Exit the program
+        ExitBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 System.exit(0);
-             }
-         });
+            }
+        });
     }
 
     public static void main(String[] args) throws IOException {
-
-
+        // Initialize the MainFrame and set bounds
         TestUI testUI = new TestUI();
-        frame.setSize(frameSize[0], frameSize[1]);
-        UICommonUtils.makeFrameToCenter(frame);
+        MainFrame.setSize(frameSize[0], frameSize[1]);
+        UICommonUtils.makeFrameToCenter(MainFrame);
+        MainFrame.setContentPane(testUI.MainPanel);
+        MainFrame.getContentPane().setLayout(null);
 
-        frame.setContentPane(testUI.panel);
-        frame.getContentPane().add(testUI.FileSelectedCap);
-        frame.getContentPane().setLayout(null);
+        // Set bounds of the components
+        testUI.FileSelectedCap.setBounds(0, 10, MainFrame.getWidth() - 20, 30);
+        testUI.ExitBtn.setBounds(MainFrame.getWidth() - 30, 0, 30, 25);
+        testUI.ChooseFileBtn.setBounds(0, MainFrame.getHeight() - 60, MainFrame.getWidth(), 60);
 
-        testUI.FileSelectedCap.setBounds(0, 10, frame.getWidth()-20, 30);
-        testUI.ExitBtn.setBounds(frame.getWidth()-20, 0, 20, 15);
-        testUI.ChooseFileBtn.setBounds(0, frame.getHeight()-60, frame.getWidth(), 60);
-
-        frame.getContentPane().add(testUI.ChooseFileBtn);
-        frame.getContentPane().add(testUI.ExitBtn);
-
-        // Add menu bar to frame
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        frame.setVisible(true);
+        // Add components to the MainFrame
+//        MainFrame.getContentPane().add(testUI.FileSelectedCap);
+        MainFrame.getContentPane().add(testUI.ChooseFileBtn);
+        MainFrame.getContentPane().add(testUI.ExitBtn);
+        MainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        MainFrame.setVisible(true);
     }
 }

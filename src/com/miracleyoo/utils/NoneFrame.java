@@ -21,7 +21,7 @@ public class NoneFrame extends JFrame {
           Drag window by mouse
          */
         this.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) { // Mouse click
+            public void mousePressed(MouseEvent e) {
                 pressedPoint = e.getPoint(); // Record mouse position
             }
         });
@@ -37,7 +37,6 @@ public class NoneFrame extends JFrame {
         });
 
         this.setTitle("");
-//        this.setBounds(100, 100, 354, 206);
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
