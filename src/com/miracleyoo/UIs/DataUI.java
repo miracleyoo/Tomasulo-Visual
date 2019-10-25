@@ -29,6 +29,7 @@ public class DataUI {
     static private String[] operandColumnNames, registerColumnNames, dataColumnNames;
     static private DefaultTableModel operandModel, registerModel, dataModel;
     static private int[] statisticsInfo = new int[9];
+    static private int multiStepNum = 3;
 
     // Define some const
     private static final int[] operandColumnWidths = new int[]{50, 500};
@@ -38,16 +39,34 @@ public class DataUI {
     private static final int[] operandSlice = {0, 5};
 
     // Update the operand model when data are updated
-    private void update(DefaultTableModel dataModel) {
+    private void operandTableUpdate() {
         if (operandSlice[0] >= operandFullData.length - 1) {
             operandRawData = null;
         } else {
             operandRawData = Arrays.copyOfRange(operandFullData, operandSlice[0], operandSlice[1]);
         }
-        dataModel.setDataVector(operandRawData, operandColumnNames);
-        dataModel.fireTableDataChanged();
+        operandModel.setDataVector(operandRawData, operandColumnNames);
+        operandModel.fireTableDataChanged();
         TableUtils.setAllMinColumnSize(OperandTable, operandColumnWidths);
         TableUtils.setAllPreferredColumnSize(OperandTable, operandColumnWidths);
+    }
+
+    // Update the data model when data are updated
+    private void dataTableUpdate(){
+        dataModel.setDataVector(dataFullData, dataColumnNames);
+        dataModel.fireTableDataChanged();
+        TableUtils.setAllMinColumnSize(DataTable, dataColumnWidths);
+        TableUtils.setAllPreferredColumnSize(DataTable, dataColumnWidths);
+    }
+
+    // Reset all panels and tables
+    private void ResetALLData(){
+        operandSlice[0] = 0;
+        operandSlice[1]= 5;
+        operandTableUpdate();
+        dataTableUpdate();
+        initRegisterTable();
+        initStatisticsPanel();
     }
 
     // Initialize the operand Table
@@ -68,7 +87,6 @@ public class DataUI {
     private void initRegisterTable() {
         registerColumnNames = new String[]{"IntReg", "Value", "FloatReg", "Value"};
         for (int i = 0; i < 32; i++) {
-            System.out.println("R" + i + "=");
             registerData[i][0] = "R" + i + "=";
             registerData[i][1] = String.format("%08d", 0);
             registerData[i][2] = "F" + i + "=";
@@ -161,10 +179,18 @@ public class DataUI {
                     Map<String, List<Object[]>> listFlagMap = ParseFile.parseFile(new File(selectedFileName));
                     operandFullData = listFlagMap.get("textList").toArray(new Object[0][0]);
                     dataFullData = listFlagMap.get("dataList").toArray(new Object[0][0]);
+                    ResetALLData();
                     // TODO: Add a global init function
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
+            }
+        });
+
+        fileItems.get("Reset").addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ResetALLData();
             }
         });
 
@@ -182,6 +208,20 @@ public class DataUI {
             execItems.put(itemName, new JMenuItem(itemName));
             mExec.add(execItems.get(itemName));
         }
+
+        execItems.get("Single Cycle").addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ExeSteps(1);
+            }
+        });
+
+        execItems.get("Multi Cycles").addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ExeSteps(multiStepNum);
+            }
+        });
 
         // Add menu items to menu mConf
         // Here may need some other Configures
@@ -208,7 +248,24 @@ public class DataUI {
             mHelp.add(helpItems.get(itemName));
         }
 
+        helpItems.get("About Tomasulo Visual").addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    new InfoUI();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
         return mainMenuBar;
+    }
+
+    private void ExeSteps(int stepNum){
+        operandSlice[0]+= stepNum;
+        operandSlice[1]+= stepNum;
+        operandTableUpdate();
     }
 
     public DataUI(Object[][] inputOperandFieldData, Object[][] inputDataFieldData) {
@@ -228,9 +285,7 @@ public class DataUI {
         ExecuteOneStepBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                operandSlice[0]++;
-                operandSlice[1]++;
-                update(operandModel);
+                ExeSteps(1);
             }
         });
 
@@ -238,9 +293,7 @@ public class DataUI {
         ExecuteMultipleStepBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                operandSlice[0] += 3;
-                operandSlice[1] += 3;
-                update(operandModel);
+                ExeSteps(multiStepNum);
             }
         });
 

@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public class TestUI {
+public class CoolMainUI {
     private JButton ChooseFileBtn;     // The button used to choose a *.s file.
     private JButton ExitBtn;           // The exit button on the top-right.
     private BackgroundPanel MainPanel; // The main panel.
@@ -34,7 +34,7 @@ public class TestUI {
     private static JFrame MainFrame = new NoneFrame();      // The main frame.
     private static int[] frameSize= new int[]{500,250}; // The main frame size.
 
-    private TestUI() throws IOException {
+    private CoolMainUI() throws IOException {
         // Initialize the MainPanel
         BufferedImage img = null;
         img = ImageIO.read(new File("Assets/image_01.jpg"));
@@ -103,22 +103,23 @@ public class TestUI {
 
     public static void main(String[] args) throws IOException {
         // Initialize the MainFrame and set bounds
-        TestUI testUI = new TestUI();
+        CoolMainUI coolMainUI = new CoolMainUI();
         MainFrame.setSize(frameSize[0], frameSize[1]);
         UICommonUtils.makeFrameToCenter(MainFrame);
-        MainFrame.setContentPane(testUI.MainPanel);
+        MainFrame.setContentPane(coolMainUI.MainPanel);
         MainFrame.getContentPane().setLayout(null);
 
         // Set bounds of the components
-        testUI.FileSelectedCap.setBounds(0, 10, MainFrame.getWidth() - 20, 30);
-        testUI.ExitBtn.setBounds(MainFrame.getWidth() - 30, 0, 30, 25);
-        testUI.ChooseFileBtn.setBounds(0, MainFrame.getHeight() - 60, MainFrame.getWidth(), 60);
+        coolMainUI.FileSelectedCap.setBounds(0, 10, MainFrame.getWidth() - 20, 30);
+        coolMainUI.ExitBtn.setBounds(MainFrame.getWidth() - 30, 0, 30, 25);
+        coolMainUI.ChooseFileBtn.setBounds(0, MainFrame.getHeight() - 60, MainFrame.getWidth(), 60);
 
         // Add components to the MainFrame
-//        MainFrame.getContentPane().add(testUI.FileSelectedCap);
-        MainFrame.getContentPane().add(testUI.ChooseFileBtn);
-        MainFrame.getContentPane().add(testUI.ExitBtn);
+//        MainFrame.getContentPane().add(coolMainUI.FileSelectedCap);
+        MainFrame.getContentPane().add(coolMainUI.ChooseFileBtn);
+        MainFrame.getContentPane().add(coolMainUI.ExitBtn);
         MainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         MainFrame.setVisible(true);
+        MainFrame.setResizable(false);
     }
 }

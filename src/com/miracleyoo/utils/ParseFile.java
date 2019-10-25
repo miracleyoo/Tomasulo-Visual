@@ -42,7 +42,6 @@ public class ParseFile {
                     }
                     listFlagMap.get(listFlag).add(new Object[]{String.format("%04X", listCounter.get(listFlag)), str.strip()});
                 }
-                System.out.println(str);
             }
         }
         return listFlagMap;
