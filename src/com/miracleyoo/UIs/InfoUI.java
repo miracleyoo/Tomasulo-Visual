@@ -40,7 +40,7 @@ public class InfoUI {
 
         // Initialize the ExitBtn
         ExitBtn = new JButton();
-        ExitBtn.setText("<html><font color='white'>X</font></html>");
+        ExitBtn.setText("<html><font color='white'>×</font></html>");
         ExitBtn.setFont(new Font("Dialog", Font.PLAIN, 12));
         ExitBtn.setOpaque(false);
         ExitBtn.setContentAreaFilled(false);

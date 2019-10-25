@@ -58,7 +58,7 @@ public class CoolMainUI {
 
         // Initialize the ExitBtn
         ExitBtn = new JButton();
-        ExitBtn.setText("<html><font color='white'>X</font></html>");
+        ExitBtn.setText("<html><font color='white'>×</font></html>");
         ExitBtn.setFont(new Font("Dialog", Font.PLAIN, 12));
         ExitBtn.setOpaque(false);
         ExitBtn.setContentAreaFilled(false);
@@ -111,7 +111,7 @@ public class CoolMainUI {
 
         // Set bounds of the components
         coolMainUI.FileSelectedCap.setBounds(0, 10, MainFrame.getWidth() - 20, 30);
-        coolMainUI.ExitBtn.setBounds(MainFrame.getWidth() - 30, 0, 30, 25);
+        coolMainUI.ExitBtn.setBounds(MainFrame.getWidth() - 30, 0, 30, 22);
         coolMainUI.ChooseFileBtn.setBounds(0, MainFrame.getHeight() - 60, MainFrame.getWidth(), 60);
 
         // Add components to the MainFrame

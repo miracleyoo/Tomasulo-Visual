@@ -29,7 +29,7 @@ public class DataUI {
     static private String[] operandColumnNames, registerColumnNames, dataColumnNames;
     static private DefaultTableModel operandModel, registerModel, dataModel;
     static private int[] statisticsInfo = new int[9];
-    static private int multiStepNum = 3;
+    static public long multiStepNum = 3;
 
     // Define some const
     private static final int[] operandColumnWidths = new int[]{50, 500};
@@ -232,6 +232,17 @@ public class DataUI {
             mConf.add(confItems.get(itemName));
         }
 
+        confItems.get("Multi-Step").addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    new MutiStepsUI();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
         // Add menu items to menu mWind
         String[] windItemNames = {"Code", "Statistics", "Data", "Registers", "Pipeline", "Cycles", "Terminal"};
         Map<String, JMenuItem> windItems = new HashMap<String, JMenuItem>();
@@ -262,7 +273,7 @@ public class DataUI {
         return mainMenuBar;
     }
 
-    private void ExeSteps(int stepNum){
+    private void ExeSteps(long stepNum){
         operandSlice[0]+= stepNum;
         operandSlice[1]+= stepNum;
         operandTableUpdate();
