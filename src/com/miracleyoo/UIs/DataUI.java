@@ -29,7 +29,7 @@ public class DataUI {
     static private String[] operandColumnNames, registerColumnNames, dataColumnNames;
     static private DefaultTableModel operandModel, registerModel, dataModel;
     static private int[] statisticsInfo = new int[9];
-    static public long multiStepNum = 3;
+    static long multiStepNum = 3;
 
     // Define some const
     private static final int[] operandColumnWidths = new int[]{50, 500};
@@ -153,7 +153,7 @@ public class DataUI {
 
         // Add menu items to menu mFile
         String[] fileItemNames = {"Open", "Reset", "Full Reset", "Exit"};
-        Map<String, JMenuItem> fileItems = new HashMap<String, JMenuItem>();
+        Map<String, JMenuItem> fileItems = new HashMap<>();
         for (String itemName : fileItemNames) {
             fileItems.put(itemName, new JMenuItem(itemName));
             mFile.add(fileItems.get(itemName));
@@ -187,19 +187,9 @@ public class DataUI {
             }
         });
 
-        fileItems.get("Reset").addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ResetALLData();
-            }
-        });
+        fileItems.get("Reset").addActionListener(e -> ResetALLData());
 
-        fileItems.get("Exit").addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        fileItems.get("Exit").addActionListener(e -> System.exit(0));
 
         // Add menu items to menu mExec
         String[] execItemNames = {"Single Cycle", "Multi Cycles", "Run to", "Stop"};
@@ -236,7 +226,7 @@ public class DataUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    new MutiStepsUI();
+                    new MultiStepsUI();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -279,7 +269,7 @@ public class DataUI {
         operandTableUpdate();
     }
 
-    public DataUI(Object[][] inputOperandFieldData, Object[][] inputDataFieldData) {
+    DataUI(Object[][] inputOperandFieldData, Object[][] inputDataFieldData) {
         // Initialize the operand Table
         initOperandTable(inputOperandFieldData);
 
@@ -293,20 +283,10 @@ public class DataUI {
         initStatisticsPanel();
 
         // Execute one step button action
-        ExecuteOneStepBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ExeSteps(1);
-            }
-        });
+        ExecuteOneStepBtn.addActionListener(e -> ExeSteps(1));
 
         // Execute multiple step button action
-        ExecuteMultipleStepBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ExeSteps(multiStepNum);
-            }
-        });
+        ExecuteMultipleStepBtn.addActionListener(e -> ExeSteps(multiStepNum));
 
         // Initiate the DataUI window
         JFrame frame = new JFrame("Operands");

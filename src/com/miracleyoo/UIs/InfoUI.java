@@ -15,57 +15,47 @@ import com.miracleyoo.utils.UICommonUtils;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
-public class InfoUI {
-    private JButton ExitBtn;           // The exit button on the top-right.
-    private BackgroundPanel MainPanel; // The main panel.
-    private Map< String, List<Object[]>> listFlagMap;   // The result of parse file.
+class InfoUI {
     private static JFrame MainFrame = new NoneFrame();      // The main frame.
     private static int[] frameSize= new int[]{560,315}; // The main frame size.
 
     InfoUI() throws IOException {
         // Initialize the MainPanel
-        BufferedImage img = null;
+        BufferedImage img;
         img = ImageIO.read(new File("Assets/info.png"));
-        MainPanel = new BackgroundPanel(img, BackgroundPanel.SCALED, 1.0f, 0.5f);
+        // The main panel.
+        BackgroundPanel mainPanel = new BackgroundPanel(img, BackgroundPanel.SCALED, 1.0f, 0.5f);
         GradientPaint paint = new GradientPaint(0, 0, Color.BLUE, 600, 0, Color.RED);
-        MainPanel.setPaint(paint);
+        mainPanel.setPaint(paint);
 
         // Initialize the ExitBtn
-        ExitBtn = new JButton();
-        ExitBtn.setText("<html><font color='white'>×</font></html>");
-        ExitBtn.setFont(new Font("Dialog", Font.PLAIN, 12));
-        ExitBtn.setOpaque(false);
-        ExitBtn.setContentAreaFilled(false);
-        ExitBtn.setBorderPainted(false);
+        // The exit button on the top-right.
+        JButton exitBtn = new JButton();
+        exitBtn.setText("<html><font color='white'>×</font></html>");
+        exitBtn.setFont(new Font("Dialog", Font.PLAIN, 12));
+        exitBtn.setOpaque(false);
+        exitBtn.setContentAreaFilled(false);
+        exitBtn.setBorderPainted(false);
 
         // Action on ExitBtn: Exit the program
-        ExitBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MainFrame.dispose();
-            }
-        });
+        exitBtn.addActionListener(e -> MainFrame.dispose());
 
         // Initialize the MainFrame and set bounds
         MainFrame.setSize(frameSize[0], frameSize[1]);
         UICommonUtils.makeFrameToCenter(MainFrame);
-        MainFrame.setContentPane(MainPanel);
+        MainFrame.setContentPane(mainPanel);
         MainFrame.getContentPane().setLayout(null);
 
         // Set bounds of the components
-        ExitBtn.setBounds(MainFrame.getWidth() - 30, 0, 30, 25);
+        exitBtn.setBounds(MainFrame.getWidth() - 30, 0, 30, 25);
 
         // Add components to the MainFrame
-        MainPanel.add(ExitBtn);
-        MainFrame.setContentPane(MainPanel);
+        mainPanel.add(exitBtn);
+        MainFrame.setContentPane(mainPanel);
         MainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         MainFrame.setVisible(true);
         MainFrame.setResizable(false);

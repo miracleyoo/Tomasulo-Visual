@@ -11,46 +11,41 @@ package com.miracleyoo.UIs;
 import com.miracleyoo.utils.BackgroundPanel;
 import com.miracleyoo.utils.NoneFrame;
 import com.miracleyoo.utils.UICommonUtils;
-import com.miracleyoo.UIs.DataUI;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.NumberFormat;
-import java.util.List;
-import java.util.Map;
 
-public class MutiStepsUI {
-    private JButton ExitBtn;             // The exit button on the top-right.
+class MultiStepsUI {
     private JFormattedTextField InputTextField;   // The text area which get the user input.
-    private BackgroundPanel MainPanel;   // The main panel.
-    private Map<String, List<Object[]>> listFlagMap;   // The result of parse file.
     private static JFrame MainFrame = new NoneFrame();  // The main frame.
     private static int[] frameSize = new int[]{560, 315}; // The main frame size.
 
-    MutiStepsUI() throws IOException {
+    MultiStepsUI() throws IOException {
         // Initialize the MainPanel
-        BufferedImage img = null;
+        BufferedImage img;
         img = ImageIO.read(new File("Assets/Input_multi_steps.png"));
-        MainPanel = new BackgroundPanel(img, BackgroundPanel.SCALED, 1.0f, 0.5f);
+        // The main panel.
+        BackgroundPanel mainPanel = new BackgroundPanel(img, BackgroundPanel.SCALED, 1.0f, 0.5f);
         GradientPaint paint = new GradientPaint(0, 0, Color.BLUE, 600, 0, Color.RED);
-        MainPanel.setPaint(paint);
+        mainPanel.setPaint(paint);
 
         // Initialize the ExitBtn
-        ExitBtn = new JButton();
-        ExitBtn.setText("<html><font color='white'>×</font></html>");
-        ExitBtn.setFont(new Font("Dialog", Font.PLAIN, 12));
-        ExitBtn.setOpaque(false);
-        ExitBtn.setContentAreaFilled(false);
-        ExitBtn.setBorderPainted(false);
+        // The exit button on the top-right.
+        JButton exitBtn = new JButton();
+        exitBtn.setText("<html><font color='white'>×</font></html>");
+        exitBtn.setFont(new Font("Dialog", Font.PLAIN, 12));
+        exitBtn.setOpaque(false);
+        exitBtn.setContentAreaFilled(false);
+        exitBtn.setBorderPainted(false);
 
         // Initialize the InputTextField
         NumberFormat longFormat = NumberFormat.getIntegerInstance();
@@ -80,28 +75,23 @@ public class MutiStepsUI {
         });
 
         // Action on ExitBtn: Exit the program
-        ExitBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MainFrame.dispose();
-            }
-        });
+        exitBtn.addActionListener(e -> MainFrame.dispose());
 
         // Initialize the MainFrame and set bounds
         MainFrame.setSize(frameSize[0], frameSize[1]);
         UICommonUtils.makeFrameToCenter(MainFrame);
-        MainFrame.setContentPane(MainPanel);
+        MainFrame.setContentPane(mainPanel);
         MainFrame.getContentPane().setLayout(null);
 
         // Set bounds of the components
-        ExitBtn.setBounds(MainFrame.getWidth() - 30, 0, 30, 22);
+        exitBtn.setBounds(MainFrame.getWidth() - 30, 0, 30, 22);
         InputTextField.setBounds(MainFrame.getWidth() / 2 + 10, MainFrame.getHeight() / 2 - 4,
                 MainFrame.getWidth() / 4 - 20, 30);
 
         // Add components to the MainFrame
-        MainPanel.add(ExitBtn);
-        MainPanel.add(InputTextField);
-        MainFrame.setContentPane(MainPanel);
+        mainPanel.add(exitBtn);
+        mainPanel.add(InputTextField);
+        MainFrame.setContentPane(mainPanel);
         MainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         MainFrame.setVisible(true);
         MainFrame.setResizable(false);
