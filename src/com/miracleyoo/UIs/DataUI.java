@@ -195,7 +195,7 @@ public class DataUI {
         fileItems.get("Exit").addActionListener(e -> System.exit(0));
 
         // Add menu items to menu mExec
-        String[] execItemNames = {"Single Cycle", "Multi Cycles", "Run to", "Stop"};
+        String[] execItemNames = {"Single Cycle", "Multi Cycles", "Run to"};
         Map<String, JMenuItem> execItems = new HashMap<>();
         for (String itemName : execItemNames) {
             execItems.put(itemName, new JMenuItem(itemName));
