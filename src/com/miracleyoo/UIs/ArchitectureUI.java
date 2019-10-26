@@ -1,0 +1,132 @@
+/**
+ * Functionality: A cool welcome interface. It will ask user to select
+ * a *.s file and parse the file into a list of map. Each line will be
+ * put into the corresponding array as a item.
+ * Feature: It initialize a window which is boarder-less and mouse-drag-able.
+ * Also, a automatically scalable background image is added.
+ */
+
+package com.miracleyoo.UIs;
+
+import com.miracleyoo.utils.BackgroundPanel;
+import com.miracleyoo.utils.NoneFrame;
+import com.miracleyoo.utils.UICommonUtils;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.text.NumberFormatter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+class ArchitectureUI {
+    private List<JFormattedTextField> InputTextField = new ArrayList<>();   // The text area which get the user input.
+    private static JFrame MainFrame = new NoneFrame();  // The main frame.
+    private static int[] frameSize = new int[]{560, 315}; // The main frame size.
+
+    ArchitectureUI() throws IOException {
+        // Initialize the MainPanel
+        BufferedImage img;
+        img = ImageIO.read(new File("Assets/Architecture.png"));
+        // The main panel.
+        BackgroundPanel mainPanel = new BackgroundPanel(img, BackgroundPanel.SCALED, 1.0f, 0.5f);
+        GradientPaint paint = new GradientPaint(0, 0, Color.BLUE, 600, 0, Color.RED);
+        mainPanel.setPaint(paint);
+
+        // Initialize the ExitBtn
+        // The exit button on the top-right.
+        JButton exitBtn = new JButton();
+        exitBtn.setText("<html><font color='white'>×</font></html>");
+        exitBtn.setFont(new Font("Dialog", Font.PLAIN, 12));
+        exitBtn.setOpaque(false);
+        exitBtn.setContentAreaFilled(false);
+        exitBtn.setBorderPainted(false);
+
+        // Initialize the submitBtn
+        JButton submitBtn = new JButton();
+        submitBtn.setText("");
+        submitBtn.setOpaque(false);
+        submitBtn.setContentAreaFilled(false);
+        submitBtn.setBorderPainted(false);
+
+        // Initialize the InputTextField
+        NumberFormat longFormat = NumberFormat.getIntegerInstance();
+        NumberFormatter numberFormatter = new NumberFormatter(longFormat);
+        numberFormatter.setValueClass(Long.class); //optional, ensures you will always get a long value
+        numberFormatter.setAllowsInvalid(false); //this is the key!!
+        numberFormatter.setMinimum(0L); //Optional
+
+        // Action on ExitBtn: Exit the program
+        exitBtn.addActionListener(e -> MainFrame.dispose());
+
+        // Action on submitBtn
+        submitBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for(int i=0;i<5;i++) {
+                    DataUI.architecture[i] = (long) InputTextField.get(i).getValue();
+                }
+                MainFrame.dispose();
+            }
+        });
+
+        // Initialize the MainFrame and set bounds
+        MainFrame.setSize(frameSize[0], frameSize[1]);
+        UICommonUtils.makeFrameToCenter(MainFrame);
+        MainFrame.setContentPane(mainPanel);
+        MainFrame.getContentPane().setLayout(null);
+
+        // Set bounds of the components
+        exitBtn.setBounds(MainFrame.getWidth() - 30, 0, 30, 22);
+        submitBtn.setBounds(MainFrame.getWidth()/2 + 80, MainFrame.getHeight()*5/6+3, 95, 30);
+
+        final int[] outerCounter = {0};
+        for(outerCounter[0]=0;outerCounter[0]<5;outerCounter[0]++) {
+            int innerCounter = outerCounter[0];
+            InputTextField.add(new JFormattedTextField(numberFormatter));
+            InputTextField.get(innerCounter).setValue(DataUI.architecture[innerCounter]);
+            InputTextField.get(innerCounter).setOpaque(false);
+
+            // Add action to EnterTextAction. Execute when "enter" is pressed.
+            // This action will set the multiStepNum in DataUI to the Value set.
+            InputTextField.get(innerCounter).addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    DataUI.architecture[innerCounter] = (long) InputTextField.get(innerCounter).getValue();
+                }
+            });
+
+            // Set bound of the InputTextFields
+            InputTextField.get(innerCounter).setBounds(MainFrame.getWidth() / 2 + 10, MainFrame.getHeight() / 3 + innerCounter * 30 - 18,
+                    MainFrame.getWidth() / 4 - 20, 30);
+
+            // Add InputTextFields to the mainPanel
+            mainPanel.add(InputTextField.get(innerCounter));
+        }
+
+        // Set focus on InputTextField when window show
+        MainFrame.addWindowListener(new WindowAdapter() {
+            public void windowOpened(WindowEvent e) {
+                InputTextField.get(0).requestFocus();
+            }
+        });
+
+        // Add components to the MainFrame
+        mainPanel.add(exitBtn);
+        mainPanel.add(submitBtn);
+
+        MainFrame.setContentPane(mainPanel);
+        MainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        MainFrame.setVisible(true);
+        MainFrame.setResizable(false);
+        UICommonUtils.makeFrameToCenter(MainFrame);
+    }
+}

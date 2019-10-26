@@ -29,6 +29,7 @@ public class DataUI {
     static private String[] operandColumnNames, registerColumnNames, dataColumnNames;
     static private DefaultTableModel operandModel, registerModel, dataModel;
     static private int[] statisticsInfo = new int[9];
+    static long architecture[] = new long[]{10, 10, 4, 7, 24};
     static long multiStepNum = 3;
 
     // Define some const
@@ -52,7 +53,7 @@ public class DataUI {
     }
 
     // Update the data model when data are updated
-    private void dataTableUpdate(){
+    private void dataTableUpdate() {
         dataModel.setDataVector(dataFullData, dataColumnNames);
         dataModel.fireTableDataChanged();
         TableUtils.setAllMinColumnSize(DataTable, dataColumnWidths);
@@ -60,9 +61,9 @@ public class DataUI {
     }
 
     // Reset all panels and tables
-    private void ResetALLData(){
+    private void ResetALLData() {
         operandSlice[0] = 0;
-        operandSlice[1]= 5;
+        operandSlice[1] = 5;
         operandTableUpdate();
         dataTableUpdate();
         initRegisterTable();
@@ -233,6 +234,17 @@ public class DataUI {
             }
         });
 
+        confItems.get("Architecture").addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    new ArchitectureUI();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
         // Add menu items to menu mWind
         String[] windItemNames = {"Code", "Statistics", "Data", "Registers", "Pipeline", "Cycles", "Terminal"};
         Map<String, JMenuItem> windItems = new HashMap<String, JMenuItem>();
@@ -263,9 +275,9 @@ public class DataUI {
         return mainMenuBar;
     }
 
-    private void ExeSteps(long stepNum){
-        operandSlice[0]+= stepNum;
-        operandSlice[1]+= stepNum;
+    private void ExeSteps(long stepNum) {
+        operandSlice[0] += stepNum;
+        operandSlice[1] += stepNum;
         operandTableUpdate();
     }
 
