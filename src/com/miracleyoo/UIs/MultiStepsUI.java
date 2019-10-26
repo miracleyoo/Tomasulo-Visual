@@ -54,6 +54,7 @@ class MultiStepsUI {
         numberFormatter.setAllowsInvalid(false); //this is the key!!
         numberFormatter.setMinimum(0L); //Optional
         InputTextField = new JFormattedTextField(numberFormatter);
+        InputTextField.setValue(DataUI.multiStepNum);
         InputTextField.setOpaque(false);
 
         // Add action to EnterTextAction. Execute when "enter" is pressed.
@@ -66,6 +67,18 @@ class MultiStepsUI {
             }
         };
         InputTextField.addActionListener(EnterTextAction);
+
+        // Make the InputTextField automatically select all text when it get focus.
+        InputTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        InputTextField.selectAll();
+                    }
+                });
+            }
+        });
 
         // Set focus on InputTextField when window show
         MainFrame.addWindowListener(new WindowAdapter() {

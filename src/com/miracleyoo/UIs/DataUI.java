@@ -61,7 +61,7 @@ public class DataUI {
     }
 
     // Reset all panels and tables
-    private void ResetALLData() {
+    void ResetALLData() {
         operandSlice[0] = 0;
         operandSlice[1] = 5;
         operandTableUpdate();
@@ -153,7 +153,7 @@ public class DataUI {
         mainMenuBar.add(mHelp);
 
         // Add menu items to menu mFile
-        String[] fileItemNames = {"Open", "Reset", "Full Reset", "Exit"};
+        String[] fileItemNames = {"Open", "Reset", "Exit"};
         Map<String, JMenuItem> fileItems = new HashMap<>();
         for (String itemName : fileItemNames) {
             fileItems.put(itemName, new JMenuItem(itemName));
@@ -188,36 +188,30 @@ public class DataUI {
             }
         });
 
+        // Reset current state
         fileItems.get("Reset").addActionListener(e -> ResetALLData());
 
+        // Exit the program
         fileItems.get("Exit").addActionListener(e -> System.exit(0));
 
         // Add menu items to menu mExec
         String[] execItemNames = {"Single Cycle", "Multi Cycles", "Run to", "Stop"};
-        Map<String, JMenuItem> execItems = new HashMap<String, JMenuItem>();
+        Map<String, JMenuItem> execItems = new HashMap<>();
         for (String itemName : execItemNames) {
             execItems.put(itemName, new JMenuItem(itemName));
             mExec.add(execItems.get(itemName));
         }
 
-        execItems.get("Single Cycle").addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ExeSteps(1);
-            }
-        });
+        // Execute one step
+        execItems.get("Single Cycle").addActionListener(e -> ExeSteps(1));
 
-        execItems.get("Multi Cycles").addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ExeSteps(multiStepNum);
-            }
-        });
+        // Execute multiple steps
+        execItems.get("Multi Cycles").addActionListener(e -> ExeSteps(multiStepNum));
 
         // Add menu items to menu mConf
         // Here may need some other Configures
         String[] confItemNames = {"Architecture", "Multi-Step"};
-        Map<String, JMenuItem> confItems = new HashMap<String, JMenuItem>();
+        Map<String, JMenuItem> confItems = new HashMap<>();
         for (String itemName : confItemNames) {
             confItems.put(itemName, new JMenuItem(itemName));
             mConf.add(confItems.get(itemName));
@@ -247,7 +241,7 @@ public class DataUI {
 
         // Add menu items to menu mWind
         String[] windItemNames = {"Code", "Statistics", "Data", "Registers", "Pipeline", "Cycles", "Terminal"};
-        Map<String, JMenuItem> windItems = new HashMap<String, JMenuItem>();
+        Map<String, JMenuItem> windItems = new HashMap<>();
         for (String itemName : windItemNames) {
             windItems.put(itemName, new JMenuItem(itemName));
             mWind.add(windItems.get(itemName));
@@ -255,7 +249,7 @@ public class DataUI {
 
         // Add menu items to menu mHelp
         String[] helpItemNames = {"About Tomasulo Visual"};
-        Map<String, JMenuItem> helpItems = new HashMap<String, JMenuItem>();
+        Map<String, JMenuItem> helpItems = new HashMap<>();
         for (String itemName : helpItemNames) {
             helpItems.put(itemName, new JMenuItem(itemName));
             mHelp.add(helpItems.get(itemName));

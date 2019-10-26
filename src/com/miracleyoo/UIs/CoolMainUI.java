@@ -33,6 +33,7 @@ public class CoolMainUI {
     private Map< String, List<Object[]>> listFlagMap;   // The result of parse file.
     private static JFrame MainFrame = new NoneFrame();      // The main frame.
     private static int[] frameSize= new int[]{500,250}; // The main frame size.
+    static DataUI DataUIFrame;
 
     private CoolMainUI() throws IOException {
         // Initialize the MainPanel
@@ -84,7 +85,7 @@ public class CoolMainUI {
                     listFlagMap = ParseFile.parseFile(new File(selectedFileName));
                     Object[][] operandListArray = listFlagMap.get("textList").toArray(new Object[0][0]);
                     Object[][] dataListArray = listFlagMap.get("dataList").toArray(new Object[0][0]);
-                    new DataUI(operandListArray, dataListArray);
+                    DataUIFrame = new DataUI(operandListArray, dataListArray);
                     MainFrame.dispose();
                 } catch (IOException ex) {
                     ex.printStackTrace();

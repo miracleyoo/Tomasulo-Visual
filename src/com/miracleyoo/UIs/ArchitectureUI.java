@@ -16,10 +16,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -29,8 +26,16 @@ import java.util.List;
 
 class ArchitectureUI {
     private List<JFormattedTextField> InputTextField = new ArrayList<>();   // The text area which get the user input.
-    private static JFrame MainFrame = new NoneFrame();  // The main frame.
-    private static int[] frameSize = new int[]{560, 315}; // The main frame size.
+    private JFrame MainFrame = new NoneFrame();  // The main frame.
+    private int[] frameSize = new int[]{560, 315}; // The main frame size.
+
+    private void summarizeAction(){
+        for(int i=0;i<5;i++) {
+            DataUI.architecture[i] = (long) InputTextField.get(i).getValue();
+        }
+        CoolMainUI.DataUIFrame.ResetALLData();
+        MainFrame.dispose();
+    }
 
     ArchitectureUI() throws IOException {
         // Initialize the MainPanel
@@ -71,11 +76,8 @@ class ArchitectureUI {
         submitBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                for(int i=0;i<5;i++) {
-                    DataUI.architecture[i] = (long) InputTextField.get(i).getValue();
-                }
-                MainFrame.dispose();
-            }
+                summarizeAction();
+        }
         });
 
         // Initialize the MainFrame and set bounds
@@ -88,21 +90,49 @@ class ArchitectureUI {
         exitBtn.setBounds(MainFrame.getWidth() - 30, 0, 30, 22);
         submitBtn.setBounds(MainFrame.getWidth()/2 + 80, MainFrame.getHeight()*5/6+3, 95, 30);
 
+        // Initialize all InputTextFields and bound listeners to them.
         final int[] outerCounter = {0};
         for(outerCounter[0]=0;outerCounter[0]<5;outerCounter[0]++) {
             int innerCounter = outerCounter[0];
             InputTextField.add(new JFormattedTextField(numberFormatter));
+            // Set the default value of each InputTextField by corresponding architecture values.
             InputTextField.get(innerCounter).setValue(DataUI.architecture[innerCounter]);
             InputTextField.get(innerCounter).setOpaque(false);
 
-            // Add action to EnterTextAction. Execute when "enter" is pressed.
-            // This action will set the multiStepNum in DataUI to the Value set.
-            InputTextField.get(innerCounter).addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    DataUI.architecture[innerCounter] = (long) InputTextField.get(innerCounter).getValue();
+            // Make each InputTextField automatically select all text when it get focus.
+            InputTextField.get(innerCounter).addFocusListener(new java.awt.event.FocusAdapter() {
+                public void focusGained(java.awt.event.FocusEvent evt) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            InputTextField.get(innerCounter).selectAll();
+                        }
+                    });
                 }
             });
+
+            // Add action to EnterTextAction. Execute when "enter" is pressed.
+            // This action will set the multiStepNum in DataUI to the Value set.
+            if(innerCounter<=3) {
+                InputTextField.get(innerCounter).addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        DataUI.architecture[innerCounter] = (long) InputTextField.get(innerCounter).getValue();
+                        // Make the next InputTextField selected when press enter
+                        InputTextField.get(innerCounter+1).requestFocus();
+                    }
+                });
+            }
+            else{
+                InputTextField.get(innerCounter).addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        DataUI.architecture[innerCounter] = (long) InputTextField.get(innerCounter).getValue();
+                        // Save all value set and close this window when user press enter at the last InputTextField
+                        summarizeAction();
+                    }
+                });
+            }
 
             // Set bound of the InputTextFields
             InputTextField.get(innerCounter).setBounds(MainFrame.getWidth() / 2 + 10, MainFrame.getHeight() / 3 + innerCounter * 30 - 18,
