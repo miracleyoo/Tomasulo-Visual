@@ -1,5 +1,7 @@
 package com.miracleyoo.utils;
 
+import com.miracleyoo.UIs.DataUI;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -39,11 +41,6 @@ public class TableUtils {
         }
     }
 
-    class ColorTableModel extends DefaultTableModel{
-
-
-    }
-
     public static class StatusColumnCellRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
@@ -58,19 +55,19 @@ public class TableUtils {
             if(tableModel.getValueAt(row, col) != null) {
                 switch ((String) tableModel.getValueAt(row, col)) {
                     case "IF":
-                        background_color = Color.decode("#F8C3CD");
+                        background_color = Color.decode(DataUI.colorSchemeCycle[0]);
                         break;
                     case "ID":
-                        background_color = Color.decode("#FFE2C9");
+                        background_color = Color.decode(DataUI.colorSchemeCycle[1]);
                         break;
                     case "EX":
-                        background_color = Color.decode("#A9D5D7");
+                        background_color = Color.decode(DataUI.colorSchemeCycle[2]);
                         break;
                     case "MEM":
-                        background_color = Color.decode("#CEF1BE");
+                        background_color = Color.decode(DataUI.colorSchemeCycle[3]);
                         break;
                     case "WB":
-                        background_color = Color.decode("#BBB6E0");
+                        background_color = Color.decode(DataUI.colorSchemeCycle[4]);
                         break;
                 }
             }

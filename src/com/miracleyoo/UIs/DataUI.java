@@ -2,13 +2,11 @@ package com.miracleyoo.UIs;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -25,9 +23,14 @@ public class DataUI {
     private JTable OperandTable;            // Table of operands
     private JTable RegisterTable;           // Table of registers
     private JTable DataTable;               // Table of data
-    private JLabel StatisticsLabel;         // Label to show statistics data
+    private JLabel StatisticsText;         // Label to show statistics data
     private JTable CycleTable;
     private JLabel CycleLabel;
+    private JLabel CodeLabel;
+    private JLabel DataLabel;
+    private JLabel RegisterLabel;
+    private JLabel StatisticsLabel;
+    private JLabel TomasuloLabel;
 
     // Define the data, models, infos of all panels
     static private Object[][] operandFullData, operandRawData, dataFullData, cycleFullData;
@@ -39,17 +42,23 @@ public class DataUI {
     static long architecture[] = new long[]{10, 10, 4, 7, 24};
     static long multiStepNum = 3;
 
-    // Define some const
+    // Pink, carnation, light blue, light green, light purple
+    public static final String[] colorSchemeCycle =new String[]{"#F8C3CD","#FFE2C9","#A9D5D7","#CEF1BE","#BBB6E0"};
+    // Black, Blue, light blue, Red, blue grey
+    public static final String[] colorSchemeMain =new String[]{"#2B2B2B","#5BB7E3","#AFD5E0","#7F0906", "#3F5467"};
+
     private int[] operandColumnWidths = new int[]{50, 500};
     private int[] registerColumnWidths = new int[]{20, 80, 20, 80};
     private int[] cycleColumnWidths;
     private int cycleColumnWidth = 100;
     private int cycleNum=0;
+    private final boolean DarkMode=true;
     private TableUtils.StatusColumnCellRenderer cycleTableRender = new TableUtils.StatusColumnCellRenderer();
 
     private static final int[] dataColumnWidths = new int[]{50, 500};
     private static final int[] frameSize = new int[]{800, 600};
     private static final int[] operandSlice = {0, 5};
+
 
     // Update the operand model when data are updated
     private void operandTableUpdate() {
@@ -187,18 +196,23 @@ public class DataUI {
 
     // Initialize Statistics Panel
     private void initStatisticsPanel() {
-        StatisticsLabel.setText(
-                "<html><font color='red'>Execution</font><br>" +
+        StatisticsText.setVerticalAlignment(JLabel.TOP);
+        StatisticsText.setVerticalTextPosition(JLabel.TOP);
+        StatisticsText.setOpaque(true);
+        // sets the background color of this component
+        // the background color is used only if the component is opaque
+        StatisticsText.setText(
+                "<html><font color="+colorSchemeMain[1]+"><b>Execution</b></font><br>" +
                         statisticsInfo[0] + " Cycles<br>" +
                         statisticsInfo[1] + " Instructions<br><br>" +
-                        "<font color='red'>Stalls<br></font>" +
+                        "<font color="+colorSchemeMain[1]+"><b>Stalls</b></font><br>" +
                         statisticsInfo[2] + " RAW Stalls<br>" +
                         statisticsInfo[3] + " WAW Stalls<br>" +
                         statisticsInfo[4] + " WAR Stalls<br>" +
                         statisticsInfo[5] + " Structural Stalls<br>" +
                         statisticsInfo[6] + " Branch Taken Stalls<br>" +
                         statisticsInfo[7] + " Branch Mis-prediction Stalls<br><br>" +
-                        "<font color='red'>Code Size</font><br>" +
+                        "<font color="+colorSchemeMain[1]+"><b>Code Size</b></font><br>" +
                         statisticsInfo[8] + " Bytes"
         );
     }
@@ -374,10 +388,47 @@ public class DataUI {
 
         // Initiate the DataUI window
         JFrame frame = new JFrame("Operands");
+
+        if(DarkMode) {
+            // Set Main background color
+            PanelMain.setBackground(Color.decode(colorSchemeMain[0]));
+            PanelMain.setForeground(Color.WHITE);
+
+            // Set labels
+            TomasuloLabel.setForeground(Color.WHITE);
+            CycleLabel.setForeground(Color.WHITE);
+            StatisticsLabel.setForeground(Color.WHITE);
+            CodeLabel.setForeground(Color.WHITE);
+            DataLabel.setForeground(Color.WHITE);
+            RegisterLabel.setForeground(Color.WHITE);
+
+            RegisterTable.setBackground(Color.decode(colorSchemeMain[0]));
+            RegisterTable.setForeground(Color.WHITE);
+            RegisterTable.getTableHeader().setBackground(Color.decode(colorSchemeMain[4]));
+            RegisterTable.getTableHeader().setForeground(Color.decode(colorSchemeMain[2]));
+
+
+            OperandTable.setBackground(Color.decode(colorSchemeMain[0]));
+            OperandTable.setForeground(Color.WHITE);
+            OperandTable.getTableHeader().setBackground(Color.decode(colorSchemeMain[4]));
+            OperandTable.getTableHeader().setForeground(Color.decode(colorSchemeMain[2]));
+
+            DataTable.setBackground(Color.decode(colorSchemeMain[0]));
+            DataTable.setForeground(Color.WHITE);
+            DataTable.getTableHeader().setBackground(Color.decode(colorSchemeMain[4]));
+            DataTable.getTableHeader().setForeground(Color.decode(colorSchemeMain[2]));
+
+            StatisticsText.setBackground(Color.decode(colorSchemeMain[0]));
+            StatisticsText.setForeground(Color.WHITE);
+        }
+
+
         frame.setContentPane(PanelMain);
         frame.setJMenuBar(addMenuBar());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         frame.setSize(frameSize[0], frameSize[1]);
+        frame.setMinimumSize(new Dimension(frameSize[0], frameSize[1]));
         UICommonUtils.makeFrameToCenter(frame);
         frame.setVisible(true);
     }

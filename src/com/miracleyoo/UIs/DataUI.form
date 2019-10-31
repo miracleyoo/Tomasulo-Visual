@@ -3,9 +3,11 @@
   <grid id="27dc6" binding="PanelMain" layout-manager="GridLayoutManager" row-count="9" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="500" height="400"/>
+      <xy x="20" y="20" width="800" height="600"/>
     </constraints>
-    <properties/>
+    <properties>
+      <minimumSize width="800" height="600"/>
+    </properties>
     <border type="none"/>
     <children>
       <component id="a105" class="javax.swing.JButton" binding="ExecuteOneStepBtn">
@@ -83,12 +85,12 @@
       </scrollpane>
       <scrollpane id="9a906">
         <constraints>
-          <grid row="3" column="2" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="2" row-span="3" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
         <children>
-          <component id="68e7f" class="javax.swing.JLabel" binding="StatisticsLabel">
+          <component id="68e7f" class="javax.swing.JLabel" binding="StatisticsText">
             <constraints/>
             <properties>
               <text value=""/>
@@ -96,15 +98,16 @@
           </component>
         </children>
       </scrollpane>
-      <component id="54eeb" class="javax.swing.JLabel">
+      <component id="54eeb" class="javax.swing.JLabel" binding="CodeLabel">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <foreground color="-1"/>
           <text value="Code"/>
         </properties>
       </component>
-      <component id="a73ff" class="javax.swing.JLabel">
+      <component id="a73ff" class="javax.swing.JLabel" binding="RegisterLabel">
         <constraints>
           <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -112,7 +115,7 @@
           <text value="Registers"/>
         </properties>
       </component>
-      <component id="22bf" class="javax.swing.JLabel">
+      <component id="22bf" class="javax.swing.JLabel" binding="DataLabel">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -120,7 +123,7 @@
           <text value="Data"/>
         </properties>
       </component>
-      <component id="cd05e" class="javax.swing.JLabel">
+      <component id="cd05e" class="javax.swing.JLabel" binding="StatisticsLabel">
         <constraints>
           <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -130,7 +133,7 @@
       </component>
       <scrollpane id="ccae4">
         <constraints>
-          <grid row="5" column="0" row-span="1" col-span="4" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <horizontalScrollBarPolicy value="30"/>
@@ -161,7 +164,7 @@
           <text value="Cycles(Preview)"/>
         </properties>
       </component>
-      <component id="b2214" class="javax.swing.JLabel">
+      <component id="b2214" class="javax.swing.JLabel" binding="TomasuloLabel">
         <constraints>
           <grid row="6" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
