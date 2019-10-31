@@ -1,8 +1,11 @@
 package com.miracleyoo.utils;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import java.awt.*;
 
 public class TableUtils {
     public static void setOneColumnSize(JTable table, int i, int preferedWidth, int maxWidth, int minWidth) {
@@ -33,6 +36,48 @@ public class TableUtils {
             TableColumn column = cm.getColumn(i);
             column.setMinWidth(width);
             i++;
+        }
+    }
+
+    class ColorTableModel extends DefaultTableModel{
+
+
+    }
+
+    public static class StatusColumnCellRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+
+            //Cells are by default rendered as a JLabel.
+            JLabel l = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+
+            //Get the status for the current row.
+            DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+
+            Color background_color = Color.WHITE;
+            if(tableModel.getValueAt(row, col) != null) {
+                switch ((String) tableModel.getValueAt(row, col)) {
+                    case "IF":
+                        background_color = Color.decode("#F8C3CD");
+                        break;
+                    case "ID":
+                        background_color = Color.decode("#FFE2C9");
+                        break;
+                    case "EX":
+                        background_color = Color.decode("#A9D5D7");
+                        break;
+                    case "MEM":
+                        background_color = Color.decode("#CEF1BE");
+                        break;
+                    case "WB":
+                        background_color = Color.decode("#BBB6E0");
+                        break;
+                }
+            }
+            l.setBackground(background_color);
+
+            //Return the JLabel which renders the cell.
+            return l;
         }
     }
 }

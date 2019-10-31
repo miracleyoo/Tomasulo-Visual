@@ -2,17 +2,21 @@ package com.miracleyoo.UIs;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.miracleyoo.utils.*;
+
+import static java.lang.Integer.min;
 
 public class DataUI {
     private JPanel PanelMain;               // Main Panel
@@ -22,19 +26,27 @@ public class DataUI {
     private JTable RegisterTable;           // Table of registers
     private JTable DataTable;               // Table of data
     private JLabel StatisticsLabel;         // Label to show statistics data
+    private JTable CycleTable;
+    private JLabel CycleLabel;
 
     // Define the data, models, infos of all panels
-    static private Object[][] operandFullData, operandRawData, dataFullData;
+    static private Object[][] operandFullData, operandRawData, dataFullData, cycleFullData;
     static private Object[][] registerData = new Object[32][4];
-    static private String[] operandColumnNames, registerColumnNames, dataColumnNames;
-    static private DefaultTableModel operandModel, registerModel, dataModel;
+    static private String[] operandColumnNames, registerColumnNames, dataColumnNames, cycleColumnNames;
+    static private String[] cycleStageNames= new String[]{"IF", "ID", "EX", "MEM", "WB"};
+    static private DefaultTableModel operandModel, registerModel, dataModel, cycleModel;
     static private int[] statisticsInfo = new int[9];
     static long architecture[] = new long[]{10, 10, 4, 7, 24};
     static long multiStepNum = 3;
 
     // Define some const
-    private static final int[] operandColumnWidths = new int[]{50, 500};
-    private static final int[] registerColumnWidths = new int[]{20, 80, 20, 80};
+    private int[] operandColumnWidths = new int[]{50, 500};
+    private int[] registerColumnWidths = new int[]{20, 80, 20, 80};
+    private int[] cycleColumnWidths;
+    private int cycleColumnWidth = 100;
+    private int cycleNum=0;
+    private TableUtils.StatusColumnCellRenderer cycleTableRender = new TableUtils.StatusColumnCellRenderer();
+
     private static final int[] dataColumnWidths = new int[]{50, 500};
     private static final int[] frameSize = new int[]{800, 600};
     private static final int[] operandSlice = {0, 5};
@@ -60,14 +72,44 @@ public class DataUI {
         TableUtils.setAllPreferredColumnSize(DataTable, dataColumnWidths);
     }
 
+    // Update the data model when data are updated
+    private void cycleTableUpdate() {
+        cycleColumnNames = new String[cycleNum];
+        cycleFullData = new String[5][cycleNum];
+        cycleColumnWidths = new int[cycleNum];
+        Arrays.fill(cycleColumnWidths, 100);
+        for (int i = 0; i < cycleNum; i++) {
+            cycleColumnNames[i] = Integer.toString(i);
+            for(int j=0; j<=min(i, 4); j++) {
+                cycleFullData[j][i] = cycleStageNames[i<=4?i-j:4-j];
+            }
+        }
+        cycleModel.setDataVector(cycleFullData, cycleColumnNames);
+        cycleModel.fireTableDataChanged();
+//        CycleTable.setFillsViewportHeight(true);
+
+        for (int i = 0; i < cycleNum; i++) {
+            CycleTable.getColumn(cycleColumnNames[i]).setCellRenderer(cycleTableRender);//new TableUtils.StatusColumnCellRenderer());
+        }
+
+        cycleColumnWidths = new int[cycleColumnNames.length];
+        Arrays.fill(cycleColumnWidths, cycleColumnWidth);
+
+        TableUtils.setAllMinColumnSize(CycleTable, cycleColumnWidths);
+        TableUtils.setAllPreferredColumnSize(CycleTable, cycleColumnWidths);
+    }
+
     // Reset all panels and tables
     void ResetALLData() {
         operandSlice[0] = 0;
         operandSlice[1] = 5;
+        cycleNum = 0;
+        CycleLabel.setText("Cycles(Preview)");
         operandTableUpdate();
         dataTableUpdate();
         initRegisterTable();
         initStatisticsPanel();
+        initCycleTable();
     }
 
     // Initialize the operand Table
@@ -100,6 +142,34 @@ public class DataUI {
 
         TableUtils.setAllMinColumnSize(RegisterTable, registerColumnWidths);
         TableUtils.setAllPreferredColumnSize(RegisterTable, registerColumnWidths);
+    }
+
+    // Initialize the cycle Table
+    private void initCycleTable() {
+        cycleColumnNames = new String[]{"1", "2", "3", "4", "5"};
+        cycleColumnWidths = new int[cycleNum];
+        Arrays.fill(cycleColumnWidths, 100);
+
+        cycleFullData = new String[5][5];
+        for (int i = 0; i < 5; i++) {
+            for(int j=0; j<=i; j++) {
+                cycleFullData[j][i] = cycleStageNames[i-j];
+            }
+        }
+        cycleModel = new DefaultTableModel(cycleFullData, cycleColumnNames);
+
+        CycleTable.setModel(cycleModel);
+        CycleTable.setFillsViewportHeight(true);
+
+        for (int i = 0; i < 5; i++) {
+            CycleTable.getColumn(cycleColumnNames[i]).setCellRenderer(cycleTableRender);
+        }
+
+        cycleColumnWidths = new int[cycleColumnNames.length];
+        Arrays.fill(cycleColumnWidths, 100);
+
+        TableUtils.setAllMinColumnSize(CycleTable, cycleColumnWidths);
+        TableUtils.setAllPreferredColumnSize(CycleTable, cycleColumnWidths);
     }
 
     // Initialize the Data Table
@@ -272,7 +342,12 @@ public class DataUI {
     private void ExeSteps(long stepNum) {
         operandSlice[0] += stepNum;
         operandSlice[1] += stepNum;
+        if(cycleNum==0){
+            CycleLabel.setText("Cycles");
+        }
+        cycleNum += stepNum;
         operandTableUpdate();
+        cycleTableUpdate();
     }
 
     DataUI(Object[][] inputOperandFieldData, Object[][] inputDataFieldData) {
@@ -287,6 +362,9 @@ public class DataUI {
 
         // Initialize the Statistics Panel
         initStatisticsPanel();
+
+        // Initialize the Cycle Table
+        initCycleTable();
 
         // Execute one step button action
         ExecuteOneStepBtn.addActionListener(e -> ExeSteps(1));
