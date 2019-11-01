@@ -7,6 +7,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.xml.crypto.Data;
 import java.awt.*;
 
 public class TableUtils {
@@ -52,23 +53,32 @@ public class TableUtils {
             DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
 
             Color background_color = Color.WHITE;
+            String[] tempColorScheme = DataUI.DarkMode? DataUI.colorSchemeCycleDark:DataUI.colorSchemeCycleLight;
             if(tableModel.getValueAt(row, col) != null) {
                 switch ((String) tableModel.getValueAt(row, col)) {
                     case "IF":
-                        background_color = Color.decode(DataUI.colorSchemeCycle[0]);
+                        background_color = Color.decode(tempColorScheme[0]);
                         break;
                     case "ID":
-                        background_color = Color.decode(DataUI.colorSchemeCycle[1]);
+                        background_color = Color.decode(tempColorScheme[1]);
                         break;
                     case "EX":
-                        background_color = Color.decode(DataUI.colorSchemeCycle[2]);
+                        background_color = Color.decode(tempColorScheme[2]);
                         break;
                     case "MEM":
-                        background_color = Color.decode(DataUI.colorSchemeCycle[3]);
+                        background_color = Color.decode(tempColorScheme[3]);
                         break;
                     case "WB":
-                        background_color = Color.decode(DataUI.colorSchemeCycle[4]);
+                        background_color = Color.decode(tempColorScheme[4]);
                         break;
+                }
+            }
+            else{
+                if(DataUI.DarkMode){
+                    background_color = Color.decode(DataUI.colorSchemeMainDark[3]);
+                }
+                else {
+                    background_color = Color.decode(DataUI.colorSchemeMainLight[1]);
                 }
             }
             l.setBackground(background_color);

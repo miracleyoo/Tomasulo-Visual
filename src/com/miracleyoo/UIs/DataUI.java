@@ -43,21 +43,30 @@ public class DataUI {
     static long multiStepNum = 3;
 
     // Pink, carnation, light blue, light green, light purple
-    public static final String[] colorSchemeCycle =new String[]{"#F8C3CD","#FFE2C9","#A9D5D7","#CEF1BE","#BBB6E0"};
-    // Black, Blue, light blue, Red, blue grey
-    public static final String[] colorSchemeMain =new String[]{"#2B2B2B","#5BB7E3","#AFD5E0","#7F0906", "#3F5467"};
+    public static final String[] colorSchemeCycleLight =new String[]{"#F8C3CD","#FFE2C9","#A9D5D7","#CEF1BE","#BBB6E0"};
+
+    public static final String[] colorSchemeCycleDark =new String[]{"#FFAC5E","#4ACFAC","#7E8CE0","#3DC7D0","#FFA48E"};
+
+    // Black, Blue, light blue(#AFDCF1), light grey, blue grey
+    public static final String[] colorSchemeMainDark =new String[]{"#2B2B2B","#5BB7E3", "#E4FDFE", "#DCDCDC", "#3F5467"};
+    // Sakura, light blue, light green, millet yellow, grey
+    public static final String[] colorSchemeMainLight =new String[]{"#FEDFE1","#DFFEFC","#DFFEED","#FEFCDF", "#565656"};
 
     private int[] operandColumnWidths = new int[]{50, 500};
     private int[] registerColumnWidths = new int[]{20, 80, 20, 80};
     private int[] cycleColumnWidths;
     private int cycleColumnWidth = 100;
     private int cycleNum=0;
-    private final boolean DarkMode=true;
+
+    public static boolean DarkMode=false;
     private TableUtils.StatusColumnCellRenderer cycleTableRender = new TableUtils.StatusColumnCellRenderer();
 
     private static final int[] dataColumnWidths = new int[]{50, 500};
     private static final int[] frameSize = new int[]{800, 600};
     private static final int[] operandSlice = {0, 5};
+
+    // Initiate the DataUI window
+    JFrame frame = new JFrame("Operands");
 
 
     // Update the operand model when data are updated
@@ -196,23 +205,21 @@ public class DataUI {
 
     // Initialize Statistics Panel
     private void initStatisticsPanel() {
-        StatisticsText.setVerticalAlignment(JLabel.TOP);
-        StatisticsText.setVerticalTextPosition(JLabel.TOP);
-        StatisticsText.setOpaque(true);
+
         // sets the background color of this component
         // the background color is used only if the component is opaque
         StatisticsText.setText(
-                "<html><font color="+colorSchemeMain[1]+"><b>Execution</b></font><br>" +
+                "<html><font color="+ colorSchemeMainDark[1]+"><b>Execution</b></font><br>" +
                         statisticsInfo[0] + " Cycles<br>" +
                         statisticsInfo[1] + " Instructions<br><br>" +
-                        "<font color="+colorSchemeMain[1]+"><b>Stalls</b></font><br>" +
+                        "<font color="+ colorSchemeMainDark[1]+"><b>Stalls</b></font><br>" +
                         statisticsInfo[2] + " RAW Stalls<br>" +
                         statisticsInfo[3] + " WAW Stalls<br>" +
                         statisticsInfo[4] + " WAR Stalls<br>" +
                         statisticsInfo[5] + " Structural Stalls<br>" +
                         statisticsInfo[6] + " Branch Taken Stalls<br>" +
                         statisticsInfo[7] + " Branch Mis-prediction Stalls<br><br>" +
-                        "<font color="+colorSchemeMain[1]+"><b>Code Size</b></font><br>" +
+                        "<font color="+ colorSchemeMainDark[1]+"><b>Code Size</b></font><br>" +
                         statisticsInfo[8] + " Bytes"
         );
     }
@@ -294,7 +301,7 @@ public class DataUI {
 
         // Add menu items to menu mConf
         // Here may need some other Configures
-        String[] confItemNames = {"Architecture", "Multi-Step"};
+        String[] confItemNames = {"Architecture", "Multi-Step", "Change Scheme"};
         Map<String, JMenuItem> confItems = new HashMap<>();
         for (String itemName : confItemNames) {
             confItems.put(itemName, new JMenuItem(itemName));
@@ -320,6 +327,17 @@ public class DataUI {
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
+            }
+        });
+
+        confItems.get("Change Scheme").addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DarkMode = !DarkMode;
+                SetUIScheme();
+                frame.validate();
+                frame.repaint();
+                frame.setVisible(true);
             }
         });
 
@@ -364,6 +382,89 @@ public class DataUI {
         cycleTableUpdate();
     }
 
+    // Set the scheme according to the UI color mode
+    private void SetUIScheme(){
+        // StatisticsText Setting
+        StatisticsText.setVerticalAlignment(JLabel.TOP);
+        StatisticsText.setVerticalTextPosition(JLabel.TOP);
+        StatisticsText.setOpaque(true);
+
+        // Color Mode Setting
+        if(DarkMode) {
+            // Set Main background color
+            PanelMain.setBackground(Color.decode(colorSchemeMainDark[0]));
+            PanelMain.setForeground(Color.WHITE);
+
+            // Set labels
+            TomasuloLabel.setForeground(Color.decode(colorSchemeMainDark[2]));
+            CycleLabel.setForeground(Color.decode(colorSchemeMainDark[2]));
+            StatisticsLabel.setForeground(Color.decode(colorSchemeMainDark[2]));
+            CodeLabel.setForeground(Color.decode(colorSchemeMainDark[2]));
+            DataLabel.setForeground(Color.decode(colorSchemeMainDark[2]));
+            RegisterLabel.setForeground(Color.decode(colorSchemeMainDark[2]));
+
+            RegisterTable.setBackground(Color.decode(colorSchemeMainDark[0]));
+            RegisterTable.setForeground(Color.decode(colorSchemeMainDark[3]));
+            RegisterTable.getTableHeader().setBackground(Color.decode(colorSchemeMainDark[4]));
+            RegisterTable.getTableHeader().setForeground(Color.decode(colorSchemeMainDark[2]));
+
+            OperandTable.setBackground(Color.decode(colorSchemeMainDark[0]));
+            OperandTable.setForeground(Color.decode(colorSchemeMainDark[3]));
+            OperandTable.getTableHeader().setBackground(Color.decode(colorSchemeMainDark[4]));
+            OperandTable.getTableHeader().setForeground(Color.decode(colorSchemeMainDark[2]));
+
+            DataTable.setBackground(Color.decode(colorSchemeMainDark[0]));
+            DataTable.setForeground(Color.decode(colorSchemeMainDark[3]));
+            DataTable.getTableHeader().setBackground(Color.decode(colorSchemeMainDark[4]));
+            DataTable.getTableHeader().setForeground(Color.decode(colorSchemeMainDark[2]));
+
+            CycleTable.setBackground(Color.decode(colorSchemeMainDark[0]));
+            CycleTable.setForeground(Color.decode(colorSchemeMainDark[3]));
+            CycleTable.getTableHeader().setBackground(Color.decode(colorSchemeMainDark[4]));
+            CycleTable.getTableHeader().setForeground(Color.decode(colorSchemeMainDark[2]));
+
+            StatisticsText.setBackground(Color.decode(colorSchemeMainDark[0]));
+            StatisticsText.setForeground(Color.WHITE);
+        }
+        else
+        {
+            PanelMain.setBackground(Color.decode(colorSchemeMainLight[0]));
+            PanelMain.setForeground(Color.decode(colorSchemeMainDark[0]));
+
+            // Set labels
+            TomasuloLabel.setForeground(Color.decode(colorSchemeMainLight[4]));
+            CycleLabel.setForeground(Color.decode(colorSchemeMainLight[4]));
+            StatisticsLabel.setForeground(Color.decode(colorSchemeMainLight[4]));
+            CodeLabel.setForeground(Color.decode(colorSchemeMainLight[4]));
+            DataLabel.setForeground(Color.decode(colorSchemeMainLight[4]));
+            RegisterLabel.setForeground(Color.decode(colorSchemeMainLight[4]));
+
+            // Set Tables
+            RegisterTable.setBackground(Color.decode(colorSchemeMainLight[1]));
+            RegisterTable.setForeground(Color.decode(colorSchemeMainLight[4]));
+            RegisterTable.getTableHeader().setBackground(Color.decode(colorSchemeMainLight[3]));
+            RegisterTable.getTableHeader().setForeground(Color.decode(colorSchemeMainLight[4]));
+
+            OperandTable.setBackground(Color.decode(colorSchemeMainLight[1]));
+            OperandTable.setForeground(Color.decode(colorSchemeMainLight[4]));
+            OperandTable.getTableHeader().setBackground(Color.decode(colorSchemeMainLight[3]));
+            OperandTable.getTableHeader().setForeground(Color.decode(colorSchemeMainLight[4]));
+
+            DataTable.setBackground(Color.decode(colorSchemeMainLight[1]));
+            DataTable.setForeground(Color.decode(colorSchemeMainLight[4]));
+            DataTable.getTableHeader().setBackground(Color.decode(colorSchemeMainLight[3]));
+            DataTable.getTableHeader().setForeground(Color.decode(colorSchemeMainLight[4]));
+
+            CycleTable.setBackground(Color.decode(colorSchemeMainLight[1]));
+            CycleTable.setForeground(Color.decode(colorSchemeMainLight[4]));
+            CycleTable.getTableHeader().setBackground(Color.decode(colorSchemeMainLight[3]));
+            CycleTable.getTableHeader().setForeground(Color.decode(colorSchemeMainLight[4]));
+
+            StatisticsText.setBackground(Color.decode(colorSchemeMainLight[2]));
+            StatisticsText.setForeground(Color.decode(colorSchemeMainLight[4]));
+        }
+    }
+
     DataUI(Object[][] inputOperandFieldData, Object[][] inputDataFieldData) {
         // Initialize the operand Table
         initOperandTable(inputOperandFieldData);
@@ -386,42 +487,10 @@ public class DataUI {
         // Execute multiple step button action
         ExecuteMultipleStepBtn.addActionListener(e -> ExeSteps(multiStepNum));
 
-        // Initiate the DataUI window
-        JFrame frame = new JFrame("Operands");
-
-        if(DarkMode) {
-            // Set Main background color
-            PanelMain.setBackground(Color.decode(colorSchemeMain[0]));
-            PanelMain.setForeground(Color.WHITE);
-
-            // Set labels
-            TomasuloLabel.setForeground(Color.WHITE);
-            CycleLabel.setForeground(Color.WHITE);
-            StatisticsLabel.setForeground(Color.WHITE);
-            CodeLabel.setForeground(Color.WHITE);
-            DataLabel.setForeground(Color.WHITE);
-            RegisterLabel.setForeground(Color.WHITE);
-
-            RegisterTable.setBackground(Color.decode(colorSchemeMain[0]));
-            RegisterTable.setForeground(Color.WHITE);
-            RegisterTable.getTableHeader().setBackground(Color.decode(colorSchemeMain[4]));
-            RegisterTable.getTableHeader().setForeground(Color.decode(colorSchemeMain[2]));
 
 
-            OperandTable.setBackground(Color.decode(colorSchemeMain[0]));
-            OperandTable.setForeground(Color.WHITE);
-            OperandTable.getTableHeader().setBackground(Color.decode(colorSchemeMain[4]));
-            OperandTable.getTableHeader().setForeground(Color.decode(colorSchemeMain[2]));
-
-            DataTable.setBackground(Color.decode(colorSchemeMain[0]));
-            DataTable.setForeground(Color.WHITE);
-            DataTable.getTableHeader().setBackground(Color.decode(colorSchemeMain[4]));
-            DataTable.getTableHeader().setForeground(Color.decode(colorSchemeMain[2]));
-
-            StatisticsText.setBackground(Color.decode(colorSchemeMain[0]));
-            StatisticsText.setForeground(Color.WHITE);
-        }
-
+        // Set the scheme according to the UI color mode
+        SetUIScheme();
 
         frame.setContentPane(PanelMain);
         frame.setJMenuBar(addMenuBar());
