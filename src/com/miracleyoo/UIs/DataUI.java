@@ -31,6 +31,7 @@ public class DataUI {
     private JLabel RegisterLabel;
     private JLabel StatisticsLabel;
     private JLabel TomasuloLabel;
+    private JScrollPane GraphPanel;
 
     // Define the data, models, infos of all panels
     static private Object[][] operandFullData, operandRawData, dataFullData, cycleFullData;
@@ -52,8 +53,10 @@ public class DataUI {
     // Sakura, light blue, light green, millet yellow, grey
     public static final String[] colorSchemeMainLight =new String[]{"#FEDFE1","#DFFEFC","#DFFEED","#FEFCDF", "#565656"};
 
-    private int[] operandColumnWidths = new int[]{50, 500};
-    private int[] registerColumnWidths = new int[]{20, 80, 20, 80};
+    private int[] operandColumnWidths = new int[]{100, 400};
+//    private int[] registerColumnWidths = new int[]{150, 200, 150, 200};
+    private int[] registerColumnWidths = new int[]{120, 160, 120, 160};
+
     private int[] cycleColumnWidths;
     private int cycleColumnWidth = 100;
     private int cycleNum=0;
@@ -61,8 +64,8 @@ public class DataUI {
     public static boolean DarkMode=false;
     private TableUtils.StatusColumnCellRenderer cycleTableRender = new TableUtils.StatusColumnCellRenderer();
 
-    private static final int[] dataColumnWidths = new int[]{50, 500};
-    private static final int[] frameSize = new int[]{800, 600};
+    private static final int[] dataColumnWidths = new int[]{100, 400};
+    private static final int[] frameSize = new int[]{1280, 720};
     private static final int[] operandSlice = {0, 5};
 
     // Initiate the DataUI window
@@ -222,6 +225,16 @@ public class DataUI {
                         "<font color="+ colorSchemeMainDark[1]+"><b>Code Size</b></font><br>" +
                         statisticsInfo[8] + " Bytes"
         );
+    }
+
+    // Tomasulo Diagram
+    private void initGraphPanel() {
+        JPanel d = new Diagram();
+//        d.setBackground(Color.WHITE);
+        d.setSize(new Dimension(Diagram.diagramWidth*10, Diagram.diagramHeight));
+
+        GraphPanel.setViewportView(d);
+        GraphPanel.revalidate();
     }
 
     // Define the menu bar
@@ -423,6 +436,8 @@ public class DataUI {
             CycleTable.getTableHeader().setBackground(Color.decode(colorSchemeMainDark[4]));
             CycleTable.getTableHeader().setForeground(Color.decode(colorSchemeMainDark[2]));
 
+            GraphPanel.getViewport().getView().setBackground(Color.decode(colorSchemeMainDark[0]));
+
             StatisticsText.setBackground(Color.decode(colorSchemeMainDark[0]));
             StatisticsText.setForeground(Color.WHITE);
         }
@@ -460,6 +475,8 @@ public class DataUI {
             CycleTable.getTableHeader().setBackground(Color.decode(colorSchemeMainLight[3]));
             CycleTable.getTableHeader().setForeground(Color.decode(colorSchemeMainLight[4]));
 
+            GraphPanel.getViewport().getView().setBackground(Color.decode(colorSchemeMainLight[1]));
+
             StatisticsText.setBackground(Color.decode(colorSchemeMainLight[2]));
             StatisticsText.setForeground(Color.decode(colorSchemeMainLight[4]));
         }
@@ -480,6 +497,9 @@ public class DataUI {
 
         // Initialize the Cycle Table
         initCycleTable();
+
+        // Initialize Tomasulo Graph
+        initGraphPanel();
 
         // Execute one step button action
         ExecuteOneStepBtn.addActionListener(e -> ExeSteps(1));
