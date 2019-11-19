@@ -32,6 +32,7 @@ public class DataUI {
     private JLabel StatisticsLabel;
     private JLabel TomasuloLabel;
     private JScrollPane GraphPanel;
+    private JScrollPane CyclePanel;
 
     // Define the data, models, infos of all panels
     static private Object[][] operandFullData, operandRawData, dataFullData, cycleFullData;
@@ -431,6 +432,7 @@ public class DataUI {
             DataTable.getTableHeader().setBackground(Color.decode(colorSchemeMainDark[4]));
             DataTable.getTableHeader().setForeground(Color.decode(colorSchemeMainDark[2]));
 
+            CyclePanel.getViewport().setBackground(Color.decode(colorSchemeMainDark[0]));
             CycleTable.setBackground(Color.decode(colorSchemeMainDark[0]));
             CycleTable.setForeground(Color.decode(colorSchemeMainDark[3]));
             CycleTable.getTableHeader().setBackground(Color.decode(colorSchemeMainDark[4]));
@@ -470,6 +472,7 @@ public class DataUI {
             DataTable.getTableHeader().setBackground(Color.decode(colorSchemeMainLight[3]));
             DataTable.getTableHeader().setForeground(Color.decode(colorSchemeMainLight[4]));
 
+            CyclePanel.getViewport().setBackground(Color.decode(colorSchemeMainLight[1]));
             CycleTable.setBackground(Color.decode(colorSchemeMainLight[1]));
             CycleTable.setForeground(Color.decode(colorSchemeMainLight[4]));
             CycleTable.getTableHeader().setBackground(Color.decode(colorSchemeMainLight[3]));
