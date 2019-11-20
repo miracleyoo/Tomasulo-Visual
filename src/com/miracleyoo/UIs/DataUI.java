@@ -41,7 +41,8 @@ public class DataUI {
     static private String[] cycleStageNames= new String[]{"IF", "ID", "EX", "MEM", "WB"};
     static private DefaultTableModel operandModel, registerModel, dataModel, cycleModel;
     static private int[] statisticsInfo = new int[9];
-    static long architecture[] = new long[]{10, 10, 4, 7, 24};
+    static long architectureNum[] = new long[]{10, 10, 4, 7, 24, 5};
+    static long architectureCycle[] = new long[]{10, 10, 4, 7, 24, 5};
     static long multiStepNum = 3;
 
     // Pink, carnation, light blue, light green, light purple
@@ -315,7 +316,7 @@ public class DataUI {
 
         // Add menu items to menu mConf
         // Here may need some other Configures
-        String[] confItemNames = {"Architecture", "Multi-Step", "Change Scheme"};
+        String[] confItemNames = {"Architecture Number", "Architecture Cycle", "Multi-Step", "Change Scheme"};
         Map<String, JMenuItem> confItems = new HashMap<>();
         for (String itemName : confItemNames) {
             confItems.put(itemName, new JMenuItem(itemName));
@@ -333,11 +334,22 @@ public class DataUI {
             }
         });
 
-        confItems.get("Architecture").addActionListener(new ActionListener() {
+        confItems.get("Architecture Number").addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    new ArchitectureUI();
+                    new ArchitectureNumUI();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        confItems.get("Architecture Cycle").addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    new ArchitectureCycleUI();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }

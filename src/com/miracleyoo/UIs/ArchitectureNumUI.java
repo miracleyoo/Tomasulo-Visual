@@ -24,23 +24,23 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-class ArchitectureUI {
+class ArchitectureNumUI {
     private List<JFormattedTextField> InputTextField = new ArrayList<>();   // The text area which get the user input.
     private JFrame MainFrame = new NoneFrame();  // The main frame.
     private int[] frameSize = new int[]{560, 315}; // The main frame size.
 
     private void summarizeAction(){
-        for(int i=0;i<5;i++) {
-            DataUI.architecture[i] = (long) InputTextField.get(i).getValue();
+        for(int i = 0; i<DataUI.architectureNum.length; i++) {
+            DataUI.architectureNum[i] = (long) InputTextField.get(i).getValue();
         }
         CoolMainUI.DataUIFrame.ResetALLData();
         MainFrame.dispose();
     }
 
-    ArchitectureUI() throws IOException {
+    ArchitectureNumUI() throws IOException {
         // Initialize the MainPanel
         BufferedImage img;
-        img = ImageIO.read(new File("Assets/Architecture.png"));
+        img = ImageIO.read(new File("Assets/ArchitectureNum.png"));
         // The main panel.
         BackgroundPanel mainPanel = new BackgroundPanel(img, BackgroundPanel.SCALED, 1.0f, 0.5f);
         GradientPaint paint = new GradientPaint(0, 0, Color.BLUE, 600, 0, Color.RED);
@@ -92,11 +92,11 @@ class ArchitectureUI {
 
         // Initialize all InputTextFields and bound listeners to them.
         final int[] outerCounter = {0};
-        for(outerCounter[0]=0;outerCounter[0]<5;outerCounter[0]++) {
+        for(outerCounter[0]=0; outerCounter[0]<DataUI.architectureNum.length; outerCounter[0]++) {
             int innerCounter = outerCounter[0];
             InputTextField.add(new JFormattedTextField(numberFormatter));
             // Set the default value of each InputTextField by corresponding architecture values.
-            InputTextField.get(innerCounter).setValue(DataUI.architecture[innerCounter]);
+            InputTextField.get(innerCounter).setValue(DataUI.architectureNum[innerCounter]);
             InputTextField.get(innerCounter).setOpaque(false);
 
             // Make each InputTextField automatically select all text when it get focus.
@@ -117,7 +117,7 @@ class ArchitectureUI {
                 InputTextField.get(innerCounter).addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        DataUI.architecture[innerCounter] = (long) InputTextField.get(innerCounter).getValue();
+                        DataUI.architectureNum[innerCounter] = (long) InputTextField.get(innerCounter).getValue();
                         // Make the next InputTextField selected when press enter
                         InputTextField.get(innerCounter+1).requestFocus();
                     }
@@ -127,7 +127,7 @@ class ArchitectureUI {
                 InputTextField.get(innerCounter).addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        DataUI.architecture[innerCounter] = (long) InputTextField.get(innerCounter).getValue();
+                        DataUI.architectureNum[innerCounter] = (long) InputTextField.get(innerCounter).getValue();
                         // Save all value set and close this window when user press enter at the last InputTextField
                         summarizeAction();
                     }
@@ -135,7 +135,7 @@ class ArchitectureUI {
             }
 
             // Set bound of the InputTextFields
-            InputTextField.get(innerCounter).setBounds(MainFrame.getWidth() / 2 + 10, MainFrame.getHeight() / 3 + innerCounter * 30 - 18,
+            InputTextField.get(innerCounter).setBounds(MainFrame.getWidth() / 2 + 10, MainFrame.getHeight() / 3 + innerCounter * 30 - 34,
                     MainFrame.getWidth() / 4 - 20, 30);
 
             // Add InputTextFields to the mainPanel
