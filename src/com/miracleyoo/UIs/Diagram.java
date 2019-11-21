@@ -13,17 +13,16 @@ public class Diagram extends JPanel {
     int operandWidth = 50;
 
     //Designate number of RS per Functional unit here
-    int intAdderRS;
-    int intMultiplierRS;
-    int fpAdderRS = 4;
-    int fpMultiplierRS = 3;
-    int fpDividerRS = 2;
-    public static int OpQueue = 8; //Sharing opQueue for int and fp
-    int intRegisters = 10;
-    int fpRegisters = 10;
-    int ldBuffer = 6;
-    int sdBuffer = 6;
-    public static int diagramWidth = 200 + 200 + 50 + 50; // Most left: -200; Most right: 200 + 50(rect width)
+    int ldBuffer = (int) DataUI.architectureNum[0];
+    int sdBuffer = (int) DataUI.architectureNum[1];
+    int integerRS = (int) DataUI.architectureNum[2];
+    int fpAdderRS = (int) DataUI.architectureNum[3];
+    int fpMultiplierRS = (int) DataUI.architectureNum[4];
+    int fpDividerRS = (int) DataUI.architectureNum[5];
+    public static int OpQueue = 10; //Sharing opQueue for int and fp
+    int registers = 10;
+    //int fpRegisters = 10;
+    public static int diagramWidth = 500 + 200 + 50 + 50; // Most left: -200; Most right: 200 + 50(rect width)
     public static int diagramHeight = 110 + height * OpQueue + height + 30; // Most down: -110; Most top: Reg rects top
 //    this.setSize(diagramWidth, diagramHeight);
 
@@ -46,35 +45,49 @@ public class Diagram extends JPanel {
 
         //Place ldBuffers
         g.setFont(new Font("TimesRoman", Font.PLAIN, fontSize));
-        g.drawString("LD Buffer", originX - 200, originY + height - 40);
+        g.drawString("LD Buffer", originX - 200, originY - (height * ldBuffer + height) - 40);
         for (int i = 0; i < ldBuffer; i++) {
             g.drawRect(originX - 200, originY - (height * i + height) - 40, 50, height);
         }
 
         //Place sdBuffers
-        g.drawString("SD Buffer", originX + 200, originY + height - 40);
+        g.drawString("SD Buffer", originX + 200, originY - (height * sdBuffer + height) - 40);
         for (int i = 0; i < sdBuffer; i++) {
             g.drawRect(originX + 200, originY - (height * i + height) - 40, 50, height);
         }
 
         //Place OpQueue -- Note Op Queue is currently implmenting both int and fp, THIS MAY NEED TO CHANGE!
-        g.drawString("OP Queue", originX - 100, originY + height);
+        g.drawString("OP Queue", originX - 100, originY - (height * OpQueue + height));
         for (int q = 0; q < OpQueue; q++) {
             g.drawRect(originX - 100, originY - (height * q + height), 80, height);
         }
 
-        g.drawString("FP Reg", originX, originY + height);
-        for (int q = 0; q < fpRegisters; q++) {
-            g.drawRect(originX, originY - (height * q + height), 80, height);
+        g.drawString("Int/FP Registers", originX + 50, originY - (height * registers + height));
+        for (int q = 0; q < registers; q++) {
+            g.drawRect(originX + 50, originY - (height * q + height), 80, height);
         }
 
+        /*
         g.drawString("Int Reg", originX + 100, originY + height);
         for (int q = 0; q < intRegisters; q++) {
             g.drawRect(originX + 100, originY - (height * q + height), 80, height);
         }
+         */
 
+        //Place integer FU
+        int intBase[] = {-300, 60}; //x, y
+        for(int a = 0; a < integerRS; a++){
+            g.setColor(Color.BLACK);
+            g.drawRect(originX - opBoxWidth + intBase[0], originY - (height * a) + intBase[1], opBoxWidth, height);
+            g.drawRect(originX + intBase[0], originY - (height * a) + intBase[1], operandWidth, height);
+            g.drawRect(originX + operandWidth + intBase[0], originY - (height * a) + intBase[1], operandWidth, height);
+            g.drawString("IntegerFU", originX + intBase[0] + 5, originY + intBase[1] + 30);
+            g.drawRect(originX + intBase[0], originY + intBase[1] + 20, 80, height);
+            g.setColor(Color.RED);
+            g.drawLine(originX + intBase[0] + 40, originY + intBase[1] + 30, originX + intBase[0] + 40, originY + 100);
+        }
 
-        //Place adderRS
+        //Place fp adder FU
         int addBase[] = {-150, 60}; //used to set origin of adder FU on Tomasulo graph. X and then Y.
         //g.drawString("FPadder", originX + addBase[0], originY + addBase[1]);
         for (int x = 0; x < fpAdderRS; x++) {
@@ -91,6 +104,7 @@ public class Diagram extends JPanel {
             //g.fillRect(0, 0, 30, 30);
         }
 
+        //fp multiplier FU
         int mulBase[] = {0, 60}; //used to set origin of multiplier FU on Tomasulo graph
         //g.drawString("FPmultiplier", originX + mulBase[0], originY + mulBase[1]);
         for (int y = 0; y < fpMultiplierRS; y++) {
@@ -104,6 +118,7 @@ public class Diagram extends JPanel {
             g.drawLine(originX + mulBase[0] + 40, originY + mulBase[1] + 30, originX + mulBase[0] + 40, originY + 100);
         }
 
+        //fp Div FU
         int divBase[] = {150, 60};
         //g.drawString("Divider", 190, 80);
         for (int z = 0; z < fpDividerRS; z++) {
@@ -117,11 +132,13 @@ public class Diagram extends JPanel {
             g.drawLine(originX + divBase[0] + 40, originY + divBase[1] + 30, originX + divBase[0] + 40, originY + 100);
         }
 
-        //Connecting Wires
+        //---Connecting Wires---
         g.setColor((Color.black));
         g.drawString("Common Data Bus", originX - 200, originY + 110);
         g.setColor(Color.RED);
-        g.drawLine(originX - 200, originY + 100, originX + 250, originY + 100);
+        g.drawLine(originX + intBase[0] + 40,originY + 100, originX + divBase[0] + 120, originY + 100); //CBD horizontal line
+
+
 
         repaint();
     }

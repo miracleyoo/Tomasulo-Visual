@@ -41,7 +41,7 @@ public class DataUI {
     static private String[] cycleStageNames= new String[]{"IF", "ID", "EX", "MEM", "WB"};
     static private DefaultTableModel operandModel, registerModel, dataModel, cycleModel;
     static private int[] statisticsInfo = new int[9];
-    static long architectureNum[] = new long[]{10, 10, 4, 7, 24, 5};
+    static long architectureNum[] = new long[]{6, 6, 5, 4, 4, 3};
     static long architectureCycle[] = new long[]{10, 10, 4, 7, 24, 5};
     static long multiStepNum = 3;
 
