@@ -19,6 +19,10 @@ public class TextDirectiveParser {
 
     public static void parse(String[] operandStringList, AssemblyContext context) throws ParserException {
 
+        if (operandStringList.length == 0) {
+            operandStringList = new String[]{"0x0"};
+        }
+
         if (operandStringList.length != 1) {
             throw new OperandCountMismatchException("Expected: [Address], found: "
                     + Arrays.toString(operandStringList));
