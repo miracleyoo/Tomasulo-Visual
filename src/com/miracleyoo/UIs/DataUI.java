@@ -55,6 +55,8 @@ public class DataUI {
     public static final String[] colorSchemeMainLight = new String[]{"#DFFEFC", "#565656", "#FEFCDF", "#565656", "#565656", "#FEDFE1", "#2B2B2B", "#5BB7E3"};
     public static final String[] colorSchemeMainDark = new String[]{"#2B2B2B" ,"#DCDCDC" ,"#3F5467", "#E4FDFE" ,"#E4FDFE", "#2B2B2B", "#FFFFFF", "#5BB7E3"};
 
+
+
     public static String[] colorSchemeMainCur = DarkMode? colorSchemeMainDark:colorSchemeMainLight;
     public static String[] colorSchemeCycleCur = DarkMode? colorSchemeCycleDark:colorSchemeCycleLight;
 
