@@ -36,8 +36,8 @@ public class Diagram extends JPanel {
 //        setSize(diagramWidth, diagramHeight);
 
         //Allows for window scaling while keeping objects in their relative positions
-        int originX = getWidth() / 2-25;// getViewport().getSize().width;// getWidth()/2;
-        int originY = getHeight() / 2; //getViewport().getSize().height;//getHeight()/2;
+        int originX = getWidth() / 2 - 25;// getViewport().getSize().width;// getWidth()/2;
+        int originY = getHeight() / 2 + 35; //getViewport().getSize().height;//getHeight()/2;
 
 
         //Place ldBuffers
@@ -51,7 +51,7 @@ public class Diagram extends JPanel {
         g.setColor(Color.BLACK);
 
         //Place sdBuffers
-        int[] sdBase = {220, -60};
+        int[] sdBase = {250, -60};
         g.drawString("SD Buffer (To Memory)", originX + sdBase[0], originY - (height * sdBuffer + height) + sdBase[1]);
         for (int i = 0; i < sdBuffer; i++) {
             g.drawRect(originX + sdBase[0], originY - (height * i + height) + sdBase[1], 50, height);
