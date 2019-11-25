@@ -53,33 +53,33 @@ public class TableUtils {
             DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
 
             Color background_color = Color.WHITE;
-            String[] tempColorScheme = DataUI.DarkMode? DataUI.colorSchemeCycleDark:DataUI.colorSchemeCycleLight;
+//            String[] tempColorScheme = DataUI.colorSchemeCycleCur;//DataUI.DarkMode? DataUI.colorSchemeCycleDark:DataUI.colorSchemeCycleLight;
             if(tableModel.getValueAt(row, col) != null) {
                 switch ((String) tableModel.getValueAt(row, col)) {
                     case "IF":
-                        background_color = Color.decode(tempColorScheme[0]);
+                        background_color = Color.decode(DataUI.colorSchemeCycleCur[0]);
                         break;
                     case "ID":
-                        background_color = Color.decode(tempColorScheme[1]);
+                        background_color = Color.decode(DataUI.colorSchemeCycleCur[1]);
                         break;
                     case "EX":
-                        background_color = Color.decode(tempColorScheme[2]);
+                        background_color = Color.decode(DataUI.colorSchemeCycleCur[2]);
                         break;
                     case "MEM":
-                        background_color = Color.decode(tempColorScheme[3]);
+                        background_color = Color.decode(DataUI.colorSchemeCycleCur[3]);
                         break;
                     case "WB":
-                        background_color = Color.decode(tempColorScheme[4]);
+                        background_color = Color.decode(DataUI.colorSchemeCycleCur[4]);
                         break;
                 }
             }
             else{
-                if(DataUI.DarkMode){
-                    background_color = Color.decode(DataUI.colorSchemeMainDark[3]);
-                }
-                else {
-                    background_color = Color.decode(DataUI.colorSchemeMainLight[1]);
-                }
+//                if(DataUI.DarkMode){
+                background_color = Color.decode(DataUI.colorSchemeMainCur[0]);
+//                }
+//                else {
+//                    background_color = Color.decode(DataUI.colorSchemeMainLight[1]);
+//                }
             }
             l.setBackground(background_color);
 

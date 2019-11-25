@@ -78,5 +78,11 @@ public class TempSnippet {
 //            return rowData[rowIndex][columnIndex];
 //        }
 //    }
+// Pink, carnation, light blue, light green, light purple
+    // Black, Blue, light blue(#AFDCF1), light grey, blue grey
+//    public static final String[] colorSchemeMainDark =new String[]{"#2B2B2B","#5BB7E3", "#E4FDFE", "#DCDCDC", "#3F5467"};
+    // Sakura, light blue, light green, millet yellow, grey
+//    public static final String[] colorSchemeMainLight =new String[]{"#FEDFE1","#DFFEFC","#DFFEED","#FEFCDF", "#565656"};
+
 
 }
