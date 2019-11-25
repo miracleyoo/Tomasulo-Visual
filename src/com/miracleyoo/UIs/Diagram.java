@@ -36,8 +36,8 @@ public class Diagram extends JPanel {
 //        setSize(diagramWidth, diagramHeight);
 
         //Allows for window scaling while keeping objects in their relative positions
-        int originX = getWidth() / 2-25;// getViewport().getSize().width;// getWidth()/2;
-        int originY = getHeight() / 2; //getViewport().getSize().height;//getHeight()/2;
+        int originX = getWidth() / 2;// getViewport().getSize().width;// getWidth()/2;
+        int originY = getHeight() / 2 + 40; //getViewport().getSize().height;//getHeight()/2;
 
 
         //Place ldBuffers
@@ -146,7 +146,7 @@ public class Diagram extends JPanel {
         g.setColor(Color.RED);
         g.drawLine(originX + ldBase[0] + 25, originY + ldBase[1], originX + ldBase[0] + 25, originY + 100);
         g.fillPolygon(new int[] {originX + ldBase[0] + 20 , originX + ldBase[0] + 25 , originX + ldBase[0] + 30}, new int[] {originY + 90, originY + 100, originY + 90}, 3);
-        g.drawLine(originX + ldBase[0] + 25,originY + 100, originX + sdBase[0] + 100, originY + 100); //CBD horizontal line
+        g.drawLine(originX + ldBase[0],originY + 100, originX + sdBase[0] + 100, originY + 100); //CBD horizontal line
         g.drawLine(originX + sdBase[0] + 100, originY + sdBase[1] - registers*height + 5, originX + sdBase[0] + 100, originY + 100); //CBD vertical line going up to store data
         g.drawLine(originX + sdBase[0] + 50, originY + sdBase[1] - sdBuffer*height + 5, originX + sdBase[0] + 100, originY + sdBase[1] - sdBuffer*height + 5); //Horizontal line to SD buffer
         g.fillPolygon(new int[] {originX + sdBase[0] + 50, originX + sdBase[0] + 60, originX + sdBase[0] + 60}, new int[] {originY + sdBase[1] - sdBuffer*height + 5, originY + sdBase[1] - sdBuffer*height + 10, originY + sdBase[1] - sdBuffer*height}, 3);
