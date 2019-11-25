@@ -31,9 +31,21 @@ class ArchitectureNumUI {
 
     private void summarizeAction(){
         for(int i = 0; i<DataUI.architectureNum.length; i++) {
-            DataUI.architectureNum[i] = (long) InputTextField.get(i).getValue(); //---ADD LIMITATIONS FOR RS'S---
+
+            if((long) InputTextField.get(i).getValue() > 9) { //max
+                DataUI.architectureNum[i] = 9; //Max allowable value for RS
+            }
+
+            else if((long) InputTextField.get(i).getValue() < 1){
+                DataUI.architectureNum[i] = 1; //min allowable value for RS
+            }
+
+            else{
+                DataUI.architectureNum[i] = (long) InputTextField.get(i).getValue(); //---ADD LIMITATIONS FOR RS'S---
+            }
         }
         CoolMainUI.DataUIFrame.ResetALLData();
+        //DataUI.GraphPanel.revalidate();
         MainFrame.dispose();
     }
 
