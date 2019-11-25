@@ -31,7 +31,7 @@ class ArchitectureNumUI {
 
     private void summarizeAction(){
         for(int i = 0; i<DataUI.architectureNum.length; i++) {
-            DataUI.architectureNum[i] = (long) InputTextField.get(i).getValue();
+            DataUI.architectureNum[i] = (long) InputTextField.get(i).getValue(); //---ADD LIMITATIONS FOR RS'S---
         }
         CoolMainUI.DataUIFrame.ResetALLData();
         MainFrame.dispose();

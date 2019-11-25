@@ -46,6 +46,8 @@ public class TableUtils {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
 
+            //To highlight table components for the cycle graph, see below
+
             //Cells are by default rendered as a JLabel.
             JLabel l = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
 
