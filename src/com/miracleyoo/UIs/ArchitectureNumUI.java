@@ -28,7 +28,7 @@ class ArchitectureNumUI {
     private List<JFormattedTextField> InputTextField = new ArrayList<>();   // The text area which get the user input.
     private JFrame MainFrame = new NoneFrame();  // The main frame.
     private int[] frameSize = new int[]{560, 315}; // The main frame size.
-    static DataUI DataUIFrame = new DataUI(new Object[0][0], new Object[0][0]);
+    //static DataUI DataUIFrame = new DataUI(new Object[0][0], new Object[0][0]);
 
     private void summarizeAction(){
         for(int i = 0; i<DataUI.architectureNum.length; i++) {
