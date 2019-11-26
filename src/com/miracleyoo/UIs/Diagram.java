@@ -39,10 +39,12 @@ public class Diagram extends JPanel {
         int originX = getWidth() / 2 - 25;// getViewport().getSize().width;// getWidth()/2;
         int originY = getHeight() / 2 + 35; //getViewport().getSize().height;//getHeight()/2;
 
+        /*
         //print to console the number of reservation stations
         for(int i = 0; i < 6; i++) {
             System.out.println(DataUI.architectureNum[i]);
         }
+        */
 
         //Place ldBuffers
         int[] ldBase = {-400, -60};

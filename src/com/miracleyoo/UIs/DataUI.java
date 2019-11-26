@@ -31,7 +31,7 @@ public class DataUI {
     private JLabel RegisterLabel;
     private JLabel StatisticsLabel;
     private JLabel TomasuloLabel;
-    public JScrollPane GraphPanel;
+    private JScrollPane GraphPanel;
     private JScrollPane CyclePanel;
 
     // Define the data, models, infos of all panels
@@ -137,6 +137,13 @@ public class DataUI {
         initRegisterTable();
         initStatisticsPanel();
         initCycleTable();
+
+        //Reset Diagram
+        architectureNum = new long[]{6, 6, 5, 4, 4, 3};
+        architectureCycle = new long[]{10, 10, 4, 7, 24, 5};
+
+        //refresh Tomasulo GraphPanel to defaults
+        updateGraphPanel();
     }
 
     // Initialize the operand Table
@@ -241,6 +248,12 @@ public class DataUI {
 
         GraphPanel.setViewportView(d);
         GraphPanel.revalidate();
+    }
+
+    //When Reservtion Stations are updated, need to refresh the Tomasulo Graph
+    public void updateGraphPanel(){
+        GraphPanel.revalidate();
+        GraphPanel.repaint();
     }
 
     // Define the menu bar
