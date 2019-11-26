@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 
 public class RegisterParser {
 
-    private static final ThreadLocal<Matcher> MATCHER = RegexUtils.makeThreadLocalMatcher("\\$(\\S+)");
+    private static final ThreadLocal<Matcher> MATCHER = RegexUtils.makeThreadLocalMatcher("r(\\S+)");
 
     private RegisterParser() {}
 

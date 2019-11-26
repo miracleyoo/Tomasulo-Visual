@@ -16,6 +16,7 @@ public enum  DirectiveInformation {
     BYTE,
     HALF,
     WORD,
+    WORD32,
     SPACE,
     EVAL,
     ECHO;
@@ -42,6 +43,9 @@ public enum  DirectiveInformation {
                 break;
             case WORD:
                 WordDirectiveParser.parse(operandStringList, context);
+                break;
+            case WORD32:
+                Word32DirectiveParser.parse(operandStringList, context);
                 break;
             case SPACE:
                 SpaceDirectiveParser.parse(operandStringList, context);

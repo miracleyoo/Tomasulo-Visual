@@ -13,7 +13,7 @@ class ParserTest {
 
     @Test
     void parse() throws FileNotFoundException, ParserException, AssemblerException {
-        String file = "example/example.s";
+        String file = "example/factorial.s";
         InputStream input = new FileInputStream(file);
         AssemblyContext context = new AssemblyContext();
         Parser.parse(input, context);

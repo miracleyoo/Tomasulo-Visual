@@ -135,6 +135,7 @@ public class AssemblyContext {
     }
 
     public void allocateToAddress(int address) {
+        if (address == 0) { address = this.address; }
         checkBackwardAddress(address);
         allocateZero(address - this.address);
     }
@@ -195,6 +196,7 @@ public class AssemblyContext {
     }
 
     public void writeToAddress(int address) {
+        if (address == 0) { address = this.address; }
         checkBackwardAddress(address);
         writeZero(address - this.address);
     }

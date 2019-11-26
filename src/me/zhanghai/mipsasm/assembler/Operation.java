@@ -64,6 +64,7 @@ public enum Operation {
 //    LWC3(0b110011),
     LWL(0b100010),
     LWR(0b100110),
+    LWU(0b100111),
     // MADD, ... MFC2
     MFC0(Codes.COP0, 0b00000, false),
     MFHI(Codes.SPECIAL, 0b010000),

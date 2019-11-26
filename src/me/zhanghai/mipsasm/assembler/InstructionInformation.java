@@ -105,6 +105,8 @@ public enum InstructionInformation {
             InstructionDisassemblers.SOURCE2_OFFSET_BASE),
     LWR(Operation.LWR, OperandListPrototypes.SOURCE2_OFFSET_BASE, InstructionAssemblers.SOURCE2_OFFSET_BASE,
             InstructionDisassemblers.SOURCE2_OFFSET_BASE),
+    LWU(Operation.LWU, OperandListPrototypes.SOURCE2_OFFSET_BASE, InstructionAssemblers.SOURCE2_OFFSET_BASE,
+            InstructionDisassemblers.SOURCE2_OFFSET_BASE),
     MFC0(Operation.MFC0, OperandListPrototypes.SOURCE2_DESTINATION, InstructionAssemblers.SOURCE2_DESTINATION,
             InstructionDisassemblers.SOURCE2_DESTINATION),
     MFHI(Operation.MFHI, OperandListPrototypes.DESTINATION, InstructionAssemblers.DESTINATION,
