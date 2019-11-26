@@ -28,12 +28,27 @@ class ArchitectureNumUI {
     private List<JFormattedTextField> InputTextField = new ArrayList<>();   // The text area which get the user input.
     private JFrame MainFrame = new NoneFrame();  // The main frame.
     private int[] frameSize = new int[]{560, 315}; // The main frame size.
+    //static DataUI DataUIFrame = new DataUI(new Object[0][0], new Object[0][0]);
 
     private void summarizeAction(){
         for(int i = 0; i<DataUI.architectureNum.length; i++) {
-            DataUI.architectureNum[i] = (long) InputTextField.get(i).getValue(); //---ADD LIMITATIONS FOR RS'S---
+
+            if((long) InputTextField.get(i).getValue() > 9) { //max
+                DataUI.architectureNum[i] = 9; //Max allowable value for RS
+            }
+
+            else if((long) InputTextField.get(i).getValue() < 1){
+                DataUI.architectureNum[i] = 1; //min allowable value for RS
+            }
+
+            else{
+                DataUI.architectureNum[i] = (long) InputTextField.get(i).getValue(); //---ADD LIMITATIONS FOR RS'S---
+            }
         }
         CoolMainUI.DataUIFrame.ResetALLData();
+        //need to update diagram if reservation stations have been changed.
+        //DataUIFrame.updateGraphPanel();
+        System.out.println("Architecture updated");
         MainFrame.dispose();
     }
 

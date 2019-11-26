@@ -41,9 +41,9 @@ public class DataUI {
     static private String[] cycleStageNames= new String[]{"IF", "ID", "EX", "MEM", "WB"};
     static private DefaultTableModel operandModel, registerModel, dataModel, cycleModel;
     static private int[] statisticsInfo = new int[9];
-    static long architectureNum[] = new long[]{6, 6, 5, 4, 4, 3};
+    public static long architectureNum[] = new long[]{6, 6, 5, 4, 4, 3};
     public static long architectureNumMax[] = {9, 9, 9, 9, 9, 9};
-    static long architectureCycle[] = new long[]{10, 10, 4, 7, 24, 5};
+    public static long architectureCycle[] = new long[]{10, 10, 4, 7, 24, 5};
     public static long architectureCycleMax[] = {100,100,100,100,100,100};
     static long multiStepNum = 3;
 
@@ -140,6 +140,15 @@ public class DataUI {
         initStatisticsPanel();
         initCycleTable();
     }
+
+    //Reset Diagram --> refresh Tomasulo GraphPanel to defaults
+    void resetTomasulo() {
+        architectureNum = new long[]{6, 6, 5, 4, 4, 3};
+        architectureCycle = new long[]{10, 10, 4, 7, 24, 5};
+        updateGraphPanel();
+    }
+
+
 
     // Initialize the operand Table
     private void initOperandTable(Object[][] inputTotalData) {
@@ -243,6 +252,12 @@ public class DataUI {
 
         GraphPanel.setViewportView(d);
         GraphPanel.revalidate();
+    }
+
+    //When Reservation Stations are updated, need to refresh the Tomasulo Graph
+    public void updateGraphPanel(){
+        GraphPanel.revalidate();
+        GraphPanel.repaint();
     }
 
     // Define the menu bar
@@ -482,6 +497,8 @@ public class DataUI {
 
         // Initialize Tomasulo Graph
         initGraphPanel();
+
+        System.out.println("INIT");
 
         // Execute one step button action
         ExecuteOneStepBtn.addActionListener(e -> ExeSteps(1));
