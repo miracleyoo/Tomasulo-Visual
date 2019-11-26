@@ -33,8 +33,8 @@ class ArchitectureNumUI {
     private void summarizeAction(){
         for(int i = 0; i<DataUI.architectureNum.length; i++) {
 
-            if((long) InputTextField.get(i).getValue() > 9) { //max
-                DataUI.architectureNum[i] = 9; //Max allowable value for RS
+            if((long) InputTextField.get(i).getValue() > DataUI.architectureNumMax[i]) { //max
+                DataUI.architectureNum[i] = DataUI.architectureNumMax[i]; //Max allowable value for RS
             }
 
             else if((long) InputTextField.get(i).getValue() < 1){

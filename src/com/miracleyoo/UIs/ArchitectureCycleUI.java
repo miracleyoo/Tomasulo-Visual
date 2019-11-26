@@ -31,7 +31,15 @@ class ArchitectureCycleUI {
 
     private void summarizeAction(){
         for(int i = 0; i<DataUI.architectureCycle.length; i++) {
-            DataUI.architectureCycle[i] = (long) InputTextField.get(i).getValue();
+            if((long) InputTextField.get(i).getValue() > DataUI.architectureCycleMax[i]) { //max
+                DataUI.architectureCycle[i] = DataUI.architectureCycleMax[i]; //Max allowable value for RS
+            }
+            else if((long) InputTextField.get(i).getValue() < 1){
+                DataUI.architectureCycle[i] = 1; //min allowable value for RS
+            }
+            else {
+                DataUI.architectureCycle[i] = (long) InputTextField.get(i).getValue();
+            }
         }
         CoolMainUI.DataUIFrame.ResetALLData();
         MainFrame.dispose();
