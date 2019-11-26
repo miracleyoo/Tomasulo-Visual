@@ -28,19 +28,15 @@ class ArchitectureNumUI {
     private List<JFormattedTextField> InputTextField = new ArrayList<>();   // The text area which get the user input.
     private JFrame MainFrame = new NoneFrame();  // The main frame.
     private int[] frameSize = new int[]{560, 315}; // The main frame size.
-    //static DataUI DataUIFrame = new DataUI(new Object[0][0], new Object[0][0]);
 
     private void summarizeAction(){
         for(int i = 0; i<DataUI.architectureNum.length; i++) {
-
             if((long) InputTextField.get(i).getValue() > DataUI.architectureNumMax[i]) { //max
                 DataUI.architectureNum[i] = DataUI.architectureNumMax[i]; //Max allowable value for RS
             }
-
             else if((long) InputTextField.get(i).getValue() < 1){
                 DataUI.architectureNum[i] = 1; //min allowable value for RS
             }
-
             else{
                 DataUI.architectureNum[i] = (long) InputTextField.get(i).getValue(); //---ADD LIMITATIONS FOR RS'S---
             }
