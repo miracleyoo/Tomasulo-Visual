@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.miracleyoo.utils.*;
+import com.miracleyoo.Logic.*;
 
 import static java.lang.Integer.min;
 
@@ -78,6 +79,7 @@ public class DataUI {
 
     // Initiate the DataUI window
     JFrame frame = new JFrame("Operands");
+    public MainLogic mainLogic;
 
 
     // Update the operand model when data are updated
@@ -497,6 +499,9 @@ public class DataUI {
 
         // Initialize Tomasulo Graph
         initGraphPanel();
+
+        // Initialize Main Logic
+        mainLogic = new MainLogic();
 
         System.out.println("INIT");
 
