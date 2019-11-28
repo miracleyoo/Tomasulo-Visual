@@ -91,6 +91,10 @@ public class Diagram extends JPanel {
             }
         }
 
+        else {
+            g.drawString("No more instructions left!", originX - 200, originY - 150);
+        }
+
         //Try to push next instruction every clock cycle
         if(cycleNum != cycleNumOld){
             //need to shift all elements in opQArr down by 1 index
@@ -105,7 +109,7 @@ public class Diagram extends JPanel {
 
             //If no more instructions, begin clearing the Opqueue
             else{
-                opQArr[OpQueue - 1] = null;
+                opQArr[OpQueue - 1] = blank;
             }
 
             for(int q = 0; q < OpQueue; q++) {
@@ -113,10 +117,6 @@ public class Diagram extends JPanel {
             }
 
             cycleNumOld = cycleNum;
-        }
-
-        else{
-            g.drawString("No more instructions left!", originX - 200, originY - 150);
         }
 
         for(int q = 0; q < OpQueue; q++){

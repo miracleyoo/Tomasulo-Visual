@@ -523,7 +523,7 @@ public class DataUI {
 
         // Initialize Tomasulo Graph
         initGraphPanel();
-        
+
         // Initialize Main Logic
         mainLogic = new MainLogic();
 
