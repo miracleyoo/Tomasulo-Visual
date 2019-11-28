@@ -42,8 +42,8 @@ class ArchitectureNumUI {
             }
         }
         CoolMainUI.DataUIFrame.ResetALLData();
+        CoolMainUI.DataUIFrame.updateArchitecture();
         //need to update diagram if reservation stations have been changed.
-        //DataUIFrame.updateGraphPanel();
         System.out.println("Architecture updated");
         MainFrame.dispose();
     }

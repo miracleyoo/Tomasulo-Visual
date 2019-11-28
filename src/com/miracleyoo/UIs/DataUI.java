@@ -33,6 +33,8 @@ public class DataUI {
     private JLabel TomasuloLabel;
     private JScrollPane GraphPanel;
     private JScrollPane CyclePanel;
+    private Diagram diagram = new Diagram();
+
 
     // Define the data, models, infos of all panels
     static private Object[][] operandFullData, operandRawData, dataFullData, cycleFullData;
@@ -41,7 +43,7 @@ public class DataUI {
     static private String[] cycleStageNames= new String[]{"IF", "ID", "EX", "MEM", "WB"};
     static private DefaultTableModel operandModel, registerModel, dataModel, cycleModel;
     static private int[] statisticsInfo = new int[9];
-    public static long architectureNum[] = new long[]{6, 6, 5, 4, 4, 3};
+    public static long architectureNum[] = new long[]{6, 6, 5, 4, 4, 3}; //ld, sd, int, fpAdd, fpMul, fpDiv
     public static long architectureNumMax[] = {9, 9, 9, 9, 9, 9};
     public static long architectureCycle[] = new long[]{10, 10, 4, 7, 24, 5};
     public static long architectureCycleMax[] = {100,100,100,100,100,100};
@@ -139,13 +141,22 @@ public class DataUI {
         initRegisterTable();
         initStatisticsPanel();
         initCycleTable();
+        //resetTomasulo();
     }
 
     //Reset Diagram --> refresh Tomasulo GraphPanel to defaults
-    void resetTomasulo() {
+    public void resetTomasulo() {
         architectureNum = new long[]{6, 6, 5, 4, 4, 3};
         architectureCycle = new long[]{10, 10, 4, 7, 24, 5};
-        updateGraphPanel();
+        updateArchitecture();
+    }
+
+    //Refreshes diagram when reservation stations have been modified via ArchitectureNumUI
+    public void updateArchitecture(){
+        diagram = new Diagram();
+        GraphPanel.setViewportView(diagram);
+        GraphPanel.revalidate();
+        GraphPanel.repaint();
     }
 
 
@@ -246,19 +257,21 @@ public class DataUI {
 
     // Tomasulo Diagram
     private void initGraphPanel() {
-        JPanel d = new Diagram();
+        //JPanel d = new Diagram(cycleNum);
 //        d.setBackground(Color.WHITE);
-        d.setSize(new Dimension(Diagram.diagramWidth*10, Diagram.diagramHeight));
-
-        GraphPanel.setViewportView(d);
+        diagram.setSize(new Dimension(Diagram.diagramWidth*10, Diagram.diagramHeight));
+        diagram.setCycleNum(0);
+        GraphPanel.setViewportView(diagram);
         GraphPanel.revalidate();
     }
 
     //When Reservation Stations are updated, need to refresh the Tomasulo Graph
+    /*
     public void updateGraphPanel(){
-        GraphPanel.revalidate();
+        GraphPanel.validate();
         GraphPanel.repaint();
     }
+     */
 
     // Define the menu bar
     private JMenuBar addMenuBar() {
@@ -425,8 +438,19 @@ public class DataUI {
             CycleLabel.setText("Cycles");
         }
         cycleNum += stepNum;
+
+        System.out.println(cycleNum);
+
         operandTableUpdate();
         cycleTableUpdate();
+
+        //Update graph to show motion of instr.
+        diagram.setCycleNum(cycleNum);
+        GraphPanel.setViewportView(diagram);
+        GraphPanel.revalidate();
+        GraphPanel.repaint();
+
+        System.out.println("Execute step");
     }
 
     private void SetTableScheme(JTable renderTable, String[] ColorScheme){
@@ -498,7 +522,7 @@ public class DataUI {
         // Initialize Tomasulo Graph
         initGraphPanel();
 
-        System.out.println("INIT");
+        //System.out.println("INIT");
 
         // Execute one step button action
         ExecuteOneStepBtn.addActionListener(e -> ExeSteps(1));

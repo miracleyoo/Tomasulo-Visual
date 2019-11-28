@@ -1,9 +1,22 @@
 package com.miracleyoo.UIs;
 
+import com.miracleyoo.utils.Instruction;
+
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.awt.*;
 
 public class Diagram extends JPanel {
+
+    int cycleNum; //To keep track of cycle number
+    int cycleNumOld = 0;
+
+    Instruction blank = new Instruction("", "", "", "", 0);
+    Instruction[] opQArr = new Instruction[10];
+
+    //example instructions
+    String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "ld", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
+    int instrIndex = 0;
 
     int fontSize = 9;
 
@@ -13,8 +26,8 @@ public class Diagram extends JPanel {
     static int operandWidth = 50;
 
     //Designate number of RS per Functional unit here
-    int ldBuffer = (int) DataUI.architectureNum[0];
-    int sdBuffer = (int) DataUI.architectureNum[1];
+    int sdBuffer = (int) DataUI.architectureNum[0];
+    int ldBuffer = (int) DataUI.architectureNum[1];
     int integerRS = (int) DataUI.architectureNum[2];
     int fpAdderRS = (int) DataUI.architectureNum[3];
     int fpMultiplierRS = (int) DataUI.architectureNum[4];
@@ -42,19 +55,98 @@ public class Diagram extends JPanel {
         g.setStroke(new BasicStroke(1));
     }
 
+    public void setCycleNum(int c){
+        cycleNum = c;
+    }
+
     protected void paintComponent(Graphics2D g){
         super.paintComponent(g);
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
         int originX = getWidth() / 2 - 25;// getViewport().getSize().width;// getWidth()/2;
         int originY = getHeight() / 2 + 35; //getViewport().getSize().height;//getHeight()/2;
-
-        //Place ldBuffers
-        int[] ldBase = {-400, -60};
         g.setFont(new Font("TimesRoman", Font.PLAIN, fontSize));
+
+
+        g.drawString(Integer.toString(cycleNum), originX, originY); //debugging to keep track of updating diagram in sync with cycleNum
+
+        //Place OpQueue -- Note Op Queue is currently implementing both int and fp, THIS MAY NEED TO CHANGE!
+        g.drawString("OP Queue", originX - 100, originY - (height * OpQueue + height) - 60);
+        for (int q = 0; q < OpQueue; q++) {
+            g.drawRect(originX - 100, originY - (height * q + height) - 60, 80, height);
+        }
+
+        //Push instructions to opQueue --> Instructions stored here until ISSUED to prevent structural hazard
+        //Shift instructions down as they are processed through the OpQueue in FIFO manner. In order issue one instruction at a time!
+
+
+        //Push instructions onto opQArr initially
+        if(instrIndex < instr.length) { //needs to be adjusted to allow all instructions in OpQueue to be pushed through pipeline before throwing no more instr msg.
+            for (int q = 0; q < OpQueue; q++) {
+                //if opQArr has a blank position, push next awaiting instruction
+                if(opQArr[q] == null) {
+                    opQArr[q] = new Instruction(instr[instrIndex], "", "", "", 1);
+                    System.out.println("Instruction added: " + opQArr[q].op);
+                    instrIndex++;
+                }
+            }
+        }
+
+        //Try to push next instruction every clock cycle
+        if(cycleNum != cycleNumOld){
+            //need to shift all elements in opQArr down by 1 index
+            for(int q = 0; q < OpQueue-1; q++){
+                opQArr[q] = opQArr[q+1];
+            }
+            //Check if instr array has awaiting instr.
+            if(instrIndex < instr.length) {
+                opQArr[OpQueue - 1] = new Instruction(instr[instrIndex], "", "", "", 0); //Grab next instruction from instruction array
+                instrIndex++;
+            }
+
+            //If no more instructions, begin clearing the Opqueue
+            else{
+                opQArr[OpQueue - 1] = null;
+            }
+
+            for(int q = 0; q < OpQueue; q++) {
+                System.out.println("Instruction added: " + opQArr[q].op);
+            }
+
+            cycleNumOld = cycleNum;
+        }
+
+        else{
+            g.drawString("No more instructions left!", originX - 200, originY - 150);
+        }
+
+        for(int q = 0; q < OpQueue; q++){
+            g.drawString(opQArr[q].op, originX - 95, originY - (height * q) - 62);
+        }
+
+
+        //ldBuffers
+        int[] ldBase = {-400, -60};
         g.drawString("LD Buffer (From Memory)", originX + ldBase[0], originY - (height * ldBuffer + height) + ldBase[1]);
         for (int i = 0; i < ldBuffer; i++) {
             g.drawRect(originX + ldBase[0], originY - (height * i + height) + ldBase[1], 50, height);
         }
+
+        //if OpQArr[0] is lw
+        //Create ldWord array to hold instructions while they execute load
+        String[] ldArr = new String[ldBuffer]; //ldArray can hold at most capacity of ldBuffer
+        if(opQArr[0].op.equals("lw")){
+            //System.out.println("load true!");
+            ldArr[0] = opQArr[0].op;
+            g.drawString(ldArr[0], originX - 5, originY - (height * 1) + ldBase[0] - 3);
+        }
+
+        //for adding more lw to the lwBuffer
+        /*
+        for(int l = 0; l < DataUI.architectureNum[0]; l++){
+
+        }
+         */
+
 
 
         //Place sdBuffers
@@ -64,11 +156,6 @@ public class Diagram extends JPanel {
             g.drawRect(originX + sdBase[0], originY - (height * i + height) + sdBase[1], 50, height);
         }
 
-        //Place OpQueue -- Note Op Queue is currently implementing both int and fp, THIS MAY NEED TO CHANGE!
-        g.drawString("OP Queue", originX - 100, originY - (height * OpQueue + height) - 60);
-        for (int q = 0; q < OpQueue; q++) {
-            g.drawRect(originX - 100, originY - (height * q + height) - 60, 80, height);
-        }
 
         g.drawString("Int/FP Registers", originX + 50, originY - (height * registers + height) - 60);
         for (int q = 0; q < registers; q++) {
@@ -203,4 +290,6 @@ public class Diagram extends JPanel {
 
         repaint();
     }
+
+
 }
