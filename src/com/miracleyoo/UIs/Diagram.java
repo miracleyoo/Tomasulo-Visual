@@ -11,11 +11,10 @@ public class Diagram extends JPanel {
     int cycleNum; //To keep track of cycle number
     int cycleNumOld = 0;
 
-    Instruction blank = new Instruction("", "", "", "", 0);
-    Instruction[] opQArr = new Instruction[10];
+
 
     //example instructions
-    String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "ld", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
+    String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "lw", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
     int instrIndex = 0;
 
     int fontSize = 9;
@@ -38,6 +37,11 @@ public class Diagram extends JPanel {
     public static int diagramHeight = 110 + height * OpQueue + height + 30; // Most down: -110; Most top: Reg rects top
     //Allows for window scaling while keeping objects in their relative positions
 
+    Instruction blank = new Instruction("", "", "", "", 0);
+    Instruction[] opQArr = new Instruction[OpQueue];
+    String[] ldArr = new String[ldBuffer]; //ldArray can hold at most capacity of ldBuffer
+    boolean ldHold = false;
+    String issueBuffer = "";
 
     @Override
     public Dimension getPreferredSize() {
@@ -98,6 +102,8 @@ public class Diagram extends JPanel {
         //Try to push next instruction every clock cycle
         if(cycleNum != cycleNumOld){
             //need to shift all elements in opQArr down by 1 index
+            issueBuffer = opQArr[0].op;
+            System.out.println("issueBuffer holds: " + issueBuffer);
             for(int q = 0; q < OpQueue-1; q++){
                 opQArr[q] = opQArr[q+1];
             }
@@ -112,6 +118,7 @@ public class Diagram extends JPanel {
                 opQArr[OpQueue - 1] = blank;
             }
 
+            //for debugging purposes
             for(int q = 0; q < OpQueue; q++) {
                 System.out.println("Instruction added: " + opQArr[q].op);
             }
@@ -133,19 +140,26 @@ public class Diagram extends JPanel {
 
         //if OpQArr[0] is lw
         //Create ldWord array to hold instructions while they execute load
-        String[] ldArr = new String[ldBuffer]; //ldArray can hold at most capacity of ldBuffer
-        if(opQArr[0].op.equals("lw")){
-            //System.out.println("load true!");
-            ldArr[0] = opQArr[0].op;
-            g.drawString(ldArr[0], originX - 5, originY - (height * 1) + ldBase[0] - 3);
-        }
+        //on clock cycle
 
-        //for adding more lw to the lwBuffer
-        /*
-        for(int l = 0; l < DataUI.architectureNum[0]; l++){
+            if (issueBuffer.equals("lw")) {
+                ldArr[0] = issueBuffer;
 
-        }
-         */
+                /*
+                //place into open spot in lwArr
+                for(int a = 0; a < ldBuffer; a++) {
+                    if(ldArr[a].equals("")) {
+                        ldArr[a] = issueBuffer;
+                        break;
+                    }
+
+                 }
+                    */
+                    g.drawString(ldArr[0], originX + ldBase[0] + 5, originY + ldBase[1] - (height*0));
+                    //ldHold = true;
+
+            }
+
 
 
 
