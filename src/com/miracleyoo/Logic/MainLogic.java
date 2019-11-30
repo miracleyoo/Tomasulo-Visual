@@ -14,12 +14,12 @@ public class MainLogic {
 
     public class OperandInfo
     {
-        public String Operand = "";
-        public Boolean inst = Boolean.FALSE;
-        public Boolean issue = Boolean.FALSE;
-        public Boolean exeStart = Boolean.FALSE;
-        public Boolean exeEnd = Boolean.FALSE;
-        public Boolean writeBack = Boolean.FALSE;
+        public String operand = ""; // Only the operand name, like ADDD, MULD
+        public String inst = "";    // The whole instruction, like ADDD R1, R2, R3
+        public int issue = 0;
+        public int exeStart = 0;
+        public int exeEnd = 0;
+        public int writeBack = 0;
         public String DestReg = null;
         public String SourceReg1 = null;
         public String SourceReg2 = null;
@@ -84,6 +84,9 @@ public class MainLogic {
 
     private void updateOperandsInfoCur(){
         if (cycleTableItemNum<OpQueue){
+            for(int i=cycleTableItemNum; i>0; i++){
+//                cycleTableIndex[]
+            }
             cycleTableIndex[cycleTableItemNum] = cycleTableItemNum;
         }
         else {
@@ -93,6 +96,9 @@ public class MainLogic {
 
     private void updateCycleTableIndex(){
         if (cycleTableItemNum<OpQueue){
+            for(int i=cycleTableItemNum; i>0; i--){
+                cycleTableIndex[i]=cycleTableIndex[i-1];
+            }
             cycleTableIndex[cycleTableItemNum] = cycleTableItemNum;
         }
         else{
@@ -100,6 +106,9 @@ public class MainLogic {
         }
     }
 
+    private void judgeIssue() {
+
+    }
     private void OpsNOP(){}
 
     private void OpsHALT(){}

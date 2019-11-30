@@ -103,25 +103,22 @@ public class DataUI {
     private void constructCycleFullData(){
         for (int i=0; i<MainLogic.OpQueue; i++){
             if(MainLogic.cycleTableIndex[i]==-1){
-                break;
+                continue;
             }
-            cycleFullData[MainLogic.cycleTableItemNum-i][0] = MainLogic.OperandsInfoCur[i].Operand;
-            cycleFullData[MainLogic.cycleTableItemNum-i][0] = MainLogic.OperandsInfoCur[i].inst;
-            cycleFullData[MainLogic.cycleTableItemNum-i][0] = MainLogic.OperandsInfoCur[i].issue;
-            cycleFullData[MainLogic.cycleTableItemNum-i][0] = MainLogic.OperandsInfoCur[i].exeStart;
-            cycleFullData[MainLogic.cycleTableItemNum-i][0] = MainLogic.OperandsInfoCur[i].exeEnd;
-            cycleFullData[MainLogic.cycleTableItemNum-i][0] = MainLogic.OperandsInfoCur[i].writeBack;
+            cycleFullData[MainLogic.cycleTableItemNum-i][0] = MainLogic.OperandsInfoCur[MainLogic.cycleTableIndex[i]].inst;
+            cycleFullData[MainLogic.cycleTableItemNum-i][1] = MainLogic.OperandsInfoCur[MainLogic.cycleTableIndex[i]].issue;
+            cycleFullData[MainLogic.cycleTableItemNum-i][2] = MainLogic.OperandsInfoCur[MainLogic.cycleTableIndex[i]].exeStart;
+            cycleFullData[MainLogic.cycleTableItemNum-i][3] = MainLogic.OperandsInfoCur[MainLogic.cycleTableIndex[i]].exeEnd;
+            cycleFullData[MainLogic.cycleTableItemNum-i][4] = MainLogic.OperandsInfoCur[MainLogic.cycleTableIndex[i]].writeBack;
         }
     }
 
 
     // Update the data model when data are updated
     private void cycleTableUpdate() {
-        cycleColumnNames = new String[cycleNum];
         constructCycleFullData();
 //        cycleFullData = new String[5][cycleNum];
         for (int i = 0; i < cycleNum; i++) {
-            cycleColumnNames[i] = Integer.toString(i);
             for(int j=0; j<=min(i, 4); j++) {
                 cycleFullData[j][i] = cycleStageNames[i<=4?i-j:4-j];
             }
@@ -133,8 +130,6 @@ public class DataUI {
         for (int i = 0; i < cycleNum; i++) {
             CycleTable.getColumn(cycleColumnNames[i]).setCellRenderer(cycleTableRender);//new TableUtils.StatusColumnCellRenderer());
         }
-
-        cycleColumnWidths = new int[cycleColumnNames.length];
 
         TableUtils.setAllMinColumnSize(CycleTable, cycleColumnWidths);
         TableUtils.setAllPreferredColumnSize(CycleTable, cycleColumnWidths);
@@ -206,7 +201,7 @@ public class DataUI {
     // Initialize the cycle Table
     private void initCycleTable() {
         cycleColumnNames = new String[]{"INST", "ISSUE", "EXE START", "EXE END", "WB"};
-        cycleColumnWidths = new int[]{200,50,50,50,50};
+        cycleColumnWidths = new int[]{200,75,75,75,75};
         constructCycleFullData();
 //        cycleColumnWidths = new int[cycleNum];
 //        Arrays.fill(cycleColumnWidths, 100);
@@ -225,9 +220,6 @@ public class DataUI {
         for (int i = 0; i < 5; i++) {
             CycleTable.getColumn(cycleColumnNames[i]).setCellRenderer(cycleTableRender);
         }
-
-        cycleColumnWidths = new int[cycleColumnNames.length];
-        Arrays.fill(cycleColumnWidths, 100);
 
         TableUtils.setAllMinColumnSize(CycleTable, cycleColumnWidths);
         TableUtils.setAllPreferredColumnSize(CycleTable, cycleColumnWidths);
