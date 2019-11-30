@@ -12,9 +12,6 @@ public class Diagram extends JPanel {
     //    private int cycleNum; // To keep track of cycle number. It is changed to MainLogic.CycleNumCur
     private int cycleNumOld = 0;
 
-
-    //example instructions
-    private String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "lw", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
     private int instrIndex = 0;
 
     int fontSize = 9;
@@ -84,11 +81,11 @@ public class Diagram extends JPanel {
 
 
         //Push instructions onto opQArr initially
-        if (instrIndex < instr.length) { //needs to be adjusted to allow all instructions in OpQueue to be pushed through pipeline before throwing no more instr msg.
+        if (instrIndex < MainLogic.instr.length) { //needs to be adjusted to allow all instructions in OpQueue to be pushed through pipeline before throwing no more instr msg.
             for (int q = 0; q < MainLogic.OpQueue; q++) {
                 //if opQArr has a blank position, push next awaiting instruction
                 if (opQArr[q] == null) {
-                    opQArr[q] = new Instruction(instr[instrIndex], "", "", "", 1);
+                    opQArr[q] = new Instruction(MainLogic.instr[instrIndex], "", "", "", 1);
                     System.out.println("Instruction added: " + opQArr[q].op);
                     instrIndex++;
                 }
@@ -106,8 +103,8 @@ public class Diagram extends JPanel {
                 opQArr[q] = opQArr[q + 1];
             }
             //Check if instr array has awaiting instr.
-            if (instrIndex < instr.length) {
-                opQArr[MainLogic.OpQueue - 1] = new Instruction(instr[instrIndex], "", "", "", 0); //Grab next instruction from instruction array
+            if (instrIndex < MainLogic.instr.length) {
+                opQArr[MainLogic.OpQueue - 1] = new Instruction(MainLogic.instr[instrIndex], "", "", "", 0); //Grab next instruction from instruction array
                 instrIndex++;
             }
 
