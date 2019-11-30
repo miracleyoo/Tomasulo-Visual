@@ -57,7 +57,10 @@ public class MainLogic {
     public static long multiStepNum = 3;
 
     // The number of Operand queue. Sharing opQueue for int and fp.
-    public static int OpQueue = 10;
+    public static String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "lw", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
+    //public static String[] instr = {"add $R3,$R2,$R1"};
+    public static int OpQueue = instr.length; //size of instruction array
+
 
     // Operand info structures. It's length equals to the number of Operand cells in Diagram.
     public static OperandInfo[] OperandsInfoCur = new OperandInfo[OpQueue];
@@ -142,6 +145,8 @@ public class MainLogic {
     // The core logic. Called for each cycle update.
     public void parseStep(String operandLine){
         String destinationReg;
+        String srcTemp;
+        String[] src = new String[2];
         String operand;
         String operandType;
 
@@ -150,8 +155,29 @@ public class MainLogic {
 
         operandLine=operandLine.split(";")[0].trim();
         operand = operandLine.split("[ \t]]+")[0];
+        operand = operandLine.split("\\s+")[0];
         operand = operand.replace(".","").toUpperCase().trim();
+        srcTemp = operandLine.split("\\s+")[1];
+        srcTemp = srcTemp.toUpperCase().trim();
+
+
+
+        System.out.println(operandLine + " ");
+        //System.out.println(srcTemp);
+
+
         operandType = OperandMapper.get(operand);
+        System.out.println("Operand type: " + operandType);
+
+        destinationReg = srcTemp.split(",")[0];
+        src[0] = srcTemp.split(",")[1];
+        if(!operandType.equals("LOAD") || !operandType.equals("SAVE")) {
+            src[1] = srcTemp.split(",")[2]; //this won't exist for ld/sw!
+        }
+
+        System.out.println("destination: " + destinationReg);
+        System.out.println("src1: " + src[0]);
+        System.out.println("src2: " + src[1]);
 
         switch(operandType)
         {
@@ -205,5 +231,10 @@ public class MainLogic {
         mapListItems(BranchOps, "BRA");
         mapListItems(new String[]{"NOP"}, "NOP");
         mapListItems(new String[]{"HALT"}, "HALT");
+    }
+
+    //clock set function --> Main logic updates every clock cycle
+    public void setClock(int clk){
+        CycleNumCur = clk;
     }
 }
