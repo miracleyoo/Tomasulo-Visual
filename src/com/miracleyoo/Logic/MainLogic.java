@@ -13,20 +13,24 @@ public class MainLogic {
     private String[] SaveOps = {"SB","SH","SW","SD","SS","MTC0","MTC1","MFC0","MFC1"};
     private String[] LoadOps = {"LB","LH","LW","LD","LS","LBU","LHU","LWU"};
     private String[] BranchOps = {"BEQZ", "BENZ", "BEQ", "BNE", "J", "JR", "JAL", "JALR"};
+    private String[] InstructionState = {"Issue", "EXE", "WB", "End"};
 
 
     public class OperandInfo
     {
-        public String Operand = "";
-        public Boolean inst = Boolean.FALSE;
-        public Boolean issue = Boolean.FALSE;
-        public Boolean exeStart = Boolean.FALSE;
-        public Boolean exeEnd = Boolean.FALSE;
-        public Boolean writeBack = Boolean.FALSE;
+        public String operand = ""; // Only the operand name, like ADDD, MULD
+        public String inst = "";    // The whole instruction, like ADDD R1, R2, R3
+        public String state = "";   // Current state. It can only be
+        public int issue = 0;
+        public int exeStart = 0;
+        public int exeEnd = 0;
+        public int writeBack = 0;
         public String DestReg = null;
         public String SourceReg1 = null;
         public String SourceReg2 = null;
     };
+
+    private static OperandInfo tempOperandsInfo;
 
     ///////////////////////////////////////////////////////////////////////////
     ////////////////   Most Important Global Parameters ///////////////////////
@@ -95,8 +99,40 @@ public class MainLogic {
         }
     }
 
+
+
+    private void updateCycleTableIndex(){
+        if (cycleTableItemNum<OpQueue){
+            for(int i=cycleTableItemNum; i>0; i--){
+                cycleTableIndex[i]=cycleTableIndex[i-1];
+            }
+            cycleTableIndex[cycleTableItemNum] = cycleTableItemNum;
+        }
+        else{
+            cycleTableIndex[cycleTableItemNum%OpQueue] = cycleTableItemNum%OpQueue;
+        }
+    }
+
+    // Judge whether it is possible to issue a new instruction
+    // 1. Check whether there are some free operation stations
+    // 2. Check whether there are some free and corresponding FUs
+    private void judgeIssue() {
+        //
+    }
+
+    // Parse the next instruction and return a tempOperandsInfo
+    private void parseInstruction(){
+        //
+    }
+
+    // Update the OperandsInfoCur(current Operands station infos)
+    // 1. Put tempOperandsInfo in the right place
+    // 2. Update the Issue value and state of newly placed member
     private void updateOperandsInfoCur(){
         if (cycleTableItemNum<OpQueue){
+            for(int i=cycleTableItemNum; i>0; i++){
+//                cycleTableIndex[]
+            }
             cycleTableIndex[cycleTableItemNum] = cycleTableItemNum;
         }
         else {
@@ -104,13 +140,25 @@ public class MainLogic {
         }
     }
 
-    private void updateCycleTableIndex(){
-        if (cycleTableItemNum<OpQueue){
-            cycleTableIndex[cycleTableItemNum] = cycleTableItemNum;
-        }
-        else{
-            cycleTableIndex[cycleTableItemNum%OpQueue] = cycleTableItemNum%OpQueue;
-        }
+    // Sequentially check all of the items in the Operands station,
+    // And do corresponding operation to them according to state
+    private void checkAllOperandMember(){
+        //
+    }
+
+    // The operations applied to an instruction which is in issue state
+    private void IssueOps(){
+        //
+    }
+
+    // The operations applied to an instruction which is in execute state
+    private void ExeOps(){
+        //
+    }
+
+    // The operations applied to an instruction which is in write back state
+    private void WBOps(){
+        //
     }
 
     private void OpsNOP(){}
@@ -155,9 +203,10 @@ public class MainLogic {
         updateCycleTableIndex();
 
         operandLine=operandLine.split(";")[0].trim();
-        operand = operandLine.split("[ \t]]+")[0];
+//        operand = operandLine.split("[ \t]]+")[0];
         operand = operandLine.split("\\s+")[0];
         operand = operand.replace(".","").toUpperCase().trim();
+
         srcTemp = operandLine.split("\\s+")[1];
         //srcTemp = srcTemp.replace("\\s+", "");
         srcTemp = srcTemp.toUpperCase().trim();
@@ -166,6 +215,11 @@ public class MainLogic {
 
         System.out.println(operandLine);
         System.out.println(srcTemp);
+        srcTemp = operandLine.split("\\s+")[1].toUpperCase().trim();
+
+        System.out.println(operandLine + " ");
+        //System.out.println(srcTemp);
+
 
         operandType = OperandMapper.get(operand);
         System.out.println("Operand type: " + operandType);
