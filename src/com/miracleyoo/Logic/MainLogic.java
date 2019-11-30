@@ -120,8 +120,25 @@ public class MainLogic {
     }
 
     // Parse the next instruction and return a tempOperandsInfo
-    private void parseInstruction(){
-        //
+    private void parseInstruction(String operandLine){
+        String operand, srcTemp, operandType, destinationReg;
+        String[] src = new String[2];
+        operandLine=operandLine.split(";")[0].trim();
+        operand = operandLine.split("\\s+")[0];
+        operand = operand.replace(".","").toUpperCase().trim();
+        srcTemp = operandLine.split("\\s+")[1].toUpperCase().trim();
+
+        System.out.println(operandLine + " ");
+        //System.out.println(srcTemp);
+
+        operandType = OperandMapper.get(operand);
+        System.out.println("Operand type: " + operandType);
+
+        destinationReg = srcTemp.split(",")[0];
+        src[0] = srcTemp.split(",")[1];
+        if(!operandType.equals("LOAD") || !operandType.equals("SAVE")) {
+            src[1] = srcTemp.split(",")[2]; //this won't exist for ld/sw!
+        }
     }
 
     // Update the OperandsInfoCur(current Operands station infos)
