@@ -462,7 +462,8 @@ public class DataUI {
         GraphPanel.revalidate();
         GraphPanel.repaint();
 
-        mainLogic.parseStep("add $R3,$R2,$R1");
+
+        mainLogic.runLogic((int)stepNum);
 
         System.out.println("Execute step");
     }
