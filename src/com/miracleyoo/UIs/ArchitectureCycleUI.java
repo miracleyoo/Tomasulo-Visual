@@ -11,6 +11,7 @@ package com.miracleyoo.UIs;
 import com.miracleyoo.utils.BackgroundPanel;
 import com.miracleyoo.utils.NoneFrame;
 import com.miracleyoo.utils.UICommonUtils;
+import com.miracleyoo.Logic.MainLogic;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -30,15 +31,15 @@ class ArchitectureCycleUI {
     private int[] frameSize = new int[]{560, 315}; // The main frame size.
 
     private void summarizeAction(){
-        for(int i = 0; i<DataUI.architectureCycle.length; i++) {
-            if((long) InputTextField.get(i).getValue() > DataUI.architectureCycleMax[i]) { //max
-                DataUI.architectureCycle[i] = DataUI.architectureCycleMax[i]; //Max allowable value for RS
+        for(int i = 0; i<MainLogic.architectureCycle.length; i++) {
+            if((long) InputTextField.get(i).getValue() > MainLogic.architectureCycleMax[i]) { //max
+                MainLogic.architectureCycle[i] = MainLogic.architectureCycleMax[i]; //Max allowable value for RS
             }
             else if((long) InputTextField.get(i).getValue() < 1){
-                DataUI.architectureCycle[i] = 1; //min allowable value for RS
+                MainLogic.architectureCycle[i] = 1; //min allowable value for RS
             }
             else {
-                DataUI.architectureCycle[i] = (long) InputTextField.get(i).getValue();
+                MainLogic.architectureCycle[i] = (long) InputTextField.get(i).getValue();
             }
         }
         CoolMainUI.DataUIFrame.ResetALLData();
@@ -100,11 +101,11 @@ class ArchitectureCycleUI {
 
         // Initialize all InputTextFields and bound listeners to them.
         final int[] outerCounter = {0};
-        for(outerCounter[0]=0; outerCounter[0]<DataUI.architectureCycle.length; outerCounter[0]++) {
+        for(outerCounter[0]=0; outerCounter[0]<MainLogic.architectureCycle.length; outerCounter[0]++) {
             int innerCounter = outerCounter[0];
             InputTextField.add(new JFormattedTextField(numberFormatter));
             // Set the default value of each InputTextField by corresponding architecture values.
-            InputTextField.get(innerCounter).setValue(DataUI.architectureCycle[innerCounter]);
+            InputTextField.get(innerCounter).setValue(MainLogic.architectureCycle[innerCounter]);
             InputTextField.get(innerCounter).setOpaque(false);
 
             // Make each InputTextField automatically select all text when it get focus.
@@ -125,7 +126,7 @@ class ArchitectureCycleUI {
                 InputTextField.get(innerCounter).addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        DataUI.architectureCycle[innerCounter] = (long) InputTextField.get(innerCounter).getValue();
+                        MainLogic.architectureCycle[innerCounter] = (long) InputTextField.get(innerCounter).getValue();
                         // Make the next InputTextField selected when press enter
                         InputTextField.get(innerCounter+1).requestFocus();
                     }
@@ -135,7 +136,7 @@ class ArchitectureCycleUI {
                 InputTextField.get(innerCounter).addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        DataUI.architectureCycle[innerCounter] = (long) InputTextField.get(innerCounter).getValue();
+                        MainLogic.architectureCycle[innerCounter] = (long) InputTextField.get(innerCounter).getValue();
                         // Save all value set and close this window when user press enter at the last InputTextField
                         summarizeAction();
                     }

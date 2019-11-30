@@ -1,6 +1,7 @@
 package com.miracleyoo.UIs;
 
 import com.miracleyoo.utils.Instruction;
+import com.miracleyoo.Logic.MainLogic;
 
 import javax.swing.*;
 import javax.xml.crypto.Data;
@@ -8,14 +9,13 @@ import java.awt.*;
 
 public class Diagram extends JPanel {
 
-    int cycleNum; //To keep track of cycle number
-    int cycleNumOld = 0;
-
+    //    private int cycleNum; // To keep track of cycle number. It is changed to MainLogic.CycleNumCur
+    private int cycleNumOld = 0;
 
 
     //example instructions
-    String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "lw", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
-    int instrIndex = 0;
+    private String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "lw", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
+    private int instrIndex = 0;
 
     int fontSize = 9;
 
@@ -25,20 +25,20 @@ public class Diagram extends JPanel {
     static int operandWidth = 50;
 
     //Designate number of RS per Functional unit here
-    int sdBuffer = (int) DataUI.architectureNum[0];
-    int ldBuffer = (int) DataUI.architectureNum[1];
-    int integerRS = (int) DataUI.architectureNum[2];
-    int fpAdderRS = (int) DataUI.architectureNum[3];
-    int fpMultiplierRS = (int) DataUI.architectureNum[4];
-    int fpDividerRS = (int) DataUI.architectureNum[5];
-    public static int OpQueue = 10; //Sharing opQueue for int and fp
+    int sdBuffer = (int) MainLogic.architectureNum[0];
+    int ldBuffer = (int) MainLogic.architectureNum[1];
+    int integerRS = (int) MainLogic.architectureNum[2];
+    int fpAdderRS = (int) MainLogic.architectureNum[3];
+    int fpMultiplierRS = (int) MainLogic.architectureNum[4];
+    int fpDividerRS = (int) MainLogic.architectureNum[5];
+
     static int registers = 10;
     public static int diagramWidth = 600 + 200 + 50 + 50; // Most left: -200; Most right: 200 + 50(rect width)
-    public static int diagramHeight = 110 + height * OpQueue + height + 30; // Most down: -110; Most top: Reg rects top
+    public static int diagramHeight = 110 + height * MainLogic.OpQueue + height + 30; // Most down: -110; Most top: Reg rects top
     //Allows for window scaling while keeping objects in their relative positions
 
     Instruction blank = new Instruction("", "", "", "", 0);
-    Instruction[] opQArr = new Instruction[OpQueue];
+    Instruction[] opQArr = new Instruction[MainLogic.OpQueue];
     String[] ldArr = new String[ldBuffer]; //ldArray can hold at most capacity of ldBuffer
     boolean ldHold = false;
     String issueBuffer = "";
@@ -53,17 +53,17 @@ public class Diagram extends JPanel {
         paintComponent((Graphics2D) g);
     }
 
-    private void drawThickLine(Graphics2D g, int x1, int y1, int x2, int y2){
+    private void drawThickLine(Graphics2D g, int x1, int y1, int x2, int y2) {
         g.setStroke(new BasicStroke(3));
         g.drawLine(x1, y1, x2, y2);
         g.setStroke(new BasicStroke(1));
     }
 
-    public void setCycleNum(int c){
-        cycleNum = c;
+    public void setCycleNum(int c) {
+        MainLogic.CycleNumCur = c;
     }
 
-    protected void paintComponent(Graphics2D g){
+    protected void paintComponent(Graphics2D g) {
         super.paintComponent(g);
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
         int originX = getWidth() / 2 - 25;// getViewport().getSize().width;// getWidth()/2;
@@ -71,11 +71,11 @@ public class Diagram extends JPanel {
         g.setFont(new Font("TimesRoman", Font.PLAIN, fontSize));
 
 
-        g.drawString(Integer.toString(cycleNum), originX, originY); //debugging to keep track of updating diagram in sync with cycleNum
+        g.drawString(Integer.toString(MainLogic.CycleNumCur), originX, originY); //debugging to keep track of updating diagram in sync with MainLogic.CycleNumCur
 
         //Place OpQueue -- Note Op Queue is currently implementing both int and fp, THIS MAY NEED TO CHANGE!
-        g.drawString("OP Queue", originX - 100, originY - (height * OpQueue + height) - 60);
-        for (int q = 0; q < OpQueue; q++) {
+        g.drawString("OP Queue", originX - 100, originY - (height * MainLogic.OpQueue + height) - 60);
+        for (int q = 0; q < MainLogic.OpQueue; q++) {
             g.drawRect(originX - 100, originY - (height * q + height) - 60, 80, height);
         }
 
@@ -84,49 +84,47 @@ public class Diagram extends JPanel {
 
 
         //Push instructions onto opQArr initially
-        if(instrIndex < instr.length) { //needs to be adjusted to allow all instructions in OpQueue to be pushed through pipeline before throwing no more instr msg.
-            for (int q = 0; q < OpQueue; q++) {
+        if (instrIndex < instr.length) { //needs to be adjusted to allow all instructions in OpQueue to be pushed through pipeline before throwing no more instr msg.
+            for (int q = 0; q < MainLogic.OpQueue; q++) {
                 //if opQArr has a blank position, push next awaiting instruction
-                if(opQArr[q] == null) {
+                if (opQArr[q] == null) {
                     opQArr[q] = new Instruction(instr[instrIndex], "", "", "", 1);
                     System.out.println("Instruction added: " + opQArr[q].op);
                     instrIndex++;
                 }
             }
-        }
-
-        else {
+        } else {
             g.drawString("No more instructions left!", originX - 200, originY - 150);
         }
 
         //Try to push next instruction every clock cycle
-        if(cycleNum != cycleNumOld){
+        if (MainLogic.CycleNumCur != cycleNumOld) {
             //need to shift all elements in opQArr down by 1 index
             issueBuffer = opQArr[0].op;
             System.out.println("issueBuffer holds: " + issueBuffer);
-            for(int q = 0; q < OpQueue-1; q++){
-                opQArr[q] = opQArr[q+1];
+            for (int q = 0; q < MainLogic.OpQueue - 1; q++) {
+                opQArr[q] = opQArr[q + 1];
             }
             //Check if instr array has awaiting instr.
-            if(instrIndex < instr.length) {
-                opQArr[OpQueue - 1] = new Instruction(instr[instrIndex], "", "", "", 0); //Grab next instruction from instruction array
+            if (instrIndex < instr.length) {
+                opQArr[MainLogic.OpQueue - 1] = new Instruction(instr[instrIndex], "", "", "", 0); //Grab next instruction from instruction array
                 instrIndex++;
             }
 
             //If no more instructions, begin clearing the Opqueue
-            else{
-                opQArr[OpQueue - 1] = blank;
+            else {
+                opQArr[MainLogic.OpQueue - 1] = blank;
             }
 
             //for debugging purposes
-            for(int q = 0; q < OpQueue; q++) {
+            for (int q = 0; q < MainLogic.OpQueue; q++) {
                 System.out.println("Instruction added: " + opQArr[q].op);
             }
 
-            cycleNumOld = cycleNum;
+            cycleNumOld = MainLogic.CycleNumCur;
         }
 
-        for(int q = 0; q < OpQueue; q++){
+        for (int q = 0; q < MainLogic.OpQueue; q++) {
             g.drawString(opQArr[q].op, originX - 95, originY - (height * q) - 62);
         }
 
@@ -142,8 +140,8 @@ public class Diagram extends JPanel {
         //Create ldWord array to hold instructions while they execute load
         //on clock cycle
 
-            if (issueBuffer.equals("lw")) {
-                ldArr[0] = issueBuffer;
+        if (issueBuffer.equals("lw")) {
+            ldArr[0] = issueBuffer;
 
                 /*
                 //place into open spot in lwArr
@@ -155,12 +153,10 @@ public class Diagram extends JPanel {
 
                  }
                     */
-                    g.drawString(ldArr[0], originX + ldBase[0] + 5, originY + ldBase[1] - (height*0));
-                    //ldHold = true;
+            g.drawString(ldArr[0], originX + ldBase[0] + 5, originY + ldBase[1] - (height * 0));
+            //ldHold = true;
 
-            }
-
-
+        }
 
 
         //Place sdBuffers

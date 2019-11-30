@@ -10,16 +10,93 @@ public class MainLogic {
     private String[] IntOps = {"DADDI","DADDIU","SLTI","ANDI","ORI","XORI","DSLL","DSRL","DSRA","DSLLV","DSRLV","DSRAV"};
     private String[] SaveOps = {"SB","SH","SW","SD","SS","MTC0","MTC1","MFC0","MFC1"};
     private String[] LoadOps = {"LB","LH","LW","LD","LS","LBU","LHU","LWU"};
-    public String[] BranchOps = {"BEQZ", "BENZ", "BEQ", "BNE", "J", "JR", "JAL", "JALR"};
+    private String[] BranchOps = {"BEQZ", "BENZ", "BEQ", "BNE", "J", "JR", "JAL", "JALR"};
 
-    public static int[] IntRegs = new int[32]; // Integer Registers
-    public static float[] FloatRegs = new float[32]; // Float Registers
+    public class OperandInfo
+    {
+        public String Operand = "";
+        public Boolean inst = Boolean.FALSE;
+        public Boolean issue = Boolean.FALSE;
+        public Boolean exeStart = Boolean.FALSE;
+        public Boolean exeEnd = Boolean.FALSE;
+        public Boolean writeBack = Boolean.FALSE;
+        public String DestReg = null;
+        public String SourceReg1 = null;
+        public String SourceReg2 = null;
+    };
 
+    ///////////////////////////////////////////////////////////////////////////
+    ////////////////   Most Important Global Parameters ///////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
+    // The current cycle number.
+    public static int CycleNumCur = 0;
+
+    // All Integer Registers.
+    public static int[] IntRegs = new int[32];
+
+    // All Float Registers.
+    public static float[] FloatRegs = new float[32];
+
+    // All statistics information.
+    public static int[] statisticsInfo = new int[9];
+
+    // Architecture parameters' value. "ld, sd, int, fpAdd, fpMul, fpDiv"
+    public static long[] architectureNum = new long[]{6, 6, 5, 4, 4, 3};
+
+    // Architecture parameters' max value.
+    public static long[] architectureNumMax = new long[]{9, 9, 9, 9, 9, 9};
+
+    // Architecture cycle numbers' value.
+    public static long[] architectureCycle = new long[]{10, 10, 4, 7, 24, 5};
+
+    // Architecture cycle numbers' max value.
+    public static long[] architectureCycleMax = new long[]{100,100,100,100,100,100};
+
+    // How many cycles to proceed when "Execute multiple cycle" button is pressed.
+    public static long multiStepNum = 3;
+
+    // The number of Operand queue. Sharing opQueue for int and fp.
+    public static int OpQueue = 10;
+
+    // Operand info structures. It's length equals to the number of Operand cells in Diagram.
+    public static OperandInfo[] OperandsInfoCur = new OperandInfo[OpQueue];
+
+    // Cycle table show index list.
+    public static int[] cycleTableIndex = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+
+    // The number of current in-stack operands
+    public static int cycleTableItemNum = 0;
+
+    // Operand classify dictionary. Key:Value -> Operand:Class
     public static Map< String, String> OperandMapper = new HashMap<>();
 
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////   Most Important Global Parameters End ////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Push the list item to corresponding dictionary Key:Value pair
     private void mapListItems (String[]inputList, String listName){
         for (String operand : inputList) {
             OperandMapper.put(operand, listName);
+        }
+    }
+
+    private void updateOperandsInfoCur(){
+        if (cycleTableItemNum<OpQueue){
+            cycleTableIndex[cycleTableItemNum] = cycleTableItemNum;
+        }
+        else {
+
+        }
+    }
+
+    private void updateCycleTableIndex(){
+        if (cycleTableItemNum<OpQueue){
+            cycleTableIndex[cycleTableItemNum] = cycleTableItemNum;
+        }
+        else{
+            cycleTableIndex[cycleTableItemNum%OpQueue] = cycleTableItemNum%OpQueue;
         }
     }
 
@@ -53,15 +130,20 @@ public class MainLogic {
         // Two types, normal save and directly save to register like MTC0
     }
 
+    // The core logic. Called for each cycle update.
     public void parseStep(String operandLine){
         String destinationReg;
         String operand;
         String operandType;
 
+        // Update the Cycle Table Index to make Cycle Table run correctly.
+        updateCycleTableIndex();
+
         operandLine=operandLine.split(";")[0].trim();
         operand = operandLine.split("[ \t]]+")[0];
         operand = operand.replace(".","").toUpperCase().trim();
         operandType = OperandMapper.get(operand);
+
         switch(operandType)
         {
             case "NOP" :
@@ -100,6 +182,7 @@ public class MainLogic {
                 else if(operandType.contains("AND") || operandType.contains("OR")){
                     OpsLogic();
                 }
+
         }
     }
 

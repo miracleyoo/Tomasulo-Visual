@@ -14,6 +14,7 @@ import java.util.Map;
 
 import com.miracleyoo.utils.*;
 import com.miracleyoo.Logic.*;
+import com.sun.tools.javac.Main;
 
 import static java.lang.Integer.min;
 
@@ -43,12 +44,7 @@ public class DataUI {
     static private String[] operandColumnNames, registerColumnNames, dataColumnNames, cycleColumnNames;
     static private String[] cycleStageNames= new String[]{"IF", "ID", "EX", "MEM", "WB"};
     static private DefaultTableModel operandModel, registerModel, dataModel, cycleModel;
-    static private int[] statisticsInfo = new int[9];
-    public static long architectureNum[] = new long[]{6, 6, 5, 4, 4, 3}; //ld, sd, int, fpAdd, fpMul, fpDiv
-    public static long architectureNumMax[] = {9, 9, 9, 9, 9, 9};
-    public static long architectureCycle[] = new long[]{10, 10, 4, 7, 24, 5};
-    public static long architectureCycleMax[] = {100,100,100,100,100,100};
-    static long multiStepNum = 3;
+
 
     // Whether using Dark Mode or not(Light Mode)
     public static boolean DarkMode=false;
@@ -68,8 +64,7 @@ public class DataUI {
     private int[] operandColumnWidths = new int[]{100, 400};
     private int[] registerColumnWidths = new int[]{120, 160, 120, 160};
 
-    private int[] cycleColumnWidths;
-    private int cycleColumnWidth = 100;
+    private int[] cycleColumnWidths = new int[]{200,50,50,50,50};
     private int cycleNum=0;
 
 
@@ -105,12 +100,26 @@ public class DataUI {
         TableUtils.setAllPreferredColumnSize(DataTable, dataColumnWidths);
     }
 
+    private void constructCycleFullData(){
+        for (int i=0; i<MainLogic.OpQueue; i++){
+            if(MainLogic.cycleTableIndex[i]==-1){
+                break;
+            }
+            cycleFullData[MainLogic.cycleTableItemNum-i][0] = MainLogic.OperandsInfoCur[i].Operand;
+            cycleFullData[MainLogic.cycleTableItemNum-i][0] = MainLogic.OperandsInfoCur[i].inst;
+            cycleFullData[MainLogic.cycleTableItemNum-i][0] = MainLogic.OperandsInfoCur[i].issue;
+            cycleFullData[MainLogic.cycleTableItemNum-i][0] = MainLogic.OperandsInfoCur[i].exeStart;
+            cycleFullData[MainLogic.cycleTableItemNum-i][0] = MainLogic.OperandsInfoCur[i].exeEnd;
+            cycleFullData[MainLogic.cycleTableItemNum-i][0] = MainLogic.OperandsInfoCur[i].writeBack;
+        }
+    }
+
+
     // Update the data model when data are updated
     private void cycleTableUpdate() {
         cycleColumnNames = new String[cycleNum];
-        cycleFullData = new String[5][cycleNum];
-        cycleColumnWidths = new int[cycleNum];
-        Arrays.fill(cycleColumnWidths, 100);
+        constructCycleFullData();
+//        cycleFullData = new String[5][cycleNum];
         for (int i = 0; i < cycleNum; i++) {
             cycleColumnNames[i] = Integer.toString(i);
             for(int j=0; j<=min(i, 4); j++) {
@@ -126,7 +135,6 @@ public class DataUI {
         }
 
         cycleColumnWidths = new int[cycleColumnNames.length];
-        Arrays.fill(cycleColumnWidths, cycleColumnWidth);
 
         TableUtils.setAllMinColumnSize(CycleTable, cycleColumnWidths);
         TableUtils.setAllPreferredColumnSize(CycleTable, cycleColumnWidths);
@@ -148,8 +156,8 @@ public class DataUI {
 
     //Reset Diagram --> refresh Tomasulo GraphPanel to defaults
     public void resetTomasulo() {
-        architectureNum = new long[]{6, 6, 5, 4, 4, 3};
-        architectureCycle = new long[]{10, 10, 4, 7, 24, 5};
+        MainLogic.architectureNum = new long[]{6, 6, 5, 4, 4, 3};
+        MainLogic.architectureCycle = new long[]{10, 10, 4, 7, 24, 5};
         updateArchitecture();
     }
 
@@ -197,11 +205,13 @@ public class DataUI {
 
     // Initialize the cycle Table
     private void initCycleTable() {
-        cycleColumnNames = new String[]{"1", "2", "3", "4", "5"};
-        cycleColumnWidths = new int[cycleNum];
-        Arrays.fill(cycleColumnWidths, 100);
+        cycleColumnNames = new String[]{"INST", "ISSUE", "EXE START", "EXE END", "WB"};
+        cycleColumnWidths = new int[]{200,50,50,50,50};
+        constructCycleFullData();
+//        cycleColumnWidths = new int[cycleNum];
+//        Arrays.fill(cycleColumnWidths, 100);
 
-        cycleFullData = new String[5][5];
+        cycleFullData = new String[MainLogic.OpQueue][5];
         for (int i = 0; i < 5; i++) {
             for(int j=0; j<=i; j++) {
                 cycleFullData[j][i] = cycleStageNames[i-j];
@@ -243,17 +253,17 @@ public class DataUI {
         // the background color is used only if the component is opaque
         StatisticsText.setText(
                 "<html><font color="+ colorSchemeMainCur[7]+"><b>Execution</b></font><br>" +
-                        statisticsInfo[0] + " Cycles<br>" +
-                        statisticsInfo[1] + " Instructions<br><br>" +
+                        MainLogic.statisticsInfo[0] + " Cycles<br>" +
+                        MainLogic.statisticsInfo[1] + " Instructions<br><br>" +
                         "<font color="+ colorSchemeMainCur[7]+"><b>Stalls</b></font><br>" +
-                        statisticsInfo[2] + " RAW Stalls<br>" +
-                        statisticsInfo[3] + " WAW Stalls<br>" +
-                        statisticsInfo[4] + " WAR Stalls<br>" +
-                        statisticsInfo[5] + " Structural Stalls<br>" +
-                        statisticsInfo[6] + " Branch Taken Stalls<br>" +
-                        statisticsInfo[7] + " Branch Mis-prediction Stalls<br><br>" +
+                        MainLogic.statisticsInfo[2] + " RAW Stalls<br>" +
+                        MainLogic.statisticsInfo[3] + " WAW Stalls<br>" +
+                        MainLogic.statisticsInfo[4] + " WAR Stalls<br>" +
+                        MainLogic.statisticsInfo[5] + " Structural Stalls<br>" +
+                        MainLogic.statisticsInfo[6] + " Branch Taken Stalls<br>" +
+                        MainLogic.statisticsInfo[7] + " Branch Mis-prediction Stalls<br><br>" +
                         "<font color="+ colorSchemeMainCur[7]+"><b>Code Size</b></font><br>" +
-                        statisticsInfo[8] + " Bytes"
+                        MainLogic.statisticsInfo[8] + " Bytes"
         );
     }
 
@@ -348,7 +358,7 @@ public class DataUI {
         execItems.get("Single Cycle").addActionListener(e -> ExeSteps(1));
 
         // Execute multiple steps
-        execItems.get("Multi Cycles").addActionListener(e -> ExeSteps(multiStepNum));
+        execItems.get("Multi Cycles").addActionListener(e -> ExeSteps(MainLogic.multiStepNum));
 
         // Add menu items to menu mConf
         // Here may need some other Configures
@@ -533,9 +543,7 @@ public class DataUI {
         ExecuteOneStepBtn.addActionListener(e -> ExeSteps(1));
 
         // Execute multiple step button action
-        ExecuteMultipleStepBtn.addActionListener(e -> ExeSteps(multiStepNum));
-
-
+        ExecuteMultipleStepBtn.addActionListener(e -> ExeSteps(MainLogic.multiStepNum));
 
         // Set the scheme according to the UI color mode
         SetUIScheme();

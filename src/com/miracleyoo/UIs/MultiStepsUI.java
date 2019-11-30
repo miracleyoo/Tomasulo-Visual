@@ -11,6 +11,7 @@ package com.miracleyoo.UIs;
 import com.miracleyoo.utils.BackgroundPanel;
 import com.miracleyoo.utils.NoneFrame;
 import com.miracleyoo.utils.UICommonUtils;
+import com.miracleyoo.Logic.MainLogic;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -54,7 +55,7 @@ class MultiStepsUI {
         numberFormatter.setAllowsInvalid(false); //this is the key!!
         numberFormatter.setMinimum(0L); //Optional
         InputTextField = new JFormattedTextField(numberFormatter);
-        InputTextField.setValue(DataUI.multiStepNum);
+        InputTextField.setValue(MainLogic.multiStepNum);
         InputTextField.setOpaque(false);
 
         // Add action to EnterTextAction. Execute when "enter" is pressed.
@@ -62,7 +63,7 @@ class MultiStepsUI {
         Action EnterTextAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                DataUI.multiStepNum = (long) InputTextField.getValue();
+                MainLogic.multiStepNum = (long) InputTextField.getValue();
                 MainFrame.dispose();
             }
         };
