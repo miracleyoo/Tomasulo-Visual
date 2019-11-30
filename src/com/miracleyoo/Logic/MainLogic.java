@@ -1,5 +1,7 @@
 package com.miracleyoo.Logic;
 
+import com.miracleyoo.utils.Instruction;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +14,7 @@ public class MainLogic {
     private String[] LoadOps = {"LB","LH","LW","LD","LS","LBU","LHU","LWU"};
     private String[] BranchOps = {"BEQZ", "BENZ", "BEQ", "BNE", "J", "JR", "JAL", "JALR"};
     private String[] InstructionState = {"Issue", "EXE", "WB", "End"};
+
 
     public class OperandInfo
     {
@@ -46,7 +49,7 @@ public class MainLogic {
     public static int[] statisticsInfo = new int[9];
 
     // Architecture parameters' value. "ld, sd, int, fpAdd, fpMul, fpDiv"
-    public static long[] architectureNum = new long[]{6, 6, 5, 4, 4, 3};
+    public static long[] architectureNum = new long[]{6, 6, 5, 4, 4, 3}; //may need to change this back to type long if bugs
 
     // Architecture parameters' max value.
     public static long[] architectureNumMax = new long[]{9, 9, 9, 9, 9, 9};
@@ -61,8 +64,9 @@ public class MainLogic {
     public static long multiStepNum = 3;
 
     // The number of Operand queue. Sharing opQueue for int and fp.
-    public static String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "lw", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
-    //public static String[] instr = {"add $R3,$R2,$R1"};
+    //public static String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "lw", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
+    //public static String[] instr = {"ld $R5,0($R4)", "add $R3,$R2,$R5", "sw $R3,0($R8)" , "sub $R4,$R3,$R5", "mul $R10,$R11,R12", "sw $10, 0($R11)"};
+    public static String[] instr = {"ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)"};
     public static int OpQueue = instr.length; //size of instruction array
 
 
@@ -81,6 +85,12 @@ public class MainLogic {
     ///////////////////////////////////////////////////////////////////////////
     ///////////////   Most Important Global Parameters End ////////////////////
     ///////////////////////////////////////////////////////////////////////////
+
+    Instruction in;
+    Instruction blankInstr = new Instruction("", "", "", "", -1, 0);
+    Instruction iBuffer; //Holds and places instruction from OpQueue into appropriate RS
+    Instruction cdb = blankInstr; //holds instruction that has finished executing and pushes it to destination
+    Instruction[] ldBuffer = new Instruction[(int)architectureNum[0]];
 
     // Push the list item to corresponding dictionary Key:Value pair
     private void mapListItems (String[]inputList, String listName){
@@ -213,18 +223,31 @@ public class MainLogic {
 //        operand = operandLine.split("[ \t]]+")[0];
         operand = operandLine.split("\\s+")[0];
         operand = operand.replace(".","").toUpperCase().trim();
+
+        srcTemp = operandLine.split("\\s+")[1];
+        //srcTemp = srcTemp.replace("\\s+", "");
+        srcTemp = srcTemp.toUpperCase().trim();
+
+
+
+        System.out.println(operandLine);
+        System.out.println(srcTemp);
         srcTemp = operandLine.split("\\s+")[1].toUpperCase().trim();
 
         System.out.println(operandLine + " ");
         //System.out.println(srcTemp);
+
 
         operandType = OperandMapper.get(operand);
         System.out.println("Operand type: " + operandType);
 
         destinationReg = srcTemp.split(",")[0];
         src[0] = srcTemp.split(",")[1];
-        if(!operandType.equals("LOAD") || !operandType.equals("SAVE")) {
-            src[1] = srcTemp.split(",")[2]; //this won't exist for ld/sw!
+        if(operandType.equals("LOAD") || operandType.equals("SAVE")) {
+            src[1] = ""; //this won't exist for ld/sw!
+        }
+        else{
+            src[1] = srcTemp.split(",")[2];
         }
 
         System.out.println("destination: " + destinationReg);
@@ -271,6 +294,7 @@ public class MainLogic {
                 }
 
         }
+        in = new Instruction(operandType, destinationReg, src[0], src[1], 3, 0); //example
     }
 
     public MainLogic() {
@@ -286,7 +310,69 @@ public class MainLogic {
     }
 
     //clock set function --> Main logic updates every clock cycle
-    public void setClock(int clk){
+    public void runLogic(int clk){
         CycleNumCur = clk;
-    }
+
+        if(clk < instr.length) {
+            parseStep(instr[clk]);
+
+            switch(in.op){
+                case "LOAD":
+                //push to load buffer on diagram if no structural hazard!
+                System.out.println("ld detected!");
+                for (int x = 0; x < ldBuffer.length; x++) {
+                    if (ldBuffer[x] == null || ldBuffer[x] == blankInstr) {
+                        ldBuffer[x] = in;
+                        System.out.println("ldBuffer[" + x + "]" + ldBuffer[0].op);
+                        break;
+                    } else {
+                        System.out.println("Structural hazard in ldBuffer detected! Stalling issue");
+                    }
+                }
+                break;
+
+                case "ADD":
+                    System.out.println("fpAdd detected");
+                break;
+
+                case "MUL":
+                    System.out.println("fpMul detected");
+                break;
+
+                case "DIV":
+                    System.out.println("fpDiv detected");
+                break;
+
+                case "INT":
+                    System.out.println("intOp detected");
+                break;
+            }
+        }
+
+        //---ldBuffer-- run execution cycles once inside ldBuffer
+        for (int x = 0; x < ldBuffer.length; x++) {
+            if (ldBuffer[x] != null || ldBuffer[x] != blankInstr) {
+                if(ldBuffer[x].currentClk < ldBuffer[x].exeTime) {
+                    //This is gonna get messy with multiple clock steps...
+                    ldBuffer[x].currentClk = ldBuffer[x].currentClk + clk; //increment every clock the instruction is in the ldBuffer
+                }
+
+                else{
+                    //put on cdb if clear
+                    if(cdb == null || cdb == blankInstr){
+                        cdb = ldBuffer[x]; //move completed instruction onto CDB and proceed with WB
+                    }
+                }
+            }
+        }
+    } //---end method---
 }
+
+/*
+if ldBuffer empty
+    Issue load
+
+    Execute load
+
+    Stall until CDB is available for write back, then WB
+ */

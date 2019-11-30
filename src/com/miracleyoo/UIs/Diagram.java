@@ -90,15 +90,16 @@ public class Diagram extends JPanel {
                     instrIndex++;
                 }
             }
-        } else {
-            g.drawString("No more instructions left!", originX - 200, originY - 150);
+        }
+        else {
+            //g.drawString("No more instructions left!", originX - 200, originY - 150);
         }
 
         //Try to push next instruction every clock cycle
         if (MainLogic.CycleNumCur != cycleNumOld) {
             //need to shift all elements in opQArr down by 1 index
             issueBuffer = opQArr[0].op;
-            System.out.println("issueBuffer holds: " + issueBuffer);
+            //System.out.println("issueBuffer holds: " + issueBuffer);
             for (int q = 0; q < MainLogic.OpQueue - 1; q++) {
                 opQArr[q] = opQArr[q + 1];
             }
@@ -114,9 +115,11 @@ public class Diagram extends JPanel {
             }
 
             //for debugging purposes
+            /*
             for (int q = 0; q < MainLogic.OpQueue; q++) {
                 System.out.println("Instruction added: " + opQArr[q].op);
             }
+             */
 
             cycleNumOld = MainLogic.CycleNumCur;
         }
