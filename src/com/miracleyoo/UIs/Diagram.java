@@ -80,11 +80,11 @@ public class Diagram extends JPanel {
 
 
         //Push instructions onto opQArr initially
-        if (instrIndex < MainLogic.instr.length) { //needs to be adjusted to allow all instructions in OpQueue to be pushed through pipeline before throwing no more instr msg.
+        if (instrIndex < MainLogic.OperandsInfoStation.size()){//instr.length) { //needs to be adjusted to allow all instructions in OpQueue to be pushed through pipeline before throwing no more instr msg.
             for (int q = 0; q < MainLogic.OpQueue; q++) {
                 //if opQArr has a blank position, push next awaiting instruction
                 if (opQArr[q] == null) {
-                    opQArr[q] = new Instruction(MainLogic.instr[instrIndex], "", "", "", 1 , 0);
+                    opQArr[q] = new Instruction(MainLogic.OperandsInfoStation.get(instrIndex).operand, MainLogic.OperandsInfoStation.get(instrIndex).DestReg,MainLogic.OperandsInfoStation.get(instrIndex).SourceReg1,MainLogic.OperandsInfoStation.get(instrIndex).SourceReg2, MainLogic.OperandsInfoStation.get(instrIndex).currentStageCycleNum, MainLogic.CycleNumCur);//instr[instrIndex], "", "", "", 1 , 0);
                     System.out.println("Instruction added: " + opQArr[q].op);
                     instrIndex++;
                 }
@@ -103,8 +103,8 @@ public class Diagram extends JPanel {
                 opQArr[q] = opQArr[q + 1];
             }
             //Check if instr array has awaiting instr.
-            if (instrIndex < MainLogic.instr.length) {
-                opQArr[MainLogic.OpQueue - 1] = new Instruction(MainLogic.instr[instrIndex], "", "", "", 0, 0); //Grab next instruction from instruction array
+            if (instrIndex < MainLogic.OperandsInfoStation.size()) {
+                opQArr[MainLogic.OpQueue - 1] = new Instruction(MainLogic.OperandsInfoStation.get(instrIndex).operand, MainLogic.OperandsInfoStation.get(instrIndex).DestReg,MainLogic.OperandsInfoStation.get(instrIndex).SourceReg1,MainLogic.OperandsInfoStation.get(instrIndex).SourceReg2, MainLogic.OperandsInfoStation.get(instrIndex).currentStageCycleNum, MainLogic.CycleNumCur);//Instruction(MainLogic.instr[instrIndex], "", "", "", 0, 0); //Grab next instruction from instruction array
                 instrIndex++;
             }
 

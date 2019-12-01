@@ -17,7 +17,7 @@ public class MainLogic {
     private String[] TypeNames = {"NOP", "HALT", "ADD", "INT", "DIV", "MUL", "LOAD", "SAVE", "BRA"};
 
 
-    public class OperandInfo
+    public static class OperandInfo
     {
         public String operand = ""; // Only the operand name, like ADDD, MULD
         public String inst = "";    // The whole instruction, like ADDD R1, R2, R3
@@ -27,6 +27,7 @@ public class MainLogic {
         public int exeEnd = 0;
         public int writeBack = 0;
         public int currentStageCycleNum = 1;
+        public int absoluteIndex = 0; // This is the line number of this instruction.
         public String DestReg = null;
         public String SourceReg1 = null;
         public String SourceReg2 = null;
@@ -34,19 +35,19 @@ public class MainLogic {
 
     private static OperandInfo tempOperandsInfo;
 
-    public class FloatRegTemplate{
+    public static class FloatRegTemplate{
         public float value= (float) 0.0;
         public Boolean ready = Boolean.FALSE;
         public int occupyInstId = 0;
     }
 
-    public class IntRegTemplate{
+    public static class IntRegTemplate{
         public int value= 0;
         public Boolean ready = Boolean.FALSE;
         public int occupyInstId = 0;
     }
 
-    public class FUTemplate{
+    public static class FUTemplate{
         public Boolean busy = Boolean.FALSE;
         public int occupyInstId = 0;
     }
@@ -112,8 +113,6 @@ public class MainLogic {
 
     public static Map< String, FUTemplate[]> Type2FUsMap = new HashMap<>();
 
-
-
     ///////////////////////////////////////////////////////////////////////////
     ///////////////   Most Important Global Parameters End ////////////////////
     ///////////////////////////////////////////////////////////////////////////
@@ -169,11 +168,13 @@ public class MainLogic {
 
     // Judge whether it is available to start execution
     private Boolean judgeExe(){
+        //
         return Boolean.FALSE;
     }
 
     // Judge whether it is available to write back
     private Boolean judgeWB(){
+        //
         return Boolean.FALSE;
     }
 
@@ -206,6 +207,8 @@ public class MainLogic {
         OperandsInfoStation.addFirst(tempOperandsInfo);
         OperandsInfoStation.getFirst().issue = CycleNumCur;
         OperandsInfoStation.getFirst().state = InstructionState[0];
+        OperandsInfoStation.getFirst().absoluteIndex = instructionLineCur;
+        OperandsInfoStation.getFirst().inst = InstructionFullList.get(instructionLineCur);
     }
 
     // Sequentially check all of the items in the Operands station,
@@ -249,9 +252,21 @@ public class MainLogic {
         }
     }
 
+
     // The operations applied to an instruction which is in issue state
     private void IssueOps(){
-        //
+        String regName;
+        int index_;
+        regName = OperandsInfoStation.getFirst().DestReg;
+        index_ =  Integer.parseInt(regName.replaceAll("\\D+",""));
+        if(regName.startsWith("R")){
+            IntRegs[index_].ready=Boolean.FALSE;
+            IntRegs[index_].occupyInstId = OperandsInfoStation.getFirst().absoluteIndex;
+        }
+        else if(regName.startsWith("F")){
+            FloatRegs[index_].ready=Boolean.FALSE;
+            FloatRegs[index_].occupyInstId = OperandsInfoStation.getFirst().absoluteIndex;
+        }
     }
 
     // The operations applied to an instruction which is in execute state
@@ -369,6 +384,38 @@ public class MainLogic {
         mapListItems(BranchOps, "BRA");
         mapListItems(new String[]{"NOP"}, "NOP");
         mapListItems(new String[]{"HALT"}, "HALT");
+
+        for (int i=0; i< IntRegs.length; i++){
+            IntRegs[i] = new IntRegTemplate();
+        }
+
+        for (int i=0; i< FloatRegs.length; i++){
+            FloatRegs[i] = new FloatRegTemplate();
+        }
+
+        for (int i=0; i< AddFUs.length; i++){
+            AddFUs[i] = new FUTemplate();
+        }
+
+        for (int i=0; i< MulFUs.length; i++){
+            MulFUs[i] = new FUTemplate();
+        }
+
+        for (int i=0; i< DivFUs.length; i++){
+            DivFUs[i] = new FUTemplate();
+        }
+
+        for (int i=0; i< SaveFUs.length; i++){
+            SaveFUs[i] = new FUTemplate();
+        }
+
+        for (int i=0; i< LoadFUs.length; i++){
+            LoadFUs[i] = new FUTemplate();
+        }
+
+        for (int i=0; i< IntFUs.length; i++){
+            IntFUs[i] = new FUTemplate();
+        }
 
         Type2FUsMap.put("ADD", AddFUs);
         Type2FUsMap.put("MUL", MulFUs);

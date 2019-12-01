@@ -98,7 +98,7 @@ public class DataUI {
 
 
     private void constructCycleFullData(){
-        for (int i=0; i<MainLogic.OpQueue; i++){
+        for (int i=0; i<MainLogic.OperandsInfoStation.size(); i++){
             cycleFullData[i][0] = MainLogic.OperandsInfoStation.get(i).inst;
             cycleFullData[i][1] = MainLogic.OperandsInfoStation.get(i).issue;
             cycleFullData[i][2] = MainLogic.OperandsInfoStation.get(i).exeStart;
@@ -450,7 +450,7 @@ public class DataUI {
         GraphPanel.repaint();
 
 
-        mainLogic.runLogic((int)stepNum);
+//        mainLogic.runLogic((int)stepNum);
 
         System.out.println("Execute step");
     }
