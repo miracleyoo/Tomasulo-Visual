@@ -63,8 +63,6 @@ public class DataUI {
     private int[] registerColumnWidths = new int[]{120, 160, 120, 160};
 
     private int[] cycleColumnWidths = new int[]{200,50,50,50,50};
-    private int cycleNum=0;
-
 
     private TableUtils.StatusColumnCellRenderer cycleTableRender = new TableUtils.StatusColumnCellRenderer();
 
@@ -113,8 +111,8 @@ public class DataUI {
     // Update the data model when data are updated
     private void cycleTableUpdate() {
         constructCycleFullData();
-//        cycleFullData = new String[5][cycleNum];
-        for (int i = 0; i < cycleNum; i++) {
+//        cycleFullData = new String[5][MainLogic.CycleNumCur];
+        for (int i = 0; i < MainLogic.CycleNumCur; i++) {
             for(int j=0; j<=min(i, 4); j++) {
                 cycleFullData[j][i] = cycleStageNames[i<=4?i-j:4-j];
             }
@@ -123,7 +121,7 @@ public class DataUI {
         cycleModel.fireTableDataChanged();
 //        CycleTable.setFillsViewportHeight(true);
 
-        for (int i = 0; i < cycleNum; i++) {
+        for (int i = 0; i < MainLogic.CycleNumCur; i++) {
             CycleTable.getColumn(cycleColumnNames[i]).setCellRenderer(cycleTableRender);//new TableUtils.StatusColumnCellRenderer());
         }
 
@@ -135,7 +133,7 @@ public class DataUI {
     void ResetALLData() {
         operandSlice[0] = 0;
         operandSlice[1] = 5;
-        cycleNum = 0;
+        MainLogic.CycleNumCur = 0;
         CycleLabel.setText("Cycles(Preview)");
         operandTableUpdate();
         dataTableUpdate();
@@ -199,7 +197,7 @@ public class DataUI {
         cycleColumnNames = new String[]{"INST", "ISSUE", "EXE START", "EXE END", "WB"};
         cycleColumnWidths = new int[]{200,75,75,75,75};
         constructCycleFullData();
-//        cycleColumnWidths = new int[cycleNum];
+//        cycleColumnWidths = new int[MainLogic.CycleNumCur];
 //        Arrays.fill(cycleColumnWidths, 100);
 
         cycleFullData = new String[MainLogic.OpQueue][5];
@@ -257,7 +255,7 @@ public class DataUI {
 
     // Tomasulo Diagram
     private void initGraphPanel() {
-        //JPanel d = new Diagram(cycleNum);
+        //JPanel d = new Diagram(MainLogic.CycleNumCur);
 //        d.setBackground(Color.WHITE);
         diagram.setSize(new Dimension(Diagram.diagramWidth*10, Diagram.diagramHeight));
         diagram.setCycleNum(0);
@@ -434,18 +432,19 @@ public class DataUI {
     private void ExeSteps(long stepNum) {
         operandSlice[0] += stepNum;
         operandSlice[1] += stepNum;
-        if(cycleNum==0){
+        if(MainLogic.CycleNumCur==0){
             CycleLabel.setText("Cycles");
         }
-        cycleNum += stepNum;
+        MainLogic.CycleNumCur += stepNum;
 
-        System.out.println(cycleNum);
+        System.out.println(MainLogic.CycleNumCur);
 
+        mainLogic.parseStep();
         operandTableUpdate();
         cycleTableUpdate();
 
         //Update graph to show motion of instr.
-        diagram.setCycleNum(cycleNum);
+        diagram.setCycleNum(MainLogic.CycleNumCur);
         GraphPanel.setViewportView(diagram);
         GraphPanel.revalidate();
         GraphPanel.repaint();

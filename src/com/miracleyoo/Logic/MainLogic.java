@@ -102,7 +102,11 @@ public class MainLogic {
     // 1. Check whether there are some free operation stations
     // 2. Check whether there are some free and corresponding FUs
     private Boolean judgeIssue() {
-        //
+        Boolean flag = Boolean.FALSE;
+
+        if (OperandsInfoStation.size()<OpQueue){
+
+        }
         return Boolean.FALSE;
     }
 
