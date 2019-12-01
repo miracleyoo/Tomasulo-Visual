@@ -34,10 +34,9 @@ public class Diagram extends JPanel {
     public static int diagramHeight = 110 + height * MainLogic.OpQueue + height + 30; // Most down: -110; Most top: Reg rects top
     //Allows for window scaling while keeping objects in their relative positions
 
-    Instruction blank = new Instruction("", "", "", "", 0);
+    Instruction blank = new Instruction("", "", "", "", 0, 0);
     Instruction[] opQArr = new Instruction[MainLogic.OpQueue];
     String[] ldArr = new String[ldBuffer]; //ldArray can hold at most capacity of ldBuffer
-    boolean ldHold = false;
     String issueBuffer = "";
 
     @Override
@@ -85,7 +84,7 @@ public class Diagram extends JPanel {
             for (int q = 0; q < MainLogic.OpQueue; q++) {
                 //if opQArr has a blank position, push next awaiting instruction
                 if (opQArr[q] == null) {
-                    opQArr[q] = new Instruction(MainLogic.instr[instrIndex], "", "", "", 1);
+                    opQArr[q] = new Instruction(MainLogic.instr[instrIndex], "", "", "", 1 , 0);
                     System.out.println("Instruction added: " + opQArr[q].op);
                     instrIndex++;
                 }
@@ -105,7 +104,7 @@ public class Diagram extends JPanel {
             }
             //Check if instr array has awaiting instr.
             if (instrIndex < MainLogic.instr.length) {
-                opQArr[MainLogic.OpQueue - 1] = new Instruction(MainLogic.instr[instrIndex], "", "", "", 0); //Grab next instruction from instruction array
+                opQArr[MainLogic.OpQueue - 1] = new Instruction(MainLogic.instr[instrIndex], "", "", "", 0, 0); //Grab next instruction from instruction array
                 instrIndex++;
             }
 
@@ -140,22 +139,10 @@ public class Diagram extends JPanel {
         //Create ldWord array to hold instructions while they execute load
         //on clock cycle
 
-        if (issueBuffer.equals("lw")) {
-            ldArr[0] = issueBuffer;
-
-                /*
-                //place into open spot in lwArr
-                for(int a = 0; a < ldBuffer; a++) {
-                    if(ldArr[a].equals("")) {
-                        ldArr[a] = issueBuffer;
-                        break;
-                    }
-
-                 }
-                    */
-            g.drawString(ldArr[0], originX + ldBase[0] + 5, originY + ldBase[1] - (height * 0));
-            //ldHold = true;
-
+        for(int z = 0; z < ldBuffer; z++) {
+            if (MainLogic.ldBuffer[z] != null) {
+                g.drawString(MainLogic.ldBuffer[z].op, originX + ldBase[0] + 5, originY + ldBase[1] - (height * z) - 2);
+            }
         }
 
 

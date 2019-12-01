@@ -26,9 +26,9 @@ public class MainLogic {
         public int exeStart = 0;
         public int exeEnd = 0;
         public int writeBack = 0;
-        public String DestReg = null;
-        public String SourceReg1 = null;
-        public String SourceReg2 = null;
+        //public String DestReg = null;
+        //public String SourceReg1 = null;
+        //public String SourceReg2 = null;
     };
 
     private static OperandInfo tempOperandsInfo;
@@ -82,10 +82,9 @@ public class MainLogic {
     ///////////////////////////////////////////////////////////////////////////
 
     Instruction in;
-    Instruction blankInstr = new Instruction("", "", "", "", -1, 0);
-    Instruction iBuffer; //Holds and places instruction from OpQueue into appropriate RS
-    Instruction cdb = blankInstr; //holds instruction that has finished executing and pushes it to destination
-    Instruction[] ldBuffer = new Instruction[(int)architectureNum[0]];
+    public static Instruction blankInstr = new Instruction("", "", "", "", -1, 0);
+    Instruction cdb = blankInstr; //holds instruction that has finished executing and pushes it to destination/waiting RS
+    public static Instruction[] ldBuffer = new Instruction[(int)architectureNum[0]];
 
     // Push the list item to corresponding dictionary Key:Value pair
     private void mapListItems (String[]inputList, String listName){
@@ -315,7 +314,7 @@ public class MainLogic {
                 for (int x = 0; x < ldBuffer.length; x++) {
                     if (ldBuffer[x] == null || ldBuffer[x] == blankInstr) {
                         ldBuffer[x] = in;
-                        System.out.println("ldBuffer[" + x + "]" + ldBuffer[0].op);
+                        System.out.println("ldBuffer[" + x + "] " + ldBuffer[x].op);
                         break;
                     } else {
                         System.out.println("Structural hazard in ldBuffer detected! Stalling issue");
@@ -343,7 +342,7 @@ public class MainLogic {
 
         //---ldBuffer-- run execution cycles once inside ldBuffer
         for (int x = 0; x < ldBuffer.length; x++) {
-            if (ldBuffer[x] != null || ldBuffer[x] != blankInstr) {
+            if (ldBuffer[x] != null && ldBuffer[x] != blankInstr) {
                 if(ldBuffer[x].currentClk < ldBuffer[x].exeTime) {
                     //This is gonna get messy with multiple clock steps...
                     ldBuffer[x].currentClk = ldBuffer[x].currentClk + clk; //increment every clock the instruction is in the ldBuffer
@@ -353,6 +352,12 @@ public class MainLogic {
                     //put on cdb if clear
                     if(cdb == null || cdb == blankInstr){
                         cdb = ldBuffer[x]; //move completed instruction onto CDB and proceed with WB
+
+                        //shift all elements in ldBuffer down 1 index after a ld completes
+                        Instruction templd = blankInstr;
+                        for(int z = 1; z < ldBuffer.length-1; z++){
+                            ldBuffer[z-1] = ldBuffer[z];
+                        }
                     }
                 }
             }
@@ -361,10 +366,9 @@ public class MainLogic {
 }
 
 /*
-if ldBuffer empty
-    Issue load
+To-Do
+Run full cycle with ld instr to check logic
+Display to diagram!
 
-    Execute load
-
-    Stall until CDB is available for write back, then WB
+The rest of the FUs have to be implemented once ld works!
  */

@@ -100,6 +100,7 @@ public class DataUI {
         TableUtils.setAllPreferredColumnSize(DataTable, dataColumnWidths);
     }
 
+
     private void constructCycleFullData(){
         for (int i=0; i<MainLogic.OpQueue; i++){
             cycleFullData[i][0] = MainLogic.OperandsInfoStation.get(i).inst;
