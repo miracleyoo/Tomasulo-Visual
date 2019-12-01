@@ -142,7 +142,7 @@ public class MainLogic {
         }
         else {
             for (FUTemplate FUs : Type2FUsMap.get(type_)) {
-                if (FUs.busy == Boolean.TRUE) {
+                if (FUs.busy == Boolean.FALSE) {
                     flag = Boolean.TRUE;
                     break;
                 }
@@ -371,6 +371,7 @@ public class MainLogic {
             instructionLineCur++;
         }
         checkAllOperandMember();
+        CycleNumCur ++;
 //        in = new Instruction(operandType, destinationReg, src[0], src[1], 3, 0); //example
     }
 

@@ -100,10 +100,10 @@ public class DataUI {
     private void constructCycleFullData(){
         for (int i=0; i<MainLogic.OperandsInfoStation.size(); i++){
             cycleFullData[i][0] = MainLogic.OperandsInfoStation.get(i).inst;
-            cycleFullData[i][1] = MainLogic.OperandsInfoStation.get(i).issue;
-            cycleFullData[i][2] = MainLogic.OperandsInfoStation.get(i).exeStart;
-            cycleFullData[i][3] = MainLogic.OperandsInfoStation.get(i).exeEnd;
-            cycleFullData[i][4] = MainLogic.OperandsInfoStation.get(i).writeBack;
+            cycleFullData[i][1] = Integer.toString(MainLogic.OperandsInfoStation.get(i).issue);
+            cycleFullData[i][2] = Integer.toString(MainLogic.OperandsInfoStation.get(i).exeStart);
+            cycleFullData[i][3] = Integer.toString(MainLogic.OperandsInfoStation.get(i).exeEnd);
+            cycleFullData[i][4] = Integer.toString(MainLogic.OperandsInfoStation.get(i).writeBack);
         }
     }
 
@@ -196,16 +196,16 @@ public class DataUI {
     private void initCycleTable() {
         cycleColumnNames = new String[]{"INST", "ISSUE", "EXE START", "EXE END", "WB"};
         cycleColumnWidths = new int[]{200,75,75,75,75};
+        cycleFullData = new String[MainLogic.OpQueue][5];
         constructCycleFullData();
 //        cycleColumnWidths = new int[MainLogic.CycleNumCur];
 //        Arrays.fill(cycleColumnWidths, 100);
-
-        cycleFullData = new String[MainLogic.OpQueue][5];
-        for (int i = 0; i < 5; i++) {
-            for(int j=0; j<=i; j++) {
-                cycleFullData[j][i] = cycleStageNames[i-j];
-            }
-        }
+//
+//        for (int i = 0; i < 5; i++) {
+//            for(int j=0; j<=i; j++) {
+//                cycleFullData[j][i] = cycleStageNames[i-j];
+//            }
+//        }
         cycleModel = new DefaultTableModel(cycleFullData, cycleColumnNames);
 
         CycleTable.setModel(cycleModel);
@@ -435,24 +435,31 @@ public class DataUI {
         if(MainLogic.CycleNumCur==0){
             CycleLabel.setText("Cycles");
         }
-        MainLogic.CycleNumCur += stepNum;
+//        MainLogic.CycleNumCur += stepNum;
 
         System.out.println(MainLogic.CycleNumCur);
 
-        mainLogic.parseStep();
-        operandTableUpdate();
-        cycleTableUpdate();
+        for(int i=0;i<stepNum;i++) {
+            mainLogic.parseStep();
+            operandTableUpdate();
+            cycleTableUpdate();
+            System.out.println("Execute step");
+        }
 
         //Update graph to show motion of instr.
-        diagram.setCycleNum(MainLogic.CycleNumCur);
-        GraphPanel.setViewportView(diagram);
-        GraphPanel.revalidate();
-        GraphPanel.repaint();
+//////////////////////////////////////////////////////////////////////
+//////////////////        TEMP       /////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
-
+//        diagram.setCycleNum(MainLogic.CycleNumCur);
+//        GraphPanel.setViewportView(diagram);
+//        GraphPanel.revalidate();
+//        GraphPanel.repaint();
 //        mainLogic.runLogic((int)stepNum);
 
-        System.out.println("Execute step");
+//////////////////////////////////////////////////////////////////////
+//////////////////       END TEMP       //////////////////////////////
+//////////////////////////////////////////////////////////////////////
     }
 
     private void SetTableScheme(JTable renderTable, String[] ColorScheme){
@@ -522,7 +529,15 @@ public class DataUI {
         initCycleTable();
 
         // Initialize Tomasulo Graph
-        initGraphPanel();
+//////////////////////////////////////////////////////////////////////
+//////////////////        TEMP       /////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+//        initGraphPanel();
+
+//////////////////////////////////////////////////////////////////////
+//////////////////       END TEMP       //////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
         // Initialize Main Logic
         mainLogic = new MainLogic();
