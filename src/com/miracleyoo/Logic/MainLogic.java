@@ -3,6 +3,7 @@ package com.miracleyoo.Logic;
 import com.miracleyoo.utils.Instruction;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class MainLogic {
@@ -71,14 +72,8 @@ public class MainLogic {
 
 
     // Operand info structures. It's length equals to the number of Operand cells in Diagram.
-    public static OperandInfo[] OperandsInfoCur = new OperandInfo[OpQueue];
-
-    // Cycle table show index list.
-    public static int[] cycleTableIndex = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-
-    // The number of current in-stack operands
-    public static int cycleTableItemNum = 0;
-
+//    public static OperandInfo[] OperandsInfoCur = new OperandInfo[OpQueue];
+    public static LinkedList<OperandInfo> OperandsInfoStation = new LinkedList<OperandInfo>();
     // Operand classify dictionary. Key:Value -> Operand:Class
     public static Map< String, String> OperandMapper = new HashMap<>();
 
@@ -101,17 +96,17 @@ public class MainLogic {
 
 
 
-    private void updateCycleTableIndex(){
-        if (cycleTableItemNum<OpQueue){
-            for(int i=cycleTableItemNum; i>0; i--){
-                cycleTableIndex[i]=cycleTableIndex[i-1];
-            }
-            cycleTableIndex[cycleTableItemNum] = cycleTableItemNum;
-        }
-        else{
-            cycleTableIndex[cycleTableItemNum%OpQueue] = cycleTableItemNum%OpQueue;
-        }
-    }
+//    private void updateCycleTableIndex(){
+//        if (cycleTableItemNum<OpQueue){
+//            for(int i=cycleTableItemNum; i>0; i--){
+//                cycleTableIndex[i]=cycleTableIndex[i-1];
+//            }
+//            cycleTableIndex[cycleTableItemNum] = cycleTableItemNum;
+//        }
+//        else{
+//            cycleTableIndex[cycleTableItemNum%OpQueue] = cycleTableItemNum%OpQueue;
+//        }
+//    }
 
     // Judge whether it is possible to issue a new instruction
     // 1. Check whether there are some free operation stations
@@ -142,19 +137,16 @@ public class MainLogic {
         }
     }
 
-    // Update the OperandsInfoCur(current Operands station infos)
+    // Update the OperandsInfoStation(current Operands station infos)
     // 1. Put tempOperandsInfo in the right place
     // 2. Update the Issue value and state of newly placed member
-    private void updateOperandsInfoCur(){
-        if (cycleTableItemNum<OpQueue){
-            for(int i=cycleTableItemNum; i>0; i++){
-//                cycleTableIndex[]
-            }
-            cycleTableIndex[cycleTableItemNum] = cycleTableItemNum;
+    private void updateOperandsInfoStation(){
+        if (OperandsInfoStation.size()>=OpQueue){
+            OperandsInfoStation.removeLast();
         }
-        else {
-
-        }
+        OperandsInfoStation.addFirst(tempOperandsInfo);
+        OperandsInfoStation.getFirst().issue = CycleNumCur;
+        OperandsInfoStation.getFirst().state = InstructionState[0];
     }
 
     // Sequentially check all of the items in the Operands station,
@@ -217,7 +209,7 @@ public class MainLogic {
         String operandType;
 
         // Update the Cycle Table Index to make Cycle Table run correctly.
-        updateCycleTableIndex();
+//        updateCycleTableIndex();
 
         operandLine=operandLine.split(";")[0].trim();
 //        operand = operandLine.split("[ \t]]+")[0];

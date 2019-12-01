@@ -102,14 +102,11 @@ public class DataUI {
 
     private void constructCycleFullData(){
         for (int i=0; i<MainLogic.OpQueue; i++){
-            if(MainLogic.cycleTableIndex[i]==-1){
-                continue;
-            }
-            cycleFullData[MainLogic.cycleTableItemNum-i][0] = MainLogic.OperandsInfoCur[MainLogic.cycleTableIndex[i]].inst;
-            cycleFullData[MainLogic.cycleTableItemNum-i][1] = MainLogic.OperandsInfoCur[MainLogic.cycleTableIndex[i]].issue;
-            cycleFullData[MainLogic.cycleTableItemNum-i][2] = MainLogic.OperandsInfoCur[MainLogic.cycleTableIndex[i]].exeStart;
-            cycleFullData[MainLogic.cycleTableItemNum-i][3] = MainLogic.OperandsInfoCur[MainLogic.cycleTableIndex[i]].exeEnd;
-            cycleFullData[MainLogic.cycleTableItemNum-i][4] = MainLogic.OperandsInfoCur[MainLogic.cycleTableIndex[i]].writeBack;
+            cycleFullData[i][0] = MainLogic.OperandsInfoStation.get(i).inst;
+            cycleFullData[i][1] = MainLogic.OperandsInfoStation.get(i).issue;
+            cycleFullData[i][2] = MainLogic.OperandsInfoStation.get(i).exeStart;
+            cycleFullData[i][3] = MainLogic.OperandsInfoStation.get(i).exeEnd;
+            cycleFullData[i][4] = MainLogic.OperandsInfoStation.get(i).writeBack;
         }
     }
 
