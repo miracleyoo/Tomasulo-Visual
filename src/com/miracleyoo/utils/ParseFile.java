@@ -41,7 +41,7 @@ public class ParseFile {
                 else{
                     if(listFlag.equals("textList")){
                         listCounter.put(listFlag, listCounter.get(listFlag) + 4);
-                        MainLogic.OperandFullList.add(str.strip());
+                        MainLogic.InstructionFullList.add(str.strip());
                     }
                     listFlagMap.get(listFlag).add(new Object[]{String.format("%04X", listCounter.get(listFlag)), str.strip()});
                 }

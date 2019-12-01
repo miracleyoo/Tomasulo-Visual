@@ -3,6 +3,7 @@ package com.miracleyoo.Logic;
 import com.miracleyoo.utils.Instruction;
 
 import java.util.*;
+import java.util.Map;
 
 public class MainLogic {
     private String[] AddOps = {"ADD","DADD","DADDU","ADDD","ADDDS","SUB","SUBS","SUBD","DSUB","DSUBU","SUBPS","SLT","SLTU","AND","OR","XOR","CVTDL"};
@@ -13,6 +14,7 @@ public class MainLogic {
     private String[] LoadOps = {"LB","LH","LW","LD","LS","LBU","LHU","LWU"};
     private String[] BranchOps = {"BEQZ", "BENZ", "BEQ", "BNE", "J", "JR", "JAL", "JALR"};
     private String[] InstructionState = {"Issue", "EXE", "ExeEnd","WB", "End"};
+    private String[] TypeNames = {"NOP", "HALT", "ADD", "INT", "DIV", "MUL", "LOAD", "SAVE", "BRA"};
 
 
     public class OperandInfo
@@ -32,6 +34,24 @@ public class MainLogic {
 
     private static OperandInfo tempOperandsInfo;
 
+    public class FloatRegTemplate{
+        public float value= (float) 0.0;
+        public Boolean ready = Boolean.FALSE;
+        public int occupyInstId = 0;
+    }
+
+    public class IntRegTemplate{
+        public int value= 0;
+        public Boolean ready = Boolean.FALSE;
+        public int occupyInstId = 0;
+    }
+
+    public class FUTemplate{
+        public Boolean busy = Boolean.FALSE;
+        public int occupyInstId = 0;
+    }
+
+
     ///////////////////////////////////////////////////////////////////////////
     ////////////////   Most Important Global Parameters ///////////////////////
     ///////////////////////////////////////////////////////////////////////////
@@ -46,10 +66,10 @@ public class MainLogic {
     public static int OpQueue = 10;//instr.length; //size of instruction array
 
     // All Integer Registers.
-    public static int[] IntRegs = new int[32];
+    public static IntRegTemplate[] IntRegs = new IntRegTemplate[32];
 
     // All Float Registers.
-    public static float[] FloatRegs = new float[32];
+    public static FloatRegTemplate[] FloatRegs = new FloatRegTemplate[32];
 
     // All statistics information.
     public static int[] statisticsInfo = new int[9];
@@ -74,13 +94,25 @@ public class MainLogic {
 
     //public static String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "lw", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
     //public static String[] instr = {"ld $R5,0($R4)", "add $R3,$R2,$R5", "sw $R3,0($R8)" , "sub $R4,$R3,$R5", "mul $R10,$R11,R12", "sw $10, 0($R11)"};
-    //public static String[] instr = {"ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)"};
+    public static String[] instr = {"ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)"};
 
     // Operand info structures. It's length equals to the number of Operand cells in Diagram.
     public static LinkedList<OperandInfo> OperandsInfoStation = new LinkedList<OperandInfo>();
 
     // Operand classify dictionary. Key:Value -> Operand:Class
     public static Map< String, String> OperandMapper = new HashMap<>();
+
+    // Reservation stations definition
+    public static FUTemplate[] LoadFUs = new FUTemplate[(int)architectureNum[0]];
+    public static FUTemplate[] SaveFUs = new FUTemplate[(int)architectureNum[1]];
+    public static FUTemplate[] IntFUs = new FUTemplate[(int)architectureNum[2]];
+    public static FUTemplate[] AddFUs = new FUTemplate[(int)architectureNum[3]];
+    public static FUTemplate[] MulFUs = new FUTemplate[(int)architectureNum[4]];
+    public static FUTemplate[] DivFUs = new FUTemplate[(int)architectureNum[5]];
+
+    public static Map< String, FUTemplate[]> Type2FUsMap = new HashMap<>();
+
+
 
     ///////////////////////////////////////////////////////////////////////////
     ///////////////   Most Important Global Parameters End ////////////////////
@@ -103,11 +135,36 @@ public class MainLogic {
     // 2. Check whether there are some free and corresponding FUs
     private Boolean judgeIssue() {
         Boolean flag = Boolean.FALSE;
+        String type_ = OperandMapper.get(tempOperandsInfo.operand);
 
-        if (OperandsInfoStation.size()<OpQueue){
-
+        // Check available reservation station at first. BRA, NOP, HALT don't need RS.
+        if(type_.equals("BRA") || type_.equals("NOP") || type_.equals("HALT")){
+            flag = Boolean.TRUE;
         }
-        return Boolean.FALSE;
+        else {
+            for (FUTemplate FUs : Type2FUsMap.get(type_)) {
+                if (FUs.busy == Boolean.TRUE) {
+                    flag = Boolean.TRUE;
+                    break;
+                }
+            }
+        }
+
+        // If no corresponding RS available, return false.
+        if(flag == Boolean.FALSE){
+            return Boolean.FALSE;
+        }
+
+        // Check whether there are free OperandsInfoStation, if not, check whether the last Instruction is end.
+        if (OperandsInfoStation.size()<OpQueue){
+            return Boolean.TRUE;
+        }
+        else if(OperandsInfoStation.getLast().state.equals("End")){
+            return Boolean.TRUE;
+        }
+        else {
+            return Boolean.FALSE;
+        }
     }
 
     // Judge whether it is available to start execution
@@ -192,6 +249,10 @@ public class MainLogic {
         }
     }
 
+    // The operations applied to an instruction which is in issue state
+    private void IssueOps(){
+        //
+    }
 
     // The operations applied to an instruction which is in execute state
     private void ExeOps(int operandInfoIndex){
@@ -288,9 +349,9 @@ public class MainLogic {
     // The core logic. Called for each cycle update.
     public void parseStep(){
         Boolean issueAvailable;
+        parseInstruction(InstructionFullList.get(instructionLineCur));
         issueAvailable = judgeIssue();
         if (issueAvailable){
-            parseInstruction(InstructionFullList.get(instructionLineCur));
             updateOperandsInfoStation();
             instructionLineCur++;
         }
@@ -308,13 +369,20 @@ public class MainLogic {
         mapListItems(BranchOps, "BRA");
         mapListItems(new String[]{"NOP"}, "NOP");
         mapListItems(new String[]{"HALT"}, "HALT");
+
+        Type2FUsMap.put("ADD", AddFUs);
+        Type2FUsMap.put("MUL", MulFUs);
+        Type2FUsMap.put("DIV", DivFUs);
+        Type2FUsMap.put("SAVE", SaveFUs);
+        Type2FUsMap.put("LOAD", LoadFUs);
+        Type2FUsMap.put("INT", IntFUs);
     }
 
     //clock set function --> Main logic updates every clock cycle
     public void runLogic(int clk){
         CycleNumCur = clk;
 
-        if(clk < OpQueue){//instr.length) {
+        if(clk < instr.length) {
             parseStep();//instr[clk]);
 
             switch(in.op){

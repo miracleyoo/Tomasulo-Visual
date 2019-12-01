@@ -112,16 +112,16 @@ public class DataUI {
     private void cycleTableUpdate() {
         constructCycleFullData();
 //        cycleFullData = new String[5][MainLogic.CycleNumCur];
-        for (int i = 0; i < MainLogic.CycleNumCur; i++) {
-            for(int j=0; j<=min(i, 4); j++) {
-                cycleFullData[j][i] = cycleStageNames[i<=4?i-j:4-j];
-            }
-        }
+//        for (int i = 0; i < MainLogic.CycleNumCur; i++) {
+//            for(int j=0; j<=min(i, 4); j++) {
+//                cycleFullData[j][i] = cycleStageNames[i<=4?i-j:4-j];
+//            }
+//        }
         cycleModel.setDataVector(cycleFullData, cycleColumnNames);
         cycleModel.fireTableDataChanged();
 //        CycleTable.setFillsViewportHeight(true);
 
-        for (int i = 0; i < MainLogic.CycleNumCur; i++) {
+        for (int i = 0; i < cycleColumnNames.length; i++) {
             CycleTable.getColumn(cycleColumnNames[i]).setCellRenderer(cycleTableRender);//new TableUtils.StatusColumnCellRenderer());
         }
 
