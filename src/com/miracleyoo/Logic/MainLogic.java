@@ -12,7 +12,7 @@ public class MainLogic {
     private String[] SaveOps = {"SB","SH","SW","SD","SS","MTC0","MTC1","MFC0","MFC1"};
     private String[] LoadOps = {"LB","LH","LW","LD","LS","LBU","LHU","LWU"};
     private String[] BranchOps = {"BEQZ", "BENZ", "BEQ", "BNE", "J", "JR", "JAL", "JALR"};
-    private String[] InstructionState = {"Issue", "EXE", "WB", "End"};
+    private String[] InstructionState = {"Issue", "EXE", "ExeEnd","WB", "End"};
 
 
     public class OperandInfo
@@ -24,6 +24,7 @@ public class MainLogic {
         public int exeStart = 0;
         public int exeEnd = 0;
         public int writeBack = 0;
+        public int currentStageCycleNum = 1;
         public String DestReg = null;
         public String SourceReg1 = null;
         public String SourceReg2 = null;
@@ -40,6 +41,9 @@ public class MainLogic {
 
     // The index of the line of instruction which is going to be parsed
     public static int instructionLineCur = 0;
+
+    // The number of Operand queue. Sharing opQueue for int and fp.
+    public static int OpQueue = 10;//instr.length; //size of instruction array
 
     // All Integer Registers.
     public static int[] IntRegs = new int[32];
@@ -68,11 +72,9 @@ public class MainLogic {
     // All of the instruction lines in this file.
     public static List<String> InstructionFullList = new ArrayList<>();
 
-    // The number of Operand queue. Sharing opQueue for int and fp.
     //public static String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "lw", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
     //public static String[] instr = {"ld $R5,0($R4)", "add $R3,$R2,$R5", "sw $R3,0($R8)" , "sub $R4,$R3,$R5", "mul $R10,$R11,R12", "sw $10, 0($R11)"};
-//    public static String[] instr = {"ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)"};
-    public static int OpQueue = 10;//instr.length; //size of instruction array
+    //public static String[] instr = {"ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)"};
 
     // Operand info structures. It's length equals to the number of Operand cells in Diagram.
     public static LinkedList<OperandInfo> OperandsInfoStation = new LinkedList<OperandInfo>();
@@ -96,12 +98,21 @@ public class MainLogic {
         }
     }
 
-
     // Judge whether it is possible to issue a new instruction
     // 1. Check whether there are some free operation stations
     // 2. Check whether there are some free and corresponding FUs
     private Boolean judgeIssue() {
         //
+        return Boolean.FALSE;
+    }
+
+    // Judge whether it is available to start execution
+    private Boolean judgeExe(){
+        return Boolean.FALSE;
+    }
+
+    // Judge whether it is available to write back
+    private Boolean judgeWB(){
         return Boolean.FALSE;
     }
 
@@ -140,39 +151,83 @@ public class MainLogic {
     // And do corresponding operation to them according to state
     private void checkAllOperandMember(){
         //
+        for(int i=0; i<OperandsInfoStation.size(); i++){
+            switch (OperandsInfoStation.get(i).state){
+                case "Issue":
+                    if (CycleNumCur - OperandsInfoStation.get(i).issue >= OperandsInfoStation.get(i).currentStageCycleNum){
+                        if(judgeExe()){
+                            OperandsInfoStation.get(i).state = InstructionState[1];
+                            OperandsInfoStation.get(i).exeStart = CycleNumCur;
+                            OperandsInfoStation.get(i).currentStageCycleNum = 1;
+                        }
+                    }
+                    break;
+                case "EXE":
+                    if (CycleNumCur - OperandsInfoStation.get(i).exeStart >= OperandsInfoStation.get(i).currentStageCycleNum){
+                        if(judgeExe()){
+                            OperandsInfoStation.get(i).state = InstructionState[2];
+                            OperandsInfoStation.get(i).exeEnd = CycleNumCur;
+                            ExeOps(i);
+                        }
+                    }
+                    break;
+                case "ExeEnd":
+                    if(judgeWB()){
+                        OperandsInfoStation.get(i).state = InstructionState[3];
+                        OperandsInfoStation.get(i).writeBack = CycleNumCur;
+                        OperandsInfoStation.get(i).currentStageCycleNum = 1;
+                    }
+                case "WB":
+                    if (CycleNumCur - OperandsInfoStation.get(i).writeBack >= OperandsInfoStation.get(i).currentStageCycleNum){
+                        OperandsInfoStation.get(i).state = InstructionState[4];
+                    }
+                    break;
+                case "End":
+                    break;
+            }
+        }
     }
 
-    // The operations applied to an instruction which is in issue state
-    private void IssueOps(){
-        //
-    }
 
     // The operations applied to an instruction which is in execute state
-    private void ExeOps(OperandInfo operandInfoCur){
-        String operandType = OperandMapper.get(operandInfoCur.operand);
+    private void ExeOps(int operandInfoIndex){
+        String operandType = OperandMapper.get(OperandsInfoStation.get(operandInfoIndex).operand);
         switch(operandType)
         {
             case "NOP" :
+                OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = 1;
                 OpsNOP();
             case "HALT" :
+                OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = 0;
                 OpsHALT();
                 break;
             case "DIV" :
+                OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[5];
                 OpsDIV();
                 break;
             case "MUL" :
+                OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[4];
                 OpsMUL();
                 break;
             case "LOAD" :
+                OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[0];
                 OpsLOAD();
                 break;
             case "SAVE":
+                OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[1];
                 OpsSAVE();
                 break;
             case "BRA":
+                OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = 1;
                 OpsBRANCH();
                 break;
             default :
+                if(operandType.equals("ADD")){
+                    OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[3];
+                }
+                else{
+                    OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[2];
+                }
                 if(operandType.contains("ADD")){
                     OpsADD();
                 }
@@ -255,7 +310,7 @@ public class MainLogic {
     public void runLogic(int clk){
         CycleNumCur = clk;
 
-        if(clk < instr.length) {
+        if(clk < OpQueue){//instr.length) {
             parseStep();//instr[clk]);
 
             switch(in.op){
