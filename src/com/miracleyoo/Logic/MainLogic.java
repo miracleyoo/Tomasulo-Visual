@@ -2,9 +2,7 @@ package com.miracleyoo.Logic;
 
 import com.miracleyoo.utils.Instruction;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class MainLogic {
     private String[] AddOps = {"ADD","DADD","DADDU","ADDD","ADDDS","SUB","SUBS","SUBD","DSUB","DSUBU","SUBPS","SLT","SLTU","AND","OR","XOR","CVTDL"};
@@ -40,6 +38,9 @@ public class MainLogic {
     // The current cycle number.
     public static int CycleNumCur = 0;
 
+    // The index of the line of instruction which is going to be parsed
+    public static int instructionLineCur = 0;
+
     // All Integer Registers.
     public static int[] IntRegs = new int[32];
 
@@ -64,16 +65,18 @@ public class MainLogic {
     // How many cycles to proceed when "Execute multiple cycle" button is pressed.
     public static long multiStepNum = 3;
 
+    // All of the instruction lines in this file.
+    public static List<String> InstructionFullList = new ArrayList<>();
+
     // The number of Operand queue. Sharing opQueue for int and fp.
     //public static String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "lw", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
     //public static String[] instr = {"ld $R5,0($R4)", "add $R3,$R2,$R5", "sw $R3,0($R8)" , "sub $R4,$R3,$R5", "mul $R10,$R11,R12", "sw $10, 0($R11)"};
-    public static String[] instr = {"ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)"};
-    public static int OpQueue = instr.length; //size of instruction array
-
+//    public static String[] instr = {"ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)"};
+    public static int OpQueue = 10;//instr.length; //size of instruction array
 
     // Operand info structures. It's length equals to the number of Operand cells in Diagram.
-//    public static OperandInfo[] OperandsInfoCur = new OperandInfo[OpQueue];
     public static LinkedList<OperandInfo> OperandsInfoStation = new LinkedList<OperandInfo>();
+
     // Operand classify dictionary. Key:Value -> Operand:Class
     public static Map< String, String> OperandMapper = new HashMap<>();
 
@@ -105,7 +108,7 @@ public class MainLogic {
     // Parse the next instruction and return a tempOperandsInfo
     private void parseInstruction(String operandLine){
         String operand, srcTemp, operandType, destinationReg;
-        String[] src = new String[2];
+
         tempOperandsInfo = new OperandInfo();
         operandLine=operandLine.split(";")[0].trim();
         operand = operandLine.split("\\s+")[0];
@@ -145,91 +148,8 @@ public class MainLogic {
     }
 
     // The operations applied to an instruction which is in execute state
-    private void ExeOps(){
-        //
-    }
-
-    // The operations applied to an instruction which is in write back state
-    private void WBOps(){
-        //
-    }
-
-    private void OpsNOP(){}
-
-    private void OpsHALT(){}
-
-    private void OpsADD(){}
-
-    private void OpsSUB(){}
-
-    private void OpsSLT(){}
-
-    private void OpsLogic(){
-        // AND, OR, XOR
-    }
-
-    private void OpsCVT(){
-        // CVTDL: to double precision, here we don't need to care. Leave the function empty.
-    }
-
-    private void OpsMUL(){}
-
-    private void OpsDIV(){}
-
-    private void OpsBRANCH(){}
-
-    private void OpsLOAD(){}
-
-    private void OpsSAVE(){
-        // Two types, normal save and directly save to register like MTC0
-    }
-
-    // The core logic. Called for each cycle update.
-    public void parseStep(String operandLine){
-        String destinationReg;
-        String srcTemp;
-        String[] src = new String[2];
-        String operand;
-        String operandType;
-
-        // Update the Cycle Table Index to make Cycle Table run correctly.
-//        updateCycleTableIndex();
-
-        operandLine=operandLine.split(";")[0].trim();
-//        operand = operandLine.split("[ \t]]+")[0];
-        operand = operandLine.split("\\s+")[0];
-        operand = operand.replace(".","").toUpperCase().trim();
-
-        srcTemp = operandLine.split("\\s+")[1];
-        //srcTemp = srcTemp.replace("\\s+", "");
-        srcTemp = srcTemp.toUpperCase().trim();
-
-
-
-        System.out.println(operandLine);
-        System.out.println(srcTemp);
-        srcTemp = operandLine.split("\\s+")[1].toUpperCase().trim();
-
-        System.out.println(operandLine + " ");
-        //System.out.println(srcTemp);
-
-
-        operandType = OperandMapper.get(operand);
-        System.out.println("Operand type: " + operandType);
-
-        destinationReg = srcTemp.split(",")[0];
-        src[0] = srcTemp.split(",")[1];
-        if(operandType.equals("LOAD") || operandType.equals("SAVE")) {
-            src[1] = ""; //this won't exist for ld/sw!
-        }
-        else{
-            src[1] = srcTemp.split(",")[2];
-        }
-
-        System.out.println("destination: " + destinationReg);
-        System.out.println("src1: " + src[0]);
-        System.out.println("src2: " + src[1]);
-
+    private void ExeOps(OperandInfo operandInfoCur){
+        String operandType = OperandMapper.get(operandInfoCur.operand);
         switch(operandType)
         {
             case "NOP" :
@@ -268,9 +188,55 @@ public class MainLogic {
                 else if(operandType.contains("AND") || operandType.contains("OR")){
                     OpsLogic();
                 }
-
         }
-        in = new Instruction(operandType, destinationReg, src[0], src[1], 3, 0); //example
+    }
+
+    // The operations applied to an instruction which is in write back state
+    private void WBOps(){
+        //
+    }
+
+    private void OpsNOP(){}
+
+    private void OpsHALT(){}
+
+    private void OpsADD(){}
+
+    private void OpsSUB(){}
+
+    private void OpsSLT(){}
+
+    private void OpsLogic(){
+        // AND, OR, XOR
+    }
+
+    private void OpsCVT(){
+        // CVTDL: to double precision, here we don't need to care. Leave the function empty.
+    }
+
+    private void OpsMUL(){}
+
+    private void OpsDIV(){}
+
+    private void OpsBRANCH(){}
+
+    private void OpsLOAD(){}
+
+    private void OpsSAVE(){
+        // Two types, normal save and directly save to register like MTC0
+    }
+
+    // The core logic. Called for each cycle update.
+    public void parseStep(){
+        Boolean issueAvailable;
+        issueAvailable = judgeIssue();
+        if (issueAvailable){
+            parseInstruction(InstructionFullList.get(instructionLineCur));
+            updateOperandsInfoStation();
+            instructionLineCur++;
+        }
+        checkAllOperandMember();
+//        in = new Instruction(operandType, destinationReg, src[0], src[1], 3, 0); //example
     }
 
     public MainLogic() {
@@ -290,7 +256,7 @@ public class MainLogic {
         CycleNumCur = clk;
 
         if(clk < instr.length) {
-            parseStep(instr[clk]);
+            parseStep();//instr[clk]);
 
             switch(in.op){
                 case "LOAD":
