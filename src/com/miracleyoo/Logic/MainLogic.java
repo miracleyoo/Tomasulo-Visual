@@ -26,9 +26,9 @@ public class MainLogic {
         public int exeStart = 0;
         public int exeEnd = 0;
         public int writeBack = 0;
-        //public String DestReg = null;
-        //public String SourceReg1 = null;
-        //public String SourceReg2 = null;
+        public String DestReg = null;
+        public String SourceReg1 = null;
+        public String SourceReg2 = null;
     };
 
     private static OperandInfo tempOperandsInfo;
@@ -94,45 +94,30 @@ public class MainLogic {
     }
 
 
-
-//    private void updateCycleTableIndex(){
-//        if (cycleTableItemNum<OpQueue){
-//            for(int i=cycleTableItemNum; i>0; i--){
-//                cycleTableIndex[i]=cycleTableIndex[i-1];
-//            }
-//            cycleTableIndex[cycleTableItemNum] = cycleTableItemNum;
-//        }
-//        else{
-//            cycleTableIndex[cycleTableItemNum%OpQueue] = cycleTableItemNum%OpQueue;
-//        }
-//    }
-
     // Judge whether it is possible to issue a new instruction
     // 1. Check whether there are some free operation stations
     // 2. Check whether there are some free and corresponding FUs
-    private void judgeIssue() {
+    private Boolean judgeIssue() {
         //
+        return Boolean.FALSE;
     }
 
     // Parse the next instruction and return a tempOperandsInfo
     private void parseInstruction(String operandLine){
         String operand, srcTemp, operandType, destinationReg;
         String[] src = new String[2];
+        tempOperandsInfo = new OperandInfo();
         operandLine=operandLine.split(";")[0].trim();
         operand = operandLine.split("\\s+")[0];
         operand = operand.replace(".","").toUpperCase().trim();
+        operandType = OperandMapper.get(operand);
         srcTemp = operandLine.split("\\s+")[1].toUpperCase().trim();
 
-        System.out.println(operandLine + " ");
-        //System.out.println(srcTemp);
-
-        operandType = OperandMapper.get(operand);
-        System.out.println("Operand type: " + operandType);
-
-        destinationReg = srcTemp.split(",")[0];
-        src[0] = srcTemp.split(",")[1];
-        if(!operandType.equals("LOAD") || !operandType.equals("SAVE")) {
-            src[1] = srcTemp.split(",")[2]; //this won't exist for ld/sw!
+        tempOperandsInfo.operand = operand; ;
+        tempOperandsInfo.DestReg = srcTemp.split(",")[0];
+        tempOperandsInfo.SourceReg1 = srcTemp.split(",")[1];
+        if(!operandType.equals("LOAD") && !operandType.equals("SAVE")) {
+            tempOperandsInfo.SourceReg2 = srcTemp.split(",")[2];
         }
     }
 
