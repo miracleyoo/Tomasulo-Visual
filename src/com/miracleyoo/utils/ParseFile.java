@@ -23,6 +23,7 @@ public class ParseFile {
         List<Object[]> textList = new ArrayList<>(); // List to hold text
         Map< String, List<Object[]>> listFlagMap = new HashMap<>(); // Map to wrap lists above
         Map< String, Integer> listCounter = new HashMap<>(); // Counters for data and code
+
         listFlagMap.put("dataList", dataList);
         listFlagMap.put("textList", textList);
         listCounter.put("dataList", 0);
@@ -42,6 +43,19 @@ public class ParseFile {
                     if(listFlag.equals("textList")){
                         listCounter.put(listFlag, listCounter.get(listFlag) + 4);
                         MainLogic.InstructionFullList.add(str.strip());
+                    }
+                    else{
+                        //////////////////////////////////////////////////////////////////////
+                        //////////////////        TODO       /////////////////////////////////
+                        //////////////////////////////////////////////////////////////////////
+
+                        //   Write a data parser here and send the parsed result to MainLogic
+                        //   and store it in a map MainLogic.dataMap
+                        //   Need to read all *.s files to make sure they all work
+
+                        //////////////////////////////////////////////////////////////////////
+                        //////////////////       END TODO       //////////////////////////////
+                        //////////////////////////////////////////////////////////////////////
                     }
                     listFlagMap.get(listFlag).add(new Object[]{String.format("%04X", listCounter.get(listFlag)), str.strip()});
                 }

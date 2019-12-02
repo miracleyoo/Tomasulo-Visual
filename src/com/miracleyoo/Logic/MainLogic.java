@@ -1,3 +1,28 @@
+//////////////////////////////////////////////////////////////////////
+//////////////////  Main Workflow TODO   /////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+//          Initialize data structures and dictionaries
+//                            ↓
+//                Parse the next instruction
+//                            ↓
+//               Judge whether it can be issued now
+//                            ↓
+//  Update the Information for the newly issued instruction (like issue cycle)
+//                            ↓
+//  Sequentially check all of the instructions in the Operands station now,
+//         And do corresponding operation to them according to state
+//          ↓               ↓                   ↓               ↓
+// | check can exe | check can exeEnd |  check can WB |  check can end |
+//          ↓
+//  OpsNOP / OpsADD / OpsSUB / OpsMUL / OpsDIV / ......
+//                            ↓
+//                         cycle ++
+
+//////////////////////////////////////////////////////////////////////
+//////////////////  Main Workflow TODO End  //////////////////////////
+//////////////////////////////////////////////////////////////////////
+
 package com.miracleyoo.Logic;
 
 import com.miracleyoo.utils.Instruction;
@@ -16,37 +41,52 @@ public class MainLogic {
     private String[] InstructionState = {"Issue", "EXE", "ExeEnd","WB", "End"};
     private String[] TypeNames = {"NOP", "HALT", "ADD", "INT", "DIV", "MUL", "LOAD", "SAVE", "BRA"};
 
-
+    // A data structure which store all data by parsing an instruction
+    // As well as cycle data during the Tomasulo execution.
     public static class OperandInfo
     {
         public String operand = ""; // Only the operand name, like ADDD, MULD
         public String inst = "";    // The whole instruction, like ADDD R1, R2, R3
         public String state = "";   // Current state. It can only be
+
+        // Tomasulo execution cycle data
         public int issue = 0;
         public int exeStart = 0;
         public int exeEnd = 0;
         public int writeBack = 0;
         public int currentStageCycleNum = 1;
         public int absoluteIndex = 0; // This is the line number of this instruction.
+
+        // Instruction related registers, jump lables or where to jump
+        public String label = null;     // The label in this line.
+        public String jumpLabel = null; // Jump to label "X". For branch operands.
         public String DestReg = null;
         public String SourceReg1 = null;
         public String SourceReg2 = null;
+
+        // If there is an numerical data in the registers' place, please store
+        // it in ValueReg1 or ValueReg2
+        public Number ValueReg1 = null;
+        public Number ValueReg2 = null;
     };
 
     private static OperandInfo tempOperandsInfo;
 
+    // Struct for float registers list
     public static class FloatRegTemplate{
         public float value= (float) 0.0;
         public Boolean ready = Boolean.FALSE;
         public int occupyInstId = 0;
     }
 
+    // Struct for integer registers list
     public static class IntRegTemplate{
         public int value= 0;
         public Boolean ready = Boolean.FALSE;
         public int occupyInstId = 0;
     }
 
+    // Struct for all kinds of functional units
     public static class FUTemplate{
         public Boolean busy = Boolean.FALSE;
         public int occupyInstId = 0;
@@ -111,7 +151,10 @@ public class MainLogic {
     public static FUTemplate[] MulFUs = new FUTemplate[(int)architectureNum[4]];
     public static FUTemplate[] DivFUs = new FUTemplate[(int)architectureNum[5]];
 
-    public static Map< String, FUTemplate[]> Type2FUsMap = new HashMap<>();
+    public static Map< String, FUTemplate[]> Type2FUsMap = new HashMap<>(); // Find corresponding FUs Struct List using Map
+
+    public static Map< String, Number> dataMap = new HashMap<>(); // Counters for data and code
+
 
     ///////////////////////////////////////////////////////////////////////////
     ///////////////   Most Important Global Parameters End ////////////////////
@@ -128,6 +171,18 @@ public class MainLogic {
             OperandMapper.put(operand, listName);
         }
     }
+
+    // Judge whether a string toCheckValue is in the string list arr
+    private static Boolean contains(String[] arr, String toCheckValue)
+    {
+        for (String element : arr) {
+            if (element.equals(toCheckValue)) {
+                return Boolean.TRUE;
+            }
+        }
+        return Boolean.FALSE;
+    }
+
 
     // Judge whether it is possible to issue a new instruction
     // 1. Check whether there are some free operation stations
@@ -184,16 +239,121 @@ public class MainLogic {
 
         tempOperandsInfo = new OperandInfo();
         operandLine=operandLine.split(";")[0].trim();
-        operand = operandLine.split("\\s+")[0];
-        operand = operand.replace(".","").toUpperCase().trim();
-        operandType = OperandMapper.get(operand);
-        srcTemp = operandLine.split("\\s+")[1].toUpperCase().trim();
+        tempOperandsInfo.inst = operandLine;
 
-        tempOperandsInfo.operand = operand; ;
-        tempOperandsInfo.DestReg = srcTemp.split(",")[0];
-        tempOperandsInfo.SourceReg1 = srcTemp.split(",")[1];
-        if(!operandType.equals("LOAD") && !operandType.equals("SAVE")) {
-            tempOperandsInfo.SourceReg2 = srcTemp.split(",")[2];
+        // There can be some label in front of a instruction, like `start: xxx xx xxx `
+        if (operandLine.split(":").length>1){
+            tempOperandsInfo.label = operandLine.split(":")[0];
+            operandLine = operandLine.split(":")[1].trim();
+        }
+
+        String[] separateEmpty = operandLine.split("\\s+");
+        operand = separateEmpty[0].replace(".","").toUpperCase().trim();
+        operandType = OperandMapper.get(operand);
+
+        tempOperandsInfo.operand = operand;
+        if (separateEmpty.length<=1){ // HALT, NOP
+            return;
+        }
+        else{
+            if(operandType.equals("BRA")){
+                tempOperandsInfo.jumpLabel = separateEmpty[1].trim();
+                return;
+            }
+
+            srcTemp = separateEmpty[1].toUpperCase().trim();
+            String[] regParts = srcTemp.split(",");
+            tempOperandsInfo.DestReg = regParts[0];
+
+            if(regParts[0].toUpperCase().startsWith("R") || regParts[0].toUpperCase().startsWith("F")){
+                tempOperandsInfo.DestReg = regParts[0].trim().toUpperCase();
+            }
+            else{
+                throw new AssertionError("Destination Register wrong");
+            }
+
+            if(contains(new String[]{"LOAD", "SAVE"}, operandType)) {
+                String[] address_ = regParts[1].split("[(]");
+                address_[1] = address_[1].replaceAll("[)]","");
+
+                // Split things like 4(R1), CONTROL(r0)
+                if (address_[0].replaceAll("\\d+","").length() == 0){
+                    tempOperandsInfo.ValueReg1 = Integer.parseInt(address_[0]);
+                }
+                else{
+                    //////////////////////////////////////////////////////////////////////
+                    //////////////////        TODO       /////////////////////////////////
+                    //////////////////////////////////////////////////////////////////////
+
+                    // Here we have not consider the case that the load or save use an
+                    // Address from .data part. After the completion of data parser in
+                    // ParseFile.java(Already written TODO there too), we need to come
+                    // back to finish this part. Temporarily use 0 here.
+
+                    //////////////////////////////////////////////////////////////////////
+                    //////////////////       END TODO       //////////////////////////////
+                    //////////////////////////////////////////////////////////////////////
+                    tempOperandsInfo.ValueReg1 = 0;
+                }
+                // When parsing LOAD or SAVE operands whose address is like ADD1(ADD2), ADD1 will be put into ValueReg1 or SourceReg1
+                if(address_[1].toUpperCase().startsWith("R") || address_[1].toUpperCase().startsWith("F")){
+                    tempOperandsInfo.SourceReg2 = address_[1];
+                }
+                else if(address_[1].trim().replaceAll("\\d+","").length() == 0){
+                    tempOperandsInfo.ValueReg2 = Integer.parseInt(address_[1]);
+                }
+                else{
+                    //////////////////////////////////////////////////////////////////////
+                    //////////////////        TODO       /////////////////////////////////
+                    //////////////////////////////////////////////////////////////////////
+
+                    // Same for here, some destination register is a variable in .data
+
+                    //////////////////////////////////////////////////////////////////////
+                    //////////////////       END TODO       //////////////////////////////
+                    //////////////////////////////////////////////////////////////////////
+                    throw new AssertionError("Destination Register wrong");
+                }
+                return;
+            }
+
+            if(regParts[1].toUpperCase().startsWith("R") || regParts[1].toUpperCase().startsWith("F")){
+                tempOperandsInfo.SourceReg1 = regParts[1];
+            }
+            else if(regParts[1].trim().replaceAll("\\d+","").length() == 0){
+                tempOperandsInfo.ValueReg1 = Integer.parseInt(regParts[1]);
+            }
+            else{
+                //////////////////////////////////////////////////////////////////////
+                //////////////////        TODO       /////////////////////////////////
+                //////////////////////////////////////////////////////////////////////
+
+                // Same as above
+
+                //////////////////////////////////////////////////////////////////////
+                //////////////////       END TODO       //////////////////////////////
+                //////////////////////////////////////////////////////////////////////
+                throw new AssertionError("Destination Register wrong");
+            }
+
+            if(regParts[2].toUpperCase().startsWith("R") || regParts[2].toUpperCase().startsWith("F")){
+                tempOperandsInfo.SourceReg2 = regParts[2];
+            }
+            else if(regParts[2].trim().replaceAll("\\d+","").length() == 0){
+                tempOperandsInfo.ValueReg2 = Integer.parseInt(regParts[2]);
+            }
+            else{
+                //////////////////////////////////////////////////////////////////////
+                //////////////////        TODO       /////////////////////////////////
+                //////////////////////////////////////////////////////////////////////
+
+                // Same as above
+
+                //////////////////////////////////////////////////////////////////////
+                //////////////////       END TODO       //////////////////////////////
+                //////////////////////////////////////////////////////////////////////
+                throw new AssertionError("Destination Register wrong");
+            }
         }
     }
 
@@ -208,13 +368,12 @@ public class MainLogic {
         OperandsInfoStation.getFirst().issue = CycleNumCur;
         OperandsInfoStation.getFirst().state = InstructionState[0];
         OperandsInfoStation.getFirst().absoluteIndex = instructionLineCur;
-        OperandsInfoStation.getFirst().inst = InstructionFullList.get(instructionLineCur);
+//        OperandsInfoStation.getFirst().inst = InstructionFullList.get(instructionLineCur);
     }
 
     // Sequentially check all of the items in the Operands station,
     // And do corresponding operation to them according to state
     private void checkAllOperandMember(){
-        //
         for(int i=0; i<OperandsInfoStation.size(); i++){
             switch (OperandsInfoStation.get(i).state){
                 case "Issue":
@@ -259,15 +418,28 @@ public class MainLogic {
         int index_;
         regName = OperandsInfoStation.getFirst().DestReg;
         index_ =  Integer.parseInt(regName.replaceAll("\\D+",""));
-        if(regName.startsWith("R")){
+        if(regName.toUpperCase().startsWith("R")){
             IntRegs[index_].ready=Boolean.FALSE;
             IntRegs[index_].occupyInstId = OperandsInfoStation.getFirst().absoluteIndex;
         }
-        else if(regName.startsWith("F")){
+        else if(regName.toUpperCase().startsWith("F")){
             FloatRegs[index_].ready=Boolean.FALSE;
             FloatRegs[index_].occupyInstId = OperandsInfoStation.getFirst().absoluteIndex;
         }
     }
+
+    //////////////////////////////////////////////////////////////////////
+    //////////////////        TODO       /////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+
+    // Execution part. This function will be applied to every instruction
+    // in the reservation station at the end of its EXE state when user
+    // click the step button. Some operations related to registers and
+    // data availability may need to be added here.
+
+    //////////////////////////////////////////////////////////////////////
+    //////////////////       END TODO       //////////////////////////////
+    //////////////////////////////////////////////////////////////////////
 
     // The operations applied to an instruction which is in execute state
     private void ExeOps(int operandInfoIndex){
@@ -326,10 +498,35 @@ public class MainLogic {
         }
     }
 
+    //////////////////////////////////////////////////////////////////////
+    //////////////////        TODO       /////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+
+    // WB part. Called at the end of WB state. Please set the occupied
+    // registers free here and update the data computed.
+
+    //////////////////////////////////////////////////////////////////////
+    //////////////////       END TODO       //////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+
     // The operations applied to an instruction which is in write back state
     private void WBOps(){
         //
     }
+
+
+    //////////////////////////////////////////////////////////////////////
+    //////////////////        TODO       /////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+
+    // Operations going to be executed when this type of instructions are
+    // called. Please refer to mips instruction guide to make them functional.
+    // Detailed data type may not need to be considered except the big
+    // difference between integer and float.
+
+    //////////////////////////////////////////////////////////////////////
+    //////////////////       END TODO       //////////////////////////////
+    //////////////////////////////////////////////////////////////////////
 
     private void OpsNOP(){}
 
@@ -372,7 +569,6 @@ public class MainLogic {
         }
         checkAllOperandMember();
         CycleNumCur ++;
-//        in = new Instruction(operandType, destinationReg, src[0], src[1], 3, 0); //example
     }
 
     public MainLogic() {
@@ -425,6 +621,18 @@ public class MainLogic {
         Type2FUsMap.put("LOAD", LoadFUs);
         Type2FUsMap.put("INT", IntFUs);
     }
+
+
+
+    //////////////////////////////////////////////////////////////////////
+    //////////////////        Attention       ////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+
+    // Unvalid part. This part is build for test. Please ignore it.
+
+    //////////////////////////////////////////////////////////////////////
+    //////////////////       END Attention       /////////////////////////
+    //////////////////////////////////////////////////////////////////////
 
     //clock set function --> Main logic updates every clock cycle
     public void runLogic(int clk){
