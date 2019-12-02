@@ -14,6 +14,8 @@
 //         And do corresponding operation to them according to state
 //          ↓               ↓                   ↓               ↓
 // | check can exe | check can exeEnd |  check can WB |  check can end |
+//          ↓                                   ↓               ↓
+//          ↓                                 ExeOps          EndOps
 //          ↓
 //  OpsNOP / OpsADD / OpsSUB / OpsMUL / OpsDIV / ......
 //                            ↓
@@ -382,6 +384,7 @@ public class MainLogic {
                             OperandsInfoStation.get(i).state = InstructionState[1];
                             OperandsInfoStation.get(i).exeStart = CycleNumCur;
                             OperandsInfoStation.get(i).currentStageCycleNum = 1;
+                            IssueOps();
                         }
                     }
                     break;
