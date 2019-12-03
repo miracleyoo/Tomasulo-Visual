@@ -12,9 +12,6 @@ import java.util.List;
 
 import com.miracleyoo.utils.*;
 import com.miracleyoo.Logic.*;
-import com.sun.tools.javac.Main;
-
-import static java.lang.Integer.min;
 
 public class DataUI {
     private JPanel PanelMain;               // Main Panel
@@ -98,13 +95,13 @@ public class DataUI {
 
 
     private void constructCycleFullData(){
-        for (int i=0; i<MainLogic.OperandsInfoStation.size(); i++){
-            cycleFullData[i][0] = Integer.toString(MainLogic.OperandsInfoStation.get(i).absoluteIndex);
-            cycleFullData[i][1] = MainLogic.OperandsInfoStation.get(i).inst;
-            cycleFullData[i][2] = Integer.toString(MainLogic.OperandsInfoStation.get(i).issue);
-            cycleFullData[i][3] = Integer.toString(MainLogic.OperandsInfoStation.get(i).exeStart);
-            cycleFullData[i][4] = Integer.toString(MainLogic.OperandsInfoStation.get(i).exeEnd);
-            cycleFullData[i][5] = Integer.toString(MainLogic.OperandsInfoStation.get(i).writeBack);
+        for (int i = 0; i<MainLogic.OperationInfoStation.size(); i++){
+            cycleFullData[i][0] = Integer.toString(MainLogic.OperationInfoStation.get(i).absoluteIndex);
+            cycleFullData[i][1] = MainLogic.OperationInfoStation.get(i).inst;
+            cycleFullData[i][2] = Integer.toString(MainLogic.OperationInfoStation.get(i).issue);
+            cycleFullData[i][3] = Integer.toString(MainLogic.OperationInfoStation.get(i).exeStart);
+            cycleFullData[i][4] = Integer.toString(MainLogic.OperationInfoStation.get(i).exeEnd);
+            cycleFullData[i][5] = Integer.toString(MainLogic.OperationInfoStation.get(i).writeBack);
         }
     }
 
