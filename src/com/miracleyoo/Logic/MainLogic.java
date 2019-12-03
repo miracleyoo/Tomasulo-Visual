@@ -142,6 +142,18 @@ public class MainLogic {
     // Operand info structures. It's length equals to the number of Operand cells in Diagram.
     public static LinkedList<OperandInfo> OperandsInfoStation = new LinkedList<OperandInfo>();
 
+    //////////////////////////////////////////////////////////////////////
+    //////////////////        TODO       /////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+
+    // Keep track of the new change of OperandsInfoStation element
+
+    //////////////////////////////////////////////////////////////////////
+    //////////////////       END TODO       //////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+    public static LinkedList<OperandInfo> OperandsInfoFull = new LinkedList<OperandInfo>();
+
+
     // Operand classify dictionary. Key:Value -> Operand:Class
     public static Map< String, String> OperandMapper = new HashMap<>();
 
@@ -222,6 +234,17 @@ public class MainLogic {
             return Boolean.FALSE;
         }
     }
+
+
+    //////////////////////////////////////////////////////////////////////
+    //////////////////        TODO       /////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+
+    // Judge
+
+    //////////////////////////////////////////////////////////////////////
+    //////////////////       END TODO       //////////////////////////////
+    //////////////////////////////////////////////////////////////////////
 
     // Judge whether it is available to start execution
     private Boolean judgeExe(){
@@ -370,6 +393,8 @@ public class MainLogic {
         OperandsInfoStation.getFirst().issue = CycleNumCur;
         OperandsInfoStation.getFirst().state = InstructionState[0];
         OperandsInfoStation.getFirst().absoluteIndex = instructionLineCur;
+
+        OperandsInfoFull.addLast(OperandsInfoStation.getFirst());
 //        OperandsInfoStation.getFirst().inst = InstructionFullList.get(instructionLineCur);
     }
 
@@ -380,7 +405,7 @@ public class MainLogic {
             switch (OperandsInfoStation.get(i).state){
                 case "Issue":
                     if (CycleNumCur - OperandsInfoStation.get(i).issue >= OperandsInfoStation.get(i).currentStageCycleNum){
-                        if(judgeExe()){
+                        if(judgeIssue()){
                             OperandsInfoStation.get(i).state = InstructionState[1];
                             OperandsInfoStation.get(i).exeStart = CycleNumCur;
                             OperandsInfoStation.get(i).currentStageCycleNum = 1;
@@ -535,7 +560,13 @@ public class MainLogic {
 
     private void OpsHALT(){}
 
-    private void OpsADD(){}
+    private void OpsADD(){
+//        OperandMapper.get(OperandsInfoStation.get(i).operand);
+//        OperandsInfoStation.get(i).DestReg=OperandsInfoStation.get(i).SourceReg1+OperandsInfoStation.get(i).SourceReg2;
+//        int index = Integer.parseInt("R11".replaceAll("\D+",""));
+//        FloatRegs[index].value = OperandsInfoStation.get(i).issue;
+//        FloatRegs[index].ready = Boolean.TRUE;
+    }
 
     private void OpsSUB(){}
 
