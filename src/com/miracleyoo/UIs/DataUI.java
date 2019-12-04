@@ -176,10 +176,11 @@ public class DataUI {
     private void initRegisterTable() {
         registerColumnNames = new String[]{"IntReg", "Value", "FloatReg", "Value"};
         for (int i = 0; i < 32; i++) {
+            //32 int and 32 fp registers available
             registerData[i][0] = "R" + i + "=";
-            registerData[i][1] = String.format("%08d", 0);
+            registerData[i][1] = String.format("%08d", 0); //write integer register value
             registerData[i][2] = "F" + i + "=";
-            registerData[i][3] = String.format("%.8f", 0.0);
+            registerData[i][3] = String.format("%.8f", 0.0); //write fp register value
         }
         registerModel = new DefaultTableModel(registerData, registerColumnNames);
 
@@ -240,13 +241,11 @@ public class DataUI {
                         MainLogic.statisticsInfo[1] + " Instructions<br><br>" +
                         "<font color="+ colorSchemeMainCur[7]+"><b>Stalls</b></font><br>" +
                         MainLogic.statisticsInfo[2] + " RAW Stalls<br>" +
-                        MainLogic.statisticsInfo[3] + " WAW Stalls<br>" +
-                        MainLogic.statisticsInfo[4] + " WAR Stalls<br>" +
-                        MainLogic.statisticsInfo[5] + " Structural Stalls<br>" +
-                        MainLogic.statisticsInfo[6] + " Branch Taken Stalls<br>" +
-                        MainLogic.statisticsInfo[7] + " Branch Mis-prediction Stalls<br><br>" +
+                        MainLogic.statisticsInfo[3] + " Structural Stalls<br>" +
+                        MainLogic.statisticsInfo[4] + " Branch Taken Stalls<br>" +
+                        MainLogic.statisticsInfo[5] + " Branch Mis-prediction Stalls<br><br>" +
                         "<font color="+ colorSchemeMainCur[7]+"><b>Code Size</b></font><br>" +
-                        MainLogic.statisticsInfo[8] + " Bytes"
+                        MainLogic.statisticsInfo[6] + " Bytes"
         );
     }
 
