@@ -601,8 +601,15 @@ public class MainLogic {
             updateOperandsInfoStation();
             instructionLineCur++;
         }
+
+        else{
+            statisticsInfo[3]++; //if issue not available, it is due to structural stall
+        }
+
         checkAllOperandMember();
         CycleNumCur ++;
+        statisticsInfo[0] = CycleNumCur;
+        statisticsInfo[1] = instructionLineCur;
     }
 
     public MainLogic() {
