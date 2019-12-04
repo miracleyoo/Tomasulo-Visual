@@ -72,7 +72,7 @@ public class MainLogic {
         public Number ValueReg2 = null;
     };
 
-    private static OperandInfo tempOperandsInfo;
+    private static OperandInfo tempOperationInfo;
 
     // Struct for float registers list
     public static class FloatRegTemplate{
@@ -140,10 +140,22 @@ public class MainLogic {
     public static String[] instr = {"ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)"};
 
     // Operand info structures. It's length equals to the number of Operand cells in Diagram.
-    public static LinkedList<OperandInfo> OperandsInfoStation = new LinkedList<OperandInfo>();
+    public static LinkedList<OperandInfo> OperationInfoStation = new LinkedList<OperandInfo>();
+
+    //////////////////////////////////////////////////////////////////////
+    //////////////////        TODO       /////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+
+    // Keep track of the new change of OperandsInfoStation element
+
+    //////////////////////////////////////////////////////////////////////
+    //////////////////       END TODO       //////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+    public static LinkedList<OperandInfo> OperationInfoFull = new LinkedList<OperandInfo>();
+
 
     // Operand classify dictionary. Key:Value -> Operand:Class
-    public static Map< String, String> OperandMapper = new HashMap<>();
+    public static Map< String, String> OperationMapper = new HashMap<>();
 
     // Reservation stations definition
     public static FUTemplate[] LoadFUs = new FUTemplate[(int)architectureNum[0]];
@@ -170,7 +182,7 @@ public class MainLogic {
     // Push the list item to corresponding dictionary Key:Value pair
     private void mapListItems (String[]inputList, String listName){
         for (String operand : inputList) {
-            OperandMapper.put(operand, listName);
+            OperationMapper.put(operand, listName);
         }
     }
 
@@ -191,7 +203,7 @@ public class MainLogic {
     // 2. Check whether there are some free and corresponding FUs
     private Boolean judgeIssue() {
         Boolean flag = Boolean.FALSE;
-        String type_ = OperandMapper.get(tempOperandsInfo.operand);
+        String type_ = OperationMapper.get(tempOperationInfo.operand);
 
         // Check available reservation station at first. BRA, NOP, HALT don't need RS.
         if(type_.equals("BRA") || type_.equals("NOP") || type_.equals("HALT")){
@@ -212,16 +224,27 @@ public class MainLogic {
         }
 
         // Check whether there are free OperandsInfoStation, if not, check whether the last Instruction is end.
-        if (OperandsInfoStation.size()<OpQueue){
+        if (OperationInfoStation.size()<OpQueue){
             return Boolean.TRUE;
         }
-        else if(OperandsInfoStation.getLast().state.equals("End")){
+        else if(OperationInfoStation.getLast().state.equals("End")){
             return Boolean.TRUE;
         }
         else {
             return Boolean.FALSE;
         }
     }
+
+
+    //////////////////////////////////////////////////////////////////////
+    //////////////////        TODO       /////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+
+    // Judge
+
+    //////////////////////////////////////////////////////////////////////
+    //////////////////       END TODO       //////////////////////////////
+    //////////////////////////////////////////////////////////////////////
 
     // Judge whether it is available to start execution
     private Boolean judgeExe(){
@@ -239,36 +262,36 @@ public class MainLogic {
     private void parseInstruction(String operandLine){
         String operand, srcTemp, operandType, destinationReg;
 
-        tempOperandsInfo = new OperandInfo();
+        tempOperationInfo = new OperandInfo();
         operandLine=operandLine.split(";")[0].trim();
-        tempOperandsInfo.inst = operandLine;
+        tempOperationInfo.inst = operandLine;
 
         // There can be some label in front of a instruction, like `start: xxx xx xxx `
         if (operandLine.split(":").length>1){
-            tempOperandsInfo.label = operandLine.split(":")[0];
+            tempOperationInfo.label = operandLine.split(":")[0];
             operandLine = operandLine.split(":")[1].trim();
         }
 
         String[] separateEmpty = operandLine.split("\\s+");
         operand = separateEmpty[0].replace(".","").toUpperCase().trim();
-        operandType = OperandMapper.get(operand);
+        operandType = OperationMapper.get(operand);
 
-        tempOperandsInfo.operand = operand;
+        tempOperationInfo.operand = operand;
         if (separateEmpty.length<=1){ // HALT, NOP
             return;
         }
         else{
             if(operandType.equals("BRA")){
-                tempOperandsInfo.jumpLabel = separateEmpty[1].trim();
+                tempOperationInfo.jumpLabel = separateEmpty[1].trim();
                 return;
             }
 
             srcTemp = separateEmpty[1].toUpperCase().trim();
             String[] regParts = srcTemp.split(",");
-            tempOperandsInfo.DestReg = regParts[0];
+            tempOperationInfo.DestReg = regParts[0];
 
             if(regParts[0].toUpperCase().startsWith("R") || regParts[0].toUpperCase().startsWith("F")){
-                tempOperandsInfo.DestReg = regParts[0].trim().toUpperCase();
+                tempOperationInfo.DestReg = regParts[0].trim().toUpperCase();
             }
             else{
                 throw new AssertionError("Destination Register wrong");
@@ -280,7 +303,7 @@ public class MainLogic {
 
                 // Split things like 4(R1), CONTROL(r0)
                 if (address_[0].replaceAll("\\d+","").length() == 0){
-                    tempOperandsInfo.ValueReg1 = Integer.parseInt(address_[0]);
+                    tempOperationInfo.ValueReg1 = Integer.parseInt(address_[0]);
                 }
                 else{
                     //////////////////////////////////////////////////////////////////////
@@ -295,14 +318,14 @@ public class MainLogic {
                     //////////////////////////////////////////////////////////////////////
                     //////////////////       END TODO       //////////////////////////////
                     //////////////////////////////////////////////////////////////////////
-                    tempOperandsInfo.ValueReg1 = 0;
+                    tempOperationInfo.ValueReg1 = 0;
                 }
                 // When parsing LOAD or SAVE operands whose address is like ADD1(ADD2), ADD1 will be put into ValueReg1 or SourceReg1
                 if(address_[1].toUpperCase().startsWith("R") || address_[1].toUpperCase().startsWith("F")){
-                    tempOperandsInfo.SourceReg2 = address_[1];
+                    tempOperationInfo.SourceReg2 = address_[1];
                 }
                 else if(address_[1].trim().replaceAll("\\d+","").length() == 0){
-                    tempOperandsInfo.ValueReg2 = Integer.parseInt(address_[1]);
+                    tempOperationInfo.ValueReg2 = Integer.parseInt(address_[1]);
                 }
                 else{
                     //////////////////////////////////////////////////////////////////////
@@ -320,10 +343,10 @@ public class MainLogic {
             }
 
             if(regParts[1].toUpperCase().startsWith("R") || regParts[1].toUpperCase().startsWith("F")){
-                tempOperandsInfo.SourceReg1 = regParts[1];
+                tempOperationInfo.SourceReg1 = regParts[1];
             }
             else if(regParts[1].trim().replaceAll("\\d+","").length() == 0){
-                tempOperandsInfo.ValueReg1 = Integer.parseInt(regParts[1]);
+                tempOperationInfo.ValueReg1 = Integer.parseInt(regParts[1]);
             }
             else{
                 //////////////////////////////////////////////////////////////////////
@@ -339,10 +362,10 @@ public class MainLogic {
             }
 
             if(regParts[2].toUpperCase().startsWith("R") || regParts[2].toUpperCase().startsWith("F")){
-                tempOperandsInfo.SourceReg2 = regParts[2];
+                tempOperationInfo.SourceReg2 = regParts[2];
             }
             else if(regParts[2].trim().replaceAll("\\d+","").length() == 0){
-                tempOperandsInfo.ValueReg2 = Integer.parseInt(regParts[2]);
+                tempOperationInfo.ValueReg2 = Integer.parseInt(regParts[2]);
             }
             else{
                 //////////////////////////////////////////////////////////////////////
@@ -363,49 +386,51 @@ public class MainLogic {
     // 1. Put tempOperandsInfo in the right place
     // 2. Update the Issue value and state of newly placed member
     private void updateOperandsInfoStation(){
-        if (OperandsInfoStation.size()>=OpQueue){
-            OperandsInfoStation.removeLast();
+        if (OperationInfoStation.size()>=OpQueue){
+            OperationInfoStation.removeLast();
         }
-        OperandsInfoStation.addFirst(tempOperandsInfo);
-        OperandsInfoStation.getFirst().issue = CycleNumCur;
-        OperandsInfoStation.getFirst().state = InstructionState[0];
-        OperandsInfoStation.getFirst().absoluteIndex = instructionLineCur;
+        OperationInfoStation.addFirst(tempOperationInfo);
+        OperationInfoStation.getFirst().issue = CycleNumCur;
+        OperationInfoStation.getFirst().state = InstructionState[0];
+        OperationInfoStation.getFirst().absoluteIndex = instructionLineCur;
+
+        OperationInfoFull.addLast(OperationInfoStation.getFirst());
 //        OperandsInfoStation.getFirst().inst = InstructionFullList.get(instructionLineCur);
     }
 
     // Sequentially check all of the items in the Operands station,
     // And do corresponding operation to them according to state
     private void checkAllOperandMember(){
-        for(int i=0; i<OperandsInfoStation.size(); i++){
-            switch (OperandsInfoStation.get(i).state){
+        for(int i = 0; i< OperationInfoStation.size(); i++){
+            switch (OperationInfoStation.get(i).state){
                 case "Issue":
-                    if (CycleNumCur - OperandsInfoStation.get(i).issue >= OperandsInfoStation.get(i).currentStageCycleNum){
-                        if(judgeExe()){
-                            OperandsInfoStation.get(i).state = InstructionState[1];
-                            OperandsInfoStation.get(i).exeStart = CycleNumCur;
-                            OperandsInfoStation.get(i).currentStageCycleNum = 1;
+                    if (CycleNumCur - OperationInfoStation.get(i).issue >= OperationInfoStation.get(i).currentStageCycleNum){
+                        if(judgeIssue()){
+                            OperationInfoStation.get(i).state = InstructionState[1];
+                            OperationInfoStation.get(i).exeStart = CycleNumCur;
+                            OperationInfoStation.get(i).currentStageCycleNum = 1;
                             IssueOps();
                         }
                     }
                     break;
                 case "EXE":
-                    if (CycleNumCur - OperandsInfoStation.get(i).exeStart >= OperandsInfoStation.get(i).currentStageCycleNum){
+                    if (CycleNumCur - OperationInfoStation.get(i).exeStart >= OperationInfoStation.get(i).currentStageCycleNum){
                         if(judgeExe()){
-                            OperandsInfoStation.get(i).state = InstructionState[2];
-                            OperandsInfoStation.get(i).exeEnd = CycleNumCur;
+                            OperationInfoStation.get(i).state = InstructionState[2];
+                            OperationInfoStation.get(i).exeEnd = CycleNumCur;
                             ExeOps(i);
                         }
                     }
                     break;
                 case "ExeEnd":
                     if(judgeWB()){
-                        OperandsInfoStation.get(i).state = InstructionState[3];
-                        OperandsInfoStation.get(i).writeBack = CycleNumCur;
-                        OperandsInfoStation.get(i).currentStageCycleNum = 1;
+                        OperationInfoStation.get(i).state = InstructionState[3];
+                        OperationInfoStation.get(i).writeBack = CycleNumCur;
+                        OperationInfoStation.get(i).currentStageCycleNum = 1;
                     }
                 case "WB":
-                    if (CycleNumCur - OperandsInfoStation.get(i).writeBack >= OperandsInfoStation.get(i).currentStageCycleNum){
-                        OperandsInfoStation.get(i).state = InstructionState[4];
+                    if (CycleNumCur - OperationInfoStation.get(i).writeBack >= OperationInfoStation.get(i).currentStageCycleNum){
+                        OperationInfoStation.get(i).state = InstructionState[4];
                     }
                     break;
                 case "End":
@@ -419,15 +444,15 @@ public class MainLogic {
     private void IssueOps(){
         String regName;
         int index_;
-        regName = OperandsInfoStation.getFirst().DestReg;
+        regName = OperationInfoStation.getFirst().DestReg;
         index_ =  Integer.parseInt(regName.replaceAll("\\D+",""));
         if(regName.toUpperCase().startsWith("R")){
             IntRegs[index_].ready=Boolean.FALSE;
-            IntRegs[index_].occupyInstId = OperandsInfoStation.getFirst().absoluteIndex;
+            IntRegs[index_].occupyInstId = OperationInfoStation.getFirst().absoluteIndex;
         }
         else if(regName.toUpperCase().startsWith("F")){
             FloatRegs[index_].ready=Boolean.FALSE;
-            FloatRegs[index_].occupyInstId = OperandsInfoStation.getFirst().absoluteIndex;
+            FloatRegs[index_].occupyInstId = OperationInfoStation.getFirst().absoluteIndex;
         }
     }
 
@@ -446,42 +471,42 @@ public class MainLogic {
 
     // The operations applied to an instruction which is in execute state
     private void ExeOps(int operandInfoIndex){
-        String operandType = OperandMapper.get(OperandsInfoStation.get(operandInfoIndex).operand);
+        String operandType = OperationMapper.get(OperationInfoStation.get(operandInfoIndex).operand);
         switch(operandType)
         {
             case "NOP" :
-                OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = 1;
+                OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = 1;
                 OpsNOP(operandInfoIndex);
             case "HALT" :
-                OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = 0;
+                OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = 0;
                 OpsHALT(operandInfoIndex);
                 break;
             case "DIV" :
-                OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[5];
+                OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[5];
                 OpsDIV(operandInfoIndex);
                 break;
             case "MUL" :
-                OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[4];
+                OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[4];
                 OpsMUL(operandInfoIndex);
                 break;
             case "LOAD" :
-                OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[0];
+                OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[0];
                 OpsLOAD(operandInfoIndex);
                 break;
             case "SAVE":
-                OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[1];
+                OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[1];
                 OpsSAVE(operandInfoIndex);
                 break;
             case "BRA":
-                OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = 1;
+                OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = 1;
                 OpsBRANCH(operandInfoIndex);
                 break;
             default :
                 if(operandType.equals("ADD")){
-                    OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[3];
+                    OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[3];
                 }
                 else{
-                    OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[2];
+                    OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[2];
                 }
                 if(operandType.contains("ADD")){
                     OpsADD(operandInfoIndex);
@@ -538,8 +563,8 @@ public class MainLogic {
     private void OpsADD(int i){}
 
     private void OpsSUB(int i){
-        var instInfo = OperandsInfoStation.get(i);
-        var instName = OperandMapper.get(instInfo.operand);
+        var instInfo = OperationInfoStation.get(i);
+        var instName = OperationMapper.get(instInfo.operand);
 
         switch (instName) {
             case "SUB": case"SUBS": case "SUBD": case "DSUB": case"DSUBU": case "SUBPS":
@@ -580,8 +605,15 @@ public class MainLogic {
             updateOperandsInfoStation();
             instructionLineCur++;
         }
+
+        else{
+            statisticsInfo[3]++; //if issue not available, it is due to structural stall
+        }
+
         checkAllOperandMember();
         CycleNumCur ++;
+        statisticsInfo[0] = CycleNumCur;
+        statisticsInfo[1] = instructionLineCur;
     }
 
     public MainLogic() {

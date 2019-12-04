@@ -12,9 +12,6 @@ import java.util.List;
 
 import com.miracleyoo.utils.*;
 import com.miracleyoo.Logic.*;
-import com.sun.tools.javac.Main;
-
-import static java.lang.Integer.min;
 
 public class DataUI {
     private JPanel PanelMain;               // Main Panel
@@ -98,13 +95,13 @@ public class DataUI {
 
 
     private void constructCycleFullData(){
-        for (int i=0; i<MainLogic.OperandsInfoStation.size(); i++){
-            cycleFullData[i][0] = Integer.toString(MainLogic.OperandsInfoStation.get(i).absoluteIndex);
-            cycleFullData[i][1] = MainLogic.OperandsInfoStation.get(i).inst;
-            cycleFullData[i][2] = Integer.toString(MainLogic.OperandsInfoStation.get(i).issue);
-            cycleFullData[i][3] = Integer.toString(MainLogic.OperandsInfoStation.get(i).exeStart);
-            cycleFullData[i][4] = Integer.toString(MainLogic.OperandsInfoStation.get(i).exeEnd);
-            cycleFullData[i][5] = Integer.toString(MainLogic.OperandsInfoStation.get(i).writeBack);
+        for (int i = 0; i<MainLogic.OperationInfoStation.size(); i++){
+            cycleFullData[i][0] = Integer.toString(MainLogic.OperationInfoStation.get(i).absoluteIndex);
+            cycleFullData[i][1] = MainLogic.OperationInfoStation.get(i).inst;
+            cycleFullData[i][2] = Integer.toString(MainLogic.OperationInfoStation.get(i).issue);
+            cycleFullData[i][3] = Integer.toString(MainLogic.OperationInfoStation.get(i).exeStart);
+            cycleFullData[i][4] = Integer.toString(MainLogic.OperationInfoStation.get(i).exeEnd);
+            cycleFullData[i][5] = Integer.toString(MainLogic.OperationInfoStation.get(i).writeBack);
         }
     }
 
@@ -179,10 +176,11 @@ public class DataUI {
     private void initRegisterTable() {
         registerColumnNames = new String[]{"IntReg", "Value", "FloatReg", "Value"};
         for (int i = 0; i < 32; i++) {
+            //32 int and 32 fp registers available
             registerData[i][0] = "R" + i + "=";
-            registerData[i][1] = String.format("%08d", 0);
+            registerData[i][1] = String.format("%08d", 0); //write integer register value
             registerData[i][2] = "F" + i + "=";
-            registerData[i][3] = String.format("%.8f", 0.0);
+            registerData[i][3] = String.format("%.8f", 0.0); //write fp register value
         }
         registerModel = new DefaultTableModel(registerData, registerColumnNames);
 
@@ -243,13 +241,11 @@ public class DataUI {
                         MainLogic.statisticsInfo[1] + " Instructions<br><br>" +
                         "<font color="+ colorSchemeMainCur[7]+"><b>Stalls</b></font><br>" +
                         MainLogic.statisticsInfo[2] + " RAW Stalls<br>" +
-                        MainLogic.statisticsInfo[3] + " WAW Stalls<br>" +
-                        MainLogic.statisticsInfo[4] + " WAR Stalls<br>" +
-                        MainLogic.statisticsInfo[5] + " Structural Stalls<br>" +
-                        MainLogic.statisticsInfo[6] + " Branch Taken Stalls<br>" +
-                        MainLogic.statisticsInfo[7] + " Branch Mis-prediction Stalls<br><br>" +
+                        MainLogic.statisticsInfo[3] + " Structural Stalls<br>" +
+                        MainLogic.statisticsInfo[4] + " Branch Taken Stalls<br>" +
+                        MainLogic.statisticsInfo[5] + " Branch Mis-prediction Stalls<br><br>" +
                         "<font color="+ colorSchemeMainCur[7]+"><b>Code Size</b></font><br>" +
-                        MainLogic.statisticsInfo[8] + " Bytes"
+                        MainLogic.statisticsInfo[6] + " Bytes"
         );
     }
 
@@ -443,10 +439,7 @@ public class DataUI {
             mainLogic.parseStep();
             operandTableUpdate();
             cycleTableUpdate();
-            System.out.println("Execute step");
-        }
-
-        //Update graph to show motion of instr.
+            //Update graph to show motion of instr.
 //////////////////////////////////////////////////////////////////////
 //////////////////        TEMP       /////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -460,6 +453,10 @@ public class DataUI {
 //////////////////////////////////////////////////////////////////////
 //////////////////       END TEMP       //////////////////////////////
 //////////////////////////////////////////////////////////////////////
+            System.out.println("Execute step");
+        }
+
+
     }
 
     private void SetTableScheme(JTable renderTable, String[] ColorScheme){
