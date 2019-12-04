@@ -451,30 +451,30 @@ public class MainLogic {
         {
             case "NOP" :
                 OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = 1;
-                OpsNOP();
+                OpsNOP(operandInfoIndex);
             case "HALT" :
                 OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = 0;
-                OpsHALT();
+                OpsHALT(operandInfoIndex);
                 break;
             case "DIV" :
                 OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[5];
-                OpsDIV();
+                OpsDIV(operandInfoIndex);
                 break;
             case "MUL" :
                 OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[4];
-                OpsMUL();
+                OpsMUL(operandInfoIndex);
                 break;
             case "LOAD" :
                 OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[0];
-                OpsLOAD();
+                OpsLOAD(operandInfoIndex);
                 break;
             case "SAVE":
                 OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[1];
-                OpsSAVE();
+                OpsSAVE(operandInfoIndex);
                 break;
             case "BRA":
                 OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = 1;
-                OpsBRANCH();
+                OpsBRANCH(operandInfoIndex);
                 break;
             default :
                 if(operandType.equals("ADD")){
@@ -484,19 +484,19 @@ public class MainLogic {
                     OperandsInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[2];
                 }
                 if(operandType.contains("ADD")){
-                    OpsADD();
+                    OpsADD(operandInfoIndex);
                 }
                 else if(operandType.contains("SUB")){
-                    OpsSUB();
+                    OpsSUB(operandInfoIndex);
                 }
                 else if(operandType.contains("SLT")){
-                    OpsSLT();
+                    OpsSLT(operandInfoIndex);
                 }
                 else if(operandType.contains("CVT")){
-                    OpsCVT();
+                    OpsCVT(operandInfoIndex);
                 }
                 else if(operandType.contains("AND") || operandType.contains("OR")){
-                    OpsLogic();
+                    OpsLogic(operandInfoIndex);
                 }
         }
     }
@@ -531,33 +531,43 @@ public class MainLogic {
     //////////////////       END TODO       //////////////////////////////
     //////////////////////////////////////////////////////////////////////
 
-    private void OpsNOP(){}
+    private void OpsNOP(int i){}
 
-    private void OpsHALT(){}
+    private void OpsHALT(int i){}
 
-    private void OpsADD(){}
+    private void OpsADD(int i){}
 
-    private void OpsSUB(){}
+    private void OpsSUB(int i){
+        var instInfo = OperandsInfoStation.get(i);
+        var instName = OperandMapper.get(instInfo.operand);
 
-    private void OpsSLT(){}
+        switch (instName) {
+            case "SUB": case"SUBS": case "SUBD": case "DSUB": case"DSUBU": case "SUBPS":
+                var reg1 = instInfo.SourceReg1;
+                var reg2 = instInfo.SourceReg2;
 
-    private void OpsLogic(){
+        }
+    }
+
+    private void OpsSLT(int i){}
+
+    private void OpsLogic(int i){
         // AND, OR, XOR
     }
 
-    private void OpsCVT(){
+    private void OpsCVT(int i){
         // CVTDL: to double precision, here we don't need to care. Leave the function empty.
     }
 
-    private void OpsMUL(){}
+    private void OpsMUL(int i){}
 
-    private void OpsDIV(){}
+    private void OpsDIV(int i){}
 
-    private void OpsBRANCH(){}
+    private void OpsBRANCH(int i){}
 
-    private void OpsLOAD(){}
+    private void OpsLOAD(int i){}
 
-    private void OpsSAVE(){
+    private void OpsSAVE(int i){
         // Two types, normal save and directly save to register like MTC0
     }
 
