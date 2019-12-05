@@ -33,9 +33,9 @@ public class Diagram extends JPanel {
     public static int diagramHeight = 110 + height * MainLogic.OpQueue + height + 30; // Most down: -110; Most top: Reg rects top
     //Allows for window scaling while keeping objects in their relative positions
 
-    Instruction blank = new Instruction("", "", "", "", 0, 0);
+    Instruction blank = new Instruction("", "", "", "", "", 0);
     Instruction[] opQArr = new Instruction[MainLogic.OpQueue];
-    String[] ldArr = new String[ldBuffer]; //ldArray can hold at most capacity of ldBuffer
+    Instruction[] ldArr = new Instruction[ldBuffer]; //ldArray can hold at most capacity of ldBuffer
     String issueBuffer = "";
 
     @Override
@@ -83,7 +83,7 @@ public class Diagram extends JPanel {
             for (int q = 0; q < MainLogic.OpQueue; q++) {
                 //if opQArr has a blank position, push next awaiting instruction
                 if (opQArr[q] == null) {
-                    opQArr[q] = new Instruction(MainLogic.OperationInfoStation.get(instrIndex).operand, MainLogic.OperationInfoStation.get(instrIndex).DestReg,MainLogic.OperationInfoStation.get(instrIndex).SourceReg1,MainLogic.OperationInfoStation.get(instrIndex).SourceReg2, MainLogic.OperationInfoStation.get(instrIndex).currentStageCycleNum, MainLogic.CycleNumCur);//instr[instrIndex], "", "", "", 1 , 0);
+                    opQArr[q] = new Instruction(MainLogic.OperationInfoStation.get(instrIndex).operand, MainLogic.OperationInfoStation.get(instrIndex).DestReg,MainLogic.OperationInfoStation.get(instrIndex).SourceReg1,MainLogic.OperationInfoStation.get(instrIndex).SourceReg2, MainLogic.OperationInfoStation.get(instrIndex).state, MainLogic.CycleNumCur);//instr[instrIndex], "", "", "", 1 , 0);
                     System.out.println("Instruction added: " + opQArr[q].op);
                     instrIndex++;
                 }
@@ -103,7 +103,7 @@ public class Diagram extends JPanel {
             }
             //Check if instr array has awaiting instr.
             if (instrIndex < MainLogic.OperationInfoStation.size()) {
-                opQArr[MainLogic.OpQueue - 1] = new Instruction(MainLogic.OperationInfoStation.get(instrIndex).operand, MainLogic.OperationInfoStation.get(instrIndex).DestReg,MainLogic.OperationInfoStation.get(instrIndex).SourceReg1,MainLogic.OperationInfoStation.get(instrIndex).SourceReg2, MainLogic.OperationInfoStation.get(instrIndex).currentStageCycleNum, MainLogic.CycleNumCur);//Instruction(MainLogic.instr[instrIndex], "", "", "", 0, 0); //Grab next instruction from instruction array
+                opQArr[MainLogic.OpQueue - 1] = new Instruction(MainLogic.OperationInfoStation.get(instrIndex).operand, MainLogic.OperationInfoStation.get(instrIndex).DestReg,MainLogic.OperationInfoStation.get(instrIndex).SourceReg1,MainLogic.OperationInfoStation.get(instrIndex).SourceReg2, MainLogic.OperationInfoStation.get(instrIndex).state, MainLogic.CycleNumCur); //Grab next instruction from instruction array
                 instrIndex++;
             }
 
@@ -123,36 +123,28 @@ public class Diagram extends JPanel {
         }
 
         for (int q = 0; q < MainLogic.OpQueue; q++) {
+            //g.setColor(Color.decode(DataUI.colorSchemeCycleCur[opQArr.length%DataUI.colorSchemeCycleCur.length])); //to set highlight
+            //g.drawRect(originX - 100, originY - (height * q + height) - 60, 80, height);
             g.drawString(opQArr[q].op, originX - 95, originY - (height * q) - 62);
         }
 
 
-        //ldBuffers
+        //---ldBuffers---\\
         int[] ldBase = {-400, -60};
         g.drawString("LD Buffer (From Memory)", originX + ldBase[0], originY - (height * ldBuffer + height) + ldBase[1]);
         for (int i = 0; i < ldBuffer; i++) {
             g.drawRect(originX + ldBase[0], originY - (height * i + height) + ldBase[1], 50, height);
         }
 
-        //if OpQArr[0] is lw
-        //Create ldWord array to hold instructions while they execute load
-        //on clock cycle
 
-        for(int z = 0; z < ldBuffer; z++) {
-            if (MainLogic.ldBuffer[z] != null) {
-                g.drawString(MainLogic.ldBuffer[z].op, originX + ldBase[0] + 5, originY + ldBase[1] - (height * z) - 2);
-            }
-        }
-
-
-        //Place sdBuffers
+        //---sdBuffers---\\
         int[] sdBase = {250, -60};
         g.drawString("SD Buffer (To Memory)", originX + sdBase[0], originY - (height * sdBuffer + height) + sdBase[1]);
         for (int i = 0; i < sdBuffer; i++) {
             g.drawRect(originX + sdBase[0], originY - (height * i + height) + sdBase[1], 50, height);
         }
 
-
+        //---Registers---\\
         g.drawString("Int/FP Registers", originX + 50, originY - (height * registers + height) - 60);
         for (int q = 0; q < registers; q++) {
             g.drawRect(originX + 50, originY - (height * q + height) - 60, 80, height);
@@ -212,7 +204,6 @@ public class Diagram extends JPanel {
 
         //fp Div FU
         int divBase[] = {150, 60};
-        //g.drawString("Divider", 190, 80);
         for (int z = 0; z < fpDividerRS; z++) {
             g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
             g.drawRect(originX - opBoxWidth + divBase[0], originY - (height * z) + divBase[1], opBoxWidth, height);
@@ -225,8 +216,60 @@ public class Diagram extends JPanel {
             g.fillPolygon(new int[]{originX + divBase[0] + 35, originX + divBase[0] + 40, originX + divBase[0] + 45}, new int[]{originY + 99, originY + 109, originY + 99}, 3);
             drawThickLine(g, originX + divBase[0] + 90, originY + divBase[1] + 17, originX + divBase[0] + 90, originY + 110); //from CDB
             g.fillPolygon(new int[]{originX + divBase[0] + 85, originX + divBase[0] + 90, originX + divBase[0] + 95}, new int[]{originY + divBase[1] + 22, originY + divBase[1] + 12, originY + divBase[1] + 22}, 3);
-
         }
+
+        //***---Diagram Logic---***\\
+        //Create respective Reservation Station arrays to hold instructions while they execute load on clock cycle
+        if(MainLogic.OperationInfoStation.get(instrIndex).state.equals("Issue") || MainLogic.OperationInfoStation.get(instrIndex).state.equals("EXE") || MainLogic.OperationInfoStation.get(instrIndex).equals("ExeEnd")){ //Hold in RS ExeEnd if CBD is occupied
+            switch (MainLogic.OperationInfoStation.get(instrIndex).operand){
+                case "LOAD":
+                for (int z = 0; z < ldBuffer; z++) {
+                    if (ldArr[z] != null) {
+                        g.drawString(ldArr[z].op, originX + ldBase[0] + 5, originY + ldBase[1] - (height * z) - 2);
+                    }
+                }
+
+                case "SAVE":
+
+                case "INT":
+
+                case "ADD":
+
+                case "MUL":
+
+                case "DIV":
+
+                case "BRA":
+            }
+        }
+
+      //Place in awaiting RS/registers
+        else if(MainLogic.OperationInfoStation.get(instrIndex).state.equals("WB")){
+            switch (MainLogic.OperationInfoStation.get(instrIndex).operand){
+                //Shift all elements in corresponding RS array down by one
+                case "LOAD":
+/*                    for (int l = 0; l < ldBuffer-1; l++) {
+                        if (ldArr[l] != null) {
+                            ldArr[l] = ldArr[l+1]; //shift the elements down one index
+                        }
+
+ */
+
+                case "SAVE":
+
+                case "INT":
+
+                case "ADD":
+
+                case "MUL":
+
+                case "DIV":
+
+                case "BRA":
+            }
+            //g.drawString(MainLogic.OperationInfoStation.get(instrIndex).operand, x, y); //draw instruction into register
+        }
+
 
         //---Connecting Wires---
         g.setColor((Color.decode(DataUI.colorSchemeMainCur[6])));
