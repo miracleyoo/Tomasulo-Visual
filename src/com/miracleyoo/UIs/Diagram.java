@@ -40,6 +40,7 @@ public class Diagram extends JPanel {
     Instruction[] addArr = new Instruction[fpAdderRS];
     Instruction[] mulArr = new Instruction[fpMultiplierRS];
     Instruction[] divArr = new Instruction[fpDividerRS];
+    Instruction[] regArr = new Instruction[registers];
     String issueBuffer = "";
 
     @Override
@@ -340,7 +341,19 @@ public class Diagram extends JPanel {
 
                     case "BRA":
                 }
-                //g.drawString(MainLogic.OperationInfoStation.get(instrIndex).operand, x, y); //draw instruction into register
+                for(int r = 0; r < registers; r++) {
+                    if(regArr[r] == blank || regArr[r] == null) {
+                        g.drawString(MainLogic.OperationInfoStation.get(i).operand, originY - (height * r) - 60, 80); //draw instruction into register
+                    }
+
+                    //if registers full on diagram, shift down. RECORD RESULTS ON REGISTERS TABLE
+                    else{
+                        if(r < registers - 1) {
+                            regArr[r] = regArr[r + 1];
+                        }
+                        regArr[registers - 1] = blank;
+                    }
+                }
             }
         }
 
