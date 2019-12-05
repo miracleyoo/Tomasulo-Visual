@@ -35,6 +35,11 @@ public class Diagram extends JPanel {
     Instruction blank = new Instruction("", "", "", "", "", 0);
     Instruction[] opQArr = new Instruction[MainLogic.OpQueue];
     Instruction[] ldArr = new Instruction[ldBuffer]; //ldArray can hold at most capacity of ldBuffer
+    Instruction[] sdArr = new Instruction[sdBuffer];
+    Instruction[] intArr = new Instruction[integerRS];
+    Instruction[] addArr = new Instruction[fpAdderRS];
+    Instruction[] mulArr = new Instruction[fpMultiplierRS];
+    Instruction[] divArr = new Instruction[fpDividerRS];
     String issueBuffer = "";
 
     @Override
@@ -224,22 +229,90 @@ public class Diagram extends JPanel {
                 switch (MainLogic.OperationInfoStation.get(i).operand) {
                     case "LOAD":
                         for (int z = 0; z < ldBuffer; z++) {
+                            //insert into load buffer if there is a blank space
+                            if(ldArr[z] == blank || ldArr[z] == null){
+                                ldArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                            }
+
+                            //paint on diagram
                             if (ldArr[z] != null) {
                                 g.drawString(ldArr[z].op, originX + ldBase[0] + 5, originY + ldBase[1] - (height * z) - 2);
                             }
                         }
 
                     case "SAVE":
+                        for (int z = 0; z < sdBuffer; z++) {
+                            //insert if there is a blank space
+                            if(sdArr[z] == blank || sdArr[z] == null){
+                                sdArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                            }
+
+                            //paint on diagram
+                            if (sdArr[z] != null) {
+                                g.drawString(sdArr[z].op, originX + sdBase[0] + 5, originY + sdBase[1] - (height * z) - 2);
+                            }
+                        }
 
                     case "INT":
+                        for (int z = 0; z < integerRS; z++) {
+                            //insert if there is a blank space
+                            if(intArr[z] == blank || intArr[z] == null){
+                                intArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                            }
+
+                            //paint on diagram
+                            if (intArr[z] != null) {
+                                g.drawString(intArr[z].op, originX + intBase[0] + 5, originY + intBase[1] - (height * z) - 2);
+                            }
+                        }
 
                     case "ADD":
+                        for (int z = 0; z < fpAdderRS; z++) {
+                            //insert if there is a blank space
+                            if(addArr[z] == blank || addArr[z] == null){
+                                addArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                            }
+
+                            //paint on diagram
+                            if (addArr[z] != null) {
+                                g.drawString(addArr[z].op, originX + addBase[0] + 5, originY + addBase[1] - (height * z) - 2);
+                            }
+                        }
 
                     case "MUL":
+                        for (int z = 0; z < fpMultiplierRS; z++) {
+                            //insert if there is a blank space
+                            if(mulArr[z] == blank || mulArr[z] == null){
+                                mulArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                            }
+
+                            //paint on diagram
+                            if (mulArr[z] != null) {
+                                g.drawString(mulArr[z].op, originX + mulBase[0] + 5, originY + mulBase[1] - (height * z) - 2);
+                            }
+                        }
 
                     case "DIV":
+                        for (int z = 0; z < fpDividerRS; z++) {
+                            //insert if there is a blank space
+                            if(divArr[z] == blank || divArr[z] == null){
+                                divArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                            }
+
+                            //paint on diagram
+                            if (divArr[z] != null) {
+                                g.drawString(divArr[z].op, originX + divBase[0] + 5, originY + divBase[1] - (height * z) - 2);
+                            }
+                        }
 
                     case "BRA":
+                        //---WIP---
+
+                    case "NOP":
+                        //do nothing
+
+                    case "HALT":
+                        //---WIP---
                 }
             }
 
