@@ -218,35 +218,36 @@ public class Diagram extends JPanel {
         }
 
         //***---Diagram Logic---***\\
-        //Create respective Reservation Station arrays to hold instructions while they execute load on clock cycle
-        if(MainLogic.OperationInfoStation.get(instrIndex).state.equals("Issue") || MainLogic.OperationInfoStation.get(instrIndex).state.equals("EXE") || MainLogic.OperationInfoStation.get(instrIndex).equals("ExeEnd")){ //Hold in RS ExeEnd if CBD is occupied
-            switch (MainLogic.OperationInfoStation.get(instrIndex).operand){
-                case "LOAD":
-                for (int z = 0; z < ldBuffer; z++) {
-                    if (ldArr[z] != null) {
-                        g.drawString(ldArr[z].op, originX + ldBase[0] + 5, originY + ldBase[1] - (height * z) - 2);
-                    }
+        for(int i = 0; i < MainLogic.OperationInfoStation.size(); i++) {
+            //Create respective Reservation Station arrays to hold instructions while they execute load on clock cycle
+            if (MainLogic.OperationInfoStation.get(i).state.equals("Issue") || MainLogic.OperationInfoStation.get(i).state.equals("EXE") || MainLogic.OperationInfoStation.get(i).equals("ExeEnd")) { //Hold in RS ExeEnd if CBD is occupied
+                switch (MainLogic.OperationInfoStation.get(i).operand) {
+                    case "LOAD":
+                        for (int z = 0; z < ldBuffer; z++) {
+                            if (ldArr[z] != null) {
+                                g.drawString(ldArr[z].op, originX + ldBase[0] + 5, originY + ldBase[1] - (height * z) - 2);
+                            }
+                        }
+
+                    case "SAVE":
+
+                    case "INT":
+
+                    case "ADD":
+
+                    case "MUL":
+
+                    case "DIV":
+
+                    case "BRA":
                 }
-
-                case "SAVE":
-
-                case "INT":
-
-                case "ADD":
-
-                case "MUL":
-
-                case "DIV":
-
-                case "BRA":
             }
-        }
 
-      //Place in awaiting RS/registers
-        else if(MainLogic.OperationInfoStation.get(instrIndex).state.equals("WB")){
-            switch (MainLogic.OperationInfoStation.get(instrIndex).operand){
-                //Shift all elements in corresponding RS array down by one
-                case "LOAD":
+            //Place in awaiting RS/registers
+            else if (MainLogic.OperationInfoStation.get(i).state.equals("WB")) {
+                switch (MainLogic.OperationInfoStation.get(i).operand) {
+                    //Shift all elements in corresponding RS array down by one
+                    case "LOAD":
 /*                    for (int l = 0; l < ldBuffer-1; l++) {
                         if (ldArr[l] != null) {
                             ldArr[l] = ldArr[l+1]; //shift the elements down one index
@@ -254,19 +255,20 @@ public class Diagram extends JPanel {
 
  */
 
-                case "SAVE":
+                    case "SAVE":
 
-                case "INT":
+                    case "INT":
 
-                case "ADD":
+                    case "ADD":
 
-                case "MUL":
+                    case "MUL":
 
-                case "DIV":
+                    case "DIV":
 
-                case "BRA":
+                    case "BRA":
+                }
+                //g.drawString(MainLogic.OperationInfoStation.get(instrIndex).operand, x, y); //draw instruction into register
             }
-            //g.drawString(MainLogic.OperationInfoStation.get(instrIndex).operand, x, y); //draw instruction into register
         }
 
 
