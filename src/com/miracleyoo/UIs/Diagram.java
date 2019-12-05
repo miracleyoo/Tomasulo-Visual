@@ -8,10 +8,9 @@ import java.awt.*;
 
 public class Diagram extends JPanel {
 
-    //    private int cycleNum; // To keep track of cycle number. It is changed to MainLogic.CycleNumCur
     private int cycleNumOld = 0;
 
-    private int instrIndex = 0;
+    private int instrIndex = 0; //this will need to change to keep track of instructions
 
     int fontSize = 9;
 
