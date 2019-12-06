@@ -73,6 +73,7 @@ public class DataUI {
 
 
     // Update the operand model when data are updated
+    /*
     private void operandTableUpdate() {
         if (operandSlice[0] >= operandFullData.length - 1) {
             operandRawData = null;
@@ -85,6 +86,8 @@ public class DataUI {
         TableUtils.setAllPreferredColumnSize(OperandTable, operandColumnWidths);
     }
 
+     */
+
     // Update the data model when data are updated
     private void dataTableUpdate() {
         dataModel.setDataVector(dataFullData, dataColumnNames);
@@ -96,12 +99,13 @@ public class DataUI {
 
     private void constructCycleFullData(){
         for (int i = 0; i<MainLogic.OperationInfoStation.size(); i++){
-            cycleFullData[i][0] = Integer.toString(MainLogic.OperationInfoStation.get(i).absoluteIndex);
-            cycleFullData[i][1] = MainLogic.OperationInfoStation.get(i).inst;
-            cycleFullData[i][2] = Integer.toString(MainLogic.OperationInfoStation.get(i).issue);
-            cycleFullData[i][3] = Integer.toString(MainLogic.OperationInfoStation.get(i).exeStart);
-            cycleFullData[i][4] = Integer.toString(MainLogic.OperationInfoStation.get(i).exeEnd);
-            cycleFullData[i][5] = Integer.toString(MainLogic.OperationInfoStation.get(i).writeBack);
+            cycleFullData[i][0] = Integer.toString((MainLogic.OperationInfoStation.get(i).absoluteIndex * 4)); //PC counter
+            cycleFullData[i][1] = Integer.toString(MainLogic.OperationInfoStation.get(i).absoluteIndex);
+            cycleFullData[i][2] = MainLogic.OperationInfoStation.get(i).inst;
+            cycleFullData[i][3] = Integer.toString(MainLogic.OperationInfoStation.get(i).issue);
+            cycleFullData[i][4] = Integer.toString(MainLogic.OperationInfoStation.get(i).exeStart);
+            cycleFullData[i][5] = Integer.toString(MainLogic.OperationInfoStation.get(i).exeEnd);
+            cycleFullData[i][6] = Integer.toString(MainLogic.OperationInfoStation.get(i).writeBack);
         }
     }
 
@@ -133,7 +137,7 @@ public class DataUI {
         operandSlice[1] = 5;
         MainLogic.CycleNumCur = 0;
         CycleLabel.setText("Cycles(Preview)");
-        operandTableUpdate();
+        //operandTableUpdate();
         dataTableUpdate();
         initRegisterTable();
         initStatisticsPanel();
@@ -157,7 +161,7 @@ public class DataUI {
     }
 
 
-
+/*
     // Initialize the operand Table
     private void initOperandTable(Object[][] inputTotalData) {
         operandFullData = inputTotalData;
@@ -171,6 +175,8 @@ public class DataUI {
         TableUtils.setAllMinColumnSize(OperandTable, operandColumnWidths);
         TableUtils.setAllPreferredColumnSize(OperandTable, operandColumnWidths);
     }
+
+ */
 
     // Initialize the register Table
     private void initRegisterTable() {
@@ -193,8 +199,8 @@ public class DataUI {
 
     // Initialize the cycle Table
     private void initCycleTable() {
-        cycleColumnNames = new String[]{"Index", "Instruction", "ISSUE", "EXE START", "EXE END", "WB"};
-        cycleFullData = new String[MainLogic.OpQueue][6];
+        cycleColumnNames = new String[]{"PC", "Index", "Instruction", "ISSUE", "EXE START", "EXE END", "WB"};
+        cycleFullData = new String[MainLogic.OpQueue][7];
         constructCycleFullData();
 //        cycleColumnWidths = new int[MainLogic.CycleNumCur];
 //        Arrays.fill(cycleColumnWidths, 100);
@@ -437,7 +443,7 @@ public class DataUI {
 
         for(int i=0;i<stepNum;i++) {
             mainLogic.parseStep();
-            operandTableUpdate();
+            //operandTableUpdate();
             cycleTableUpdate();
             //Update graph to show motion of instr.
 //////////////////////////////////////////////////////////////////////
@@ -492,7 +498,7 @@ public class DataUI {
         TomasuloLabel.setForeground(Color.decode(colorSchemeMainCur[4]));
         CycleLabel.setForeground(Color.decode(colorSchemeMainCur[4]));
         StatisticsLabel.setForeground(Color.decode(colorSchemeMainCur[4]));
-        CodeLabel.setForeground(Color.decode(colorSchemeMainCur[4]));
+        //CodeLabel.setForeground(Color.decode(colorSchemeMainCur[4]));
         DataLabel.setForeground(Color.decode(colorSchemeMainCur[4]));
         RegisterLabel.setForeground(Color.decode(colorSchemeMainCur[4]));
 
@@ -521,7 +527,7 @@ public class DataUI {
 
     DataUI(Object[][] inputOperandFieldData, Object[][] inputDataFieldData) {
         // Initialize the operand Table
-        initOperandTable(inputOperandFieldData);
+        //initOperandTable(inputOperandFieldData);
 
         // Initialize the register Table
         initRegisterTable();

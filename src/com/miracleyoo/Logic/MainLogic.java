@@ -602,6 +602,9 @@ public class MainLogic {
     public void parseStep(){
         Boolean issueAvailable;
         parseInstruction(InstructionFullList.get(instructionLineCur));
+        //for debugging
+        //System.out.println(instr[instructionLineCur]);
+        //parseInstruction(instr[instructionLineCur]);
         issueAvailable = judgeIssue();
         if (issueAvailable){
             updateOperandsInfoStation();
