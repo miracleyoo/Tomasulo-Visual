@@ -96,6 +96,7 @@ public abstract class FunctionUnit {
         instruction.setIssueCycle(cycle);
         instruction.setFunctionUnit(this.id);
         instruction.setReservationStation(this.reservationStation);
+        instruction.setCountDown(this.executionSteps());
         this.status = Status.Issued;
 
         return true;
@@ -110,7 +111,11 @@ public abstract class FunctionUnit {
         }
     }
 
-    public abstract int steps_remain();
+    public abstract int executionSteps();
 
     public abstract Type fuType();
+
+    public TomasuloCPU getCpu() {
+        return cpu;
+    }
 }

@@ -28,6 +28,7 @@ import org.edumips64.core.Memory;
 import org.edumips64.core.fpu.*;
 import org.edumips64.core.is.*;
 import org.edumips64.core.tomasulo.fu.*;
+import org.edumips64.core.tomasulo.fu.FuNOP;
 import org.edumips64.utils.*;
 
 import java.util.ArrayList;
@@ -154,6 +155,7 @@ public class TomasuloCPU {
             num_fus ++;
         }
         this.fus.add(new FuMemory(num_fus, this, memory));
+        this.fus.add(new FuNOP(num_fus, this));
 
         logger.info("Tomasulo CPU Created.");
     }
@@ -606,5 +608,9 @@ public class TomasuloCPU {
         public void writeWord(long value, int offset) {}
         public void writeDoubleWord(long value) {}
 
+    }
+
+    public ConfigStore getConfig() {
+        return config;
     }
 }
