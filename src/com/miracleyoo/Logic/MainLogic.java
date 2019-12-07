@@ -59,7 +59,7 @@ public class MainLogic {
         public int currentStageCycleNum = 1;
         public int absoluteIndex = 0; // This is the line number of this instruction.
 
-        // Instruction related registers, jump lables or where to jump
+        // Instruction related registers, jump labels or where to jump
         public String label = null;     // The label in this line.
         public String jumpLabel = null; // Jump to label "X". For branch operands.
         public String DestReg = null;
@@ -174,10 +174,12 @@ public class MainLogic {
     ///////////////   Most Important Global Parameters End ////////////////////
     ///////////////////////////////////////////////////////////////////////////
 
+    /*
     Instruction in;
     public static Instruction blankInstr = new Instruction("", "", "", "", -1, 0);
     Instruction cdb = blankInstr; //holds instruction that has finished executing and pushes it to destination/waiting RS
-    public static Instruction[] ldBuffer = new Instruction[(int)architectureNum[0]];
+    */
+    //public static OperandInfo[] loadBuffer = new OperandInfo[(int)architectureNum[0]]; //used to interface with diagram for display
 
     // Push the list item to corresponding dictionary Key:Value pair
     private void mapListItems (String[]inputList, String listName){
@@ -600,6 +602,9 @@ public class MainLogic {
     public void parseStep(){
         Boolean issueAvailable;
         parseInstruction(InstructionFullList.get(instructionLineCur));
+        //for debugging
+        //System.out.println(instr[instructionLineCur]);
+        //parseInstruction(instr[instructionLineCur]);
         issueAvailable = judgeIssue();
         if (issueAvailable){
             updateOperandsInfoStation();
@@ -679,6 +684,7 @@ public class MainLogic {
     //////////////////       END Attention       /////////////////////////
     //////////////////////////////////////////////////////////////////////
 
+    /*
     //clock set function --> Main logic updates every clock cycle
     public void runLogic(int clk){
         CycleNumCur = clk;
@@ -742,6 +748,8 @@ public class MainLogic {
             }
         }
     } //---end method---
+
+     */
 }
 
 /*
