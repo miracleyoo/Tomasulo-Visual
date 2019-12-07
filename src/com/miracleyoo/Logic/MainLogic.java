@@ -560,18 +560,18 @@ public class MainLogic {
 
     private void OpsHALT(){}
 
-    private void OpsADD(int i){
+    private void OpsADD(){
 //        OperandMapper.get(OperandsInfoStation.get(i).operand);
 //        OperandsInfoStation.get(i).DestReg=OperandsInfoStation.get(i).SourceReg1+OperandsInfoStation.get(i).SourceReg2;
 //        int index = Integer.parseInt("R11".replaceAll("\D+",""));
 //        FloatRegs[index].value = OperandsInfoStation.get(i).issue;
 //        FloatRegs[index].ready = Boolean.TRUE;
-        OperationInfoStation.get(i).ValueReg1;
-        Number i;
-        float x=9.0;
-        i=x;
-        int e=3;
-        i=e;
+//        OperationInfoStation.get(i).ValueReg1;
+//        Number i;
+//        float x=9.0;
+//        i=x;
+//        int e=3;
+//        i=e;
 
     }
 
