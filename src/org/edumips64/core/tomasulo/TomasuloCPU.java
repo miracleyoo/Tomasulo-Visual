@@ -365,14 +365,11 @@ public class TomasuloCPU {
             var cdb = this.getCdb();
             if (cdb.isBusy()) {
                 var reg = cdb.getReg();
-                if (this.registerStatuses[reg] == null) {
-                    if (reg < this.IntegerRegisters()) {
-                        this.getRegister(reg).setBits(cdb.getValue(), 0);
-                    } else {
-                        this.getRegisterFP(reg - this.IntegerRegisters()).setBits(cdb.getValue(), 0);
-                    }
+                if (reg < this.IntegerRegisters()) {
+                    this.getRegister(reg).setBits(cdb.getValue(), 0);
+                } else {
+                    this.getRegisterFP(reg - this.IntegerRegisters()).setBits(cdb.getValue(), 0);
                 }
-                cdb.reset();
             }
             InstructionInterface next_if = mem.getInstruction((int) pc.getValue());
             logger.info("Fetched new instruction " + next_if);
