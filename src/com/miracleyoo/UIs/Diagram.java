@@ -2,6 +2,7 @@ package com.miracleyoo.UIs;
 
 import com.miracleyoo.utils.Instruction;
 import com.miracleyoo.Logic.MainLogic;
+import com.miracleyoo.utils.TableUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -89,7 +90,7 @@ public class Diagram extends JPanel {
             //if opQArr has a blank position, push next awaiting instruction
             if (opQArr[o] == null || opQArr[o] == blank) {
                 opQArr[o] = new Instruction(MainLogic.OperationInfoStation.getFirst().operand, MainLogic.OperationInfoStation.getFirst().DestReg, MainLogic.OperationInfoStation.getFirst().SourceReg1, MainLogic.OperationInfoStation.getFirst().SourceReg2, MainLogic.OperationInfoStation.getFirst().state, 0);//instr[instrIndex], "", "", "", 1 , 0);
-                System.out.println("Instruction added: " + opQArr[o].op + " valO: " + o);
+                //System.out.println("Instruction added: " + opQArr[o].op + " valO: " + o);
                 break;
             }
         }
@@ -192,7 +193,7 @@ public class Diagram extends JPanel {
         for(int z = 0; z < integerRS; z++) {
             //paint on diagram
             if (intArr[z] != null || intArr[z] != blank) {
-                g.drawString(intArr[z].op, originX + intBase[0] + 5, originY + intBase[1] - (height * z + height) - 2);
+                g.drawString(intArr[z].op, originX + intBase[0] + 5, originY + intBase[1] - (height * z - height) - 2);
             }
         }
 
@@ -215,7 +216,7 @@ public class Diagram extends JPanel {
         for(int z = 0; z < fpAdderRS; z++) {
             //paint on diagram
             if (addArr[z] != blank || addArr[z] != null) {
-                g.drawString(addArr[z].op, originX + addBase[0] + 5, originY + addBase[1] - (height * z + height) - 2);
+                g.drawString(addArr[z].op, originX + addBase[0] + 5, originY + addBase[1] - (height * z - height) - 2);
             }
         }
 
@@ -238,7 +239,7 @@ public class Diagram extends JPanel {
         for(int z = 0; z < fpMultiplierRS; z++){
             //paint on diagram
             if (mulArr[z] != null || mulArr[z] != blank) {
-                g.drawString(mulArr[z].op, originX + mulBase[0] + 5, originY + mulBase[1] - (height * z + height) - 2);
+                g.drawString(mulArr[z].op, originX + mulBase[0] + 5, originY + mulBase[1] - (height * z - height) - 2);
             }
         }
 
@@ -261,56 +262,63 @@ public class Diagram extends JPanel {
         for(int z = 0; z < fpDividerRS; z++){
             //paint on diagram
             if (divArr[z] != null || divArr[z] != blank) {
-                g.drawString(divArr[z].op, originX + divBase[0] + 5, originY + divBase[1] - (height * z + height) - 2);
+                g.drawString(divArr[z].op, originX + divBase[0] + 5, originY + divBase[1] - (height * z - height) - 2);
             }
         }
 
+//       / boolean inserted = false;
         g.setColor(Color.BLACK);
         //***---Diagram Logic---***\\
         if(tick != MainLogic.OperationInfoStation.size()){
+            boolean inserted = false;
             for (int i = 0; i < MainLogic.OperationInfoStation.size(); i++) {
                 //Create respective Reservation Station arrays to hold instructions while they execute load on clock cycle
                 if (MainLogic.OperationInfoStation.get(i).state.equals("Issue") || MainLogic.OperationInfoStation.get(i).state.equals("EXE") || MainLogic.OperationInfoStation.get(i).equals("ExeEnd")) { //Hold in RS ExeEnd if CBD is occupied
-                    System.out.println(MainLogic.OperationInfoStation.get(i).operand);
+                    //System.out.println(MainLogic.OperationInfoStation.get(i).operand);
+                    //Color color = colorSchemeCycleCur[i]%DataUI.colorSchemeCycleCur.length]); //set highlight color of text
                     switch (MainLogic.OperationInfoStation.get(i).operand) {
                         case "LOAD":
                             for (int z = 0; z < ldBuffer; z++) {
                                 //insert into load buffer if there is a blank space
-                                if (ldArr[z] == blank || ldArr[z] == null) {
+                                if (!inserted && (ldArr[z] == blank || ldArr[z] == null)) {
                                     ldArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
-                                    System.out.println("Load to buffer");
+                                    System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
+                                    inserted = true;
+                                    break;
                                 }
-                                break;
                             }
                             break;
 
                         case "SAVE":
                             for (int z = 0; z < sdBuffer; z++) {
                                 //insert if there is a blank space
-                                if (sdArr[z] == blank || sdArr[z] == null) {
+                                if (!inserted && (sdArr[z] == blank || sdArr[z] == null)) {
                                     sdArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
                                     System.out.println("Save to memory");
+                                    inserted = true;
+                                    break;
                                 }
-                                break;
                             }
                             break;
 
                         case "INT":
                             for (int z = 0; z < integerRS; z++) {
                                 //insert if there is a blank space
-                                if (intArr[z] == blank || intArr[z] == null) {
+                                if (!inserted && (intArr[z] == blank || intArr[z] == null)) {
                                     intArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
                                     System.out.println("Integer op detected!");
+                                    inserted = true;
+                                    break;
                                 }
-                                break;
                             }
                             break;
 
                         case "ADD":
                             for (int z = 0; z < fpAdderRS; z++) {
                                 //insert if there is a blank space
-                                if (addArr[z] == blank || addArr[z] == null) {
+                                if (!inserted && (addArr[z] == blank || addArr[z] == null)) {
                                     addArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                                    inserted = true;
                                     break;
                                 }
                             }
@@ -321,8 +329,10 @@ public class Diagram extends JPanel {
                                 //insert if there is a blank space
                                 if (mulArr[z] == blank || mulArr[z] == null) {
                                     mulArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                                    System.out.println("Multiply issued!");
+                                    inserted = true;
+                                    break;
                                 }
-                                break;
                             }
                             break;
 
@@ -331,8 +341,9 @@ public class Diagram extends JPanel {
                                 //insert if there is a blank space
                                 if (divArr[z] == blank || divArr[z] == null) {
                                     divArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                                    inserted = true;
+                                    break;
                                 }
-                                break;
                             }
                             break;
 
@@ -379,8 +390,8 @@ public class Diagram extends JPanel {
                         if (regArr[r] == blank || regArr[r] == null) {
                             regArr[r] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
                             System.out.println("Writing to register");
+                            break;
                         }
-                        break;
                     }
                 }
             }
