@@ -314,7 +314,7 @@ public abstract class Instruction implements InstructionInterface {
     } else {
       out = this.resRegFP.getBinString();
     }
-    return this.cpu.getCdb().set(this.functionUnit, out);
+    return this.cpu.getCdb().set(this.functionUnit, out, this.dest());
   }
 
   public void setFunctionUnit(int functionUnit) {

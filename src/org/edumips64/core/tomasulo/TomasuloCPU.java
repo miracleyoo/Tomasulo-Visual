@@ -362,6 +362,18 @@ public class TomasuloCPU {
             for (int i = 0; i < 4 * mem.getInstructionsNumber(); i += 4) {
                 update_instruction(mem.getInstruction(i));
             }
+            var cdb = this.getCdb();
+            if (cdb.isBusy()) {
+                var reg = cdb.getReg();
+                if (this.registerStatuses[reg] == null) {
+                    if (reg < this.IntegerRegisters()) {
+                        this.getRegister(reg).setBits(cdb.getValue(), 0);
+                    } else {
+                        this.getRegisterFP(reg - this.IntegerRegisters()).setBits(cdb.getValue(), 0);
+                    }
+                }
+                cdb.reset();
+            }
             InstructionInterface next_if = mem.getInstruction((int) pc.getValue());
             logger.info("Fetched new instruction " + next_if);
             if (this.reserve(next_if)) {
