@@ -444,6 +444,7 @@ public class TomasuloCPU {
                     // if success, reset the function unit and reservation station
                     fu.setStatus(Status.Idle);
                     fu.getReservationStation().reset();
+                    ins.setWBCycle(cycles);
                 }
             } else {
                 countDown -= 1;
