@@ -2,16 +2,17 @@ package com.miracleyoo.UIs;
 
 import com.miracleyoo.utils.Instruction;
 import com.miracleyoo.Logic.MainLogic;
+import com.miracleyoo.utils.TableUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 
 public class Diagram extends JPanel {
 
-    //    private int cycleNum; // To keep track of cycle number. It is changed to MainLogic.CycleNumCur
     private int cycleNumOld = 0;
-
-    private int instrIndex = 0;
+    private int instrIndex = 0; //this will need to change to keep track of instructions
+    int tick = 0;
 
     int fontSize = 9;
 
@@ -33,9 +34,16 @@ public class Diagram extends JPanel {
     public static int diagramHeight = 110 + height * MainLogic.OpQueue + height + 30; // Most down: -110; Most top: Reg rects top
     //Allows for window scaling while keeping objects in their relative positions
 
-    Instruction blank = new Instruction("", "", "", "", 0, 0);
+    Instruction blank = new Instruction("", "", "", "", "", 0);
     Instruction[] opQArr = new Instruction[MainLogic.OpQueue];
-    String[] ldArr = new String[ldBuffer]; //ldArray can hold at most capacity of ldBuffer
+    String[] opQ = new String[MainLogic.OpQueue];
+    Instruction[] ldArr = new Instruction[ldBuffer];
+    Instruction[] sdArr = new Instruction[sdBuffer];
+    Instruction[] intArr = new Instruction[integerRS];
+    Instruction[] addArr = new Instruction[fpAdderRS];
+    Instruction[] mulArr = new Instruction[fpMultiplierRS];
+    Instruction[] divArr = new Instruction[fpDividerRS];
+    Instruction[] regArr = new Instruction[registers];
     String issueBuffer = "";
 
     @Override
@@ -77,22 +85,26 @@ public class Diagram extends JPanel {
         //Push instructions to opQueue --> Instructions stored here until ISSUED to prevent structural hazard
         //Shift instructions down as they are processed through the OpQueue in FIFO manner. In order issue one instruction at a time!
 
-
-        //Push instructions onto opQArr initially
-        if (instrIndex < MainLogic.OperationInfoStation.size()){//instr.length) { //needs to be adjusted to allow all instructions in OpQueue to be pushed through pipeline before throwing no more instr msg.
-            for (int q = 0; q < MainLogic.OpQueue; q++) {
-                //if opQArr has a blank position, push next awaiting instruction
-                if (opQArr[q] == null) {
-                    opQArr[q] = new Instruction(MainLogic.OperationInfoStation.get(instrIndex).operand, MainLogic.OperationInfoStation.get(instrIndex).DestReg,MainLogic.OperationInfoStation.get(instrIndex).SourceReg1,MainLogic.OperationInfoStation.get(instrIndex).SourceReg2, MainLogic.OperationInfoStation.get(instrIndex).currentStageCycleNum, MainLogic.CycleNumCur);//instr[instrIndex], "", "", "", 1 , 0);
-                    System.out.println("Instruction added: " + opQArr[q].op);
-                    instrIndex++;
-                }
+        //Push first 10 instructions onto opQArr initially at clk 0
+        for (int o = 0; o < MainLogic.OpQueue; o++) {
+            //if opQArr has a blank position, push next awaiting instruction
+            if (opQ[o] == null || opQ[o].equals("")) {
+                //opQArr[o] = new Instruction(MainLogic.OperationInfoStation.getFirst().operand, MainLogic.OperationInfoStation.getFirst().DestReg, MainLogic.OperationInfoStation.getFirst().SourceReg1, MainLogic.OperationInfoStation.getFirst().SourceReg2, MainLogic.OperationInfoStation.getFirst().state, 0);//instr[instrIndex], "", "", "", 1 , 0);
+                //System.out.println("Instruction added: " + opQArr[o].op + " valO: " + o);
+                opQ[o] = MainLogic.instr[o];
+                break;
             }
         }
-        else {
-            //g.drawString("No more instructions left!", originX - 200, originY - 150);
+
+
+        for (int q = 0; q < MainLogic.OpQueue; q++) {
+            if (opQArr[q] != null) {
+                //g.drawString(opQArr[q].op, originX - 100 + 5, originY - (height * q) - 60);
+                g.drawString(opQ[q], originX - 100 + 5, originY - (height * q) - 60);
+            }
         }
 
+/*
         //Try to push next instruction every clock cycle
         if (MainLogic.CycleNumCur != cycleNumOld) {
             //need to shift all elements in opQArr down by 1 index
@@ -103,7 +115,7 @@ public class Diagram extends JPanel {
             }
             //Check if instr array has awaiting instr.
             if (instrIndex < MainLogic.OperationInfoStation.size()) {
-                opQArr[MainLogic.OpQueue - 1] = new Instruction(MainLogic.OperationInfoStation.get(instrIndex).operand, MainLogic.OperationInfoStation.get(instrIndex).DestReg,MainLogic.OperationInfoStation.get(instrIndex).SourceReg1,MainLogic.OperationInfoStation.get(instrIndex).SourceReg2, MainLogic.OperationInfoStation.get(instrIndex).currentStageCycleNum, MainLogic.CycleNumCur);//Instruction(MainLogic.instr[instrIndex], "", "", "", 0, 0); //Grab next instruction from instruction array
+                opQArr[MainLogic.OpQueue - 1] = new Instruction(MainLogic.OperationInfoStation.get(instrIndex).operand, MainLogic.OperationInfoStation.get(instrIndex).DestReg,MainLogic.OperationInfoStation.get(instrIndex).SourceReg1,MainLogic.OperationInfoStation.get(instrIndex).SourceReg2, MainLogic.OperationInfoStation.get(instrIndex).state, MainLogic.CycleNumCur); //Grab next instruction from instruction array
                 instrIndex++;
             }
 
@@ -112,50 +124,54 @@ public class Diagram extends JPanel {
                 opQArr[MainLogic.OpQueue - 1] = blank;
             }
 
-            //for debugging purposes
-            /*
-            for (int q = 0; q < MainLogic.OpQueue; q++) {
-                System.out.println("Instruction added: " + opQArr[q].op);
-            }
-             */
-
             cycleNumOld = MainLogic.CycleNumCur;
         }
+*/
 
         for (int q = 0; q < MainLogic.OpQueue; q++) {
-            g.drawString(opQArr[q].op, originX - 95, originY - (height * q) - 62);
+            //g.setColor(Color.decode(DataUI.colorSchemeCycleCur[opQArr.length%DataUI.colorSchemeCycleCur.length])); //to set highlight
+            //g.drawRect(originX - 100, originY - (height * q + height) - 60, 80, height);
+            //g.drawString(opQArr[q].op, originX - 95, originY - (height * q) - 62);
         }
 
 
-        //ldBuffers
+        //---ldBuffers---\\
         int[] ldBase = {-400, -60};
         g.drawString("LD Buffer (From Memory)", originX + ldBase[0], originY - (height * ldBuffer + height) + ldBase[1]);
         for (int i = 0; i < ldBuffer; i++) {
             g.drawRect(originX + ldBase[0], originY - (height * i + height) + ldBase[1], 50, height);
         }
-
-        //if OpQArr[0] is lw
-        //Create ldWord array to hold instructions while they execute load
-        //on clock cycle
-
         for(int z = 0; z < ldBuffer; z++) {
-            if (MainLogic.ldBuffer[z] != null) {
-                g.drawString(MainLogic.ldBuffer[z].op, originX + ldBase[0] + 5, originY + ldBase[1] - (height * z) - 2);
+            //paint on diagram
+            if (ldArr[z] != null || ldArr[z] != blank) {
+                g.drawString(ldArr[z].op, originX + ldBase[0] + 5, originY + ldBase[1] - (height * z) - 2);
             }
         }
 
 
-        //Place sdBuffers
+        //---sdBuffers---\\
         int[] sdBase = {250, -60};
         g.drawString("SD Buffer (To Memory)", originX + sdBase[0], originY - (height * sdBuffer + height) + sdBase[1]);
         for (int i = 0; i < sdBuffer; i++) {
             g.drawRect(originX + sdBase[0], originY - (height * i + height) + sdBase[1], 50, height);
         }
+        for(int z = 0; z < sdBuffer; z++) {
+            //paint on diagram
+            if (sdArr[z] != null || sdArr[z] != blank) {
+                g.drawString(sdArr[z].op, originX + sdBase[0] + 5, originY + sdBase[1] - (height * z) - 2);
+            }
+        }
 
-
+        //---Registers---\\
         g.drawString("Int/FP Registers", originX + 50, originY - (height * registers + height) - 60);
         for (int q = 0; q < registers; q++) {
             g.drawRect(originX + 50, originY - (height * q + height) - 60, 80, height);
+        }
+        for(int z = 0; z < registers; z++) {
+            //paint on diagram
+            if (regArr[z] != null || regArr[z] != blank) {
+                g.drawString(regArr[z].op, originX + 55, originY - (height * z + height) - 2);
+            }
         }
 
 
@@ -175,10 +191,18 @@ public class Diagram extends JPanel {
             drawThickLine(g, originX + intBase[0] + 90, originY + intBase[1] + 17, originX + intBase[0] + 90, originY + 110); //From CDB
             g.fillPolygon(new int[]{originX + intBase[0] + 85, originX + intBase[0] + 90, originX + intBase[0] + 95}, new int[]{originY + intBase[1] + 22, originY + intBase[1] + 12, originY + intBase[1] + 22}, 3);
         }
+        g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
+        for(int z = 0; z < integerRS; z++) {
+            //paint on diagram
+            if (intArr[z] != null || intArr[z] != blank) {
+                g.drawString(intArr[z].op, originX + intBase[0] + 5 - opBoxWidth, originY + intBase[1] - (height * z - height) - 2);
+                g.drawString(intArr[z].src1, originX + intBase[0] + 5, originY + intBase[1] - (height * z - height) - 2);
+                g.drawString(intArr[z].src2, originX + operandWidth + intBase[0] + 5, originY + intBase[1] - (height * z - height) - 2);
+            }
+        }
 
         //Place fp adder FU
         int addBase[] = {-150, 60}; //used to set origin of adder FU on Tomasulo graph. X and then Y.
-        //g.drawString("FPadder", originX + addBase[0], originY + addBase[1]);
         for (int x = 0; x < fpAdderRS; x++) {
             g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
             g.drawRect(originX - opBoxWidth + addBase[0], originY - (height * x) + addBase[1], opBoxWidth, height);
@@ -192,10 +216,18 @@ public class Diagram extends JPanel {
             drawThickLine(g, originX + addBase[0] + 90, originY + addBase[1] + 17, originX + addBase[0] + 90, originY + 110); //from CDB
             g.fillPolygon(new int[]{originX + addBase[0] + 85, originX + addBase[0] + 90, originX + addBase[0] + 95}, new int[]{originY + addBase[1] + 22, originY + addBase[1] + 12, originY + addBase[1] + 22}, 3);
         }
+        g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
+        for(int z = 0; z < fpAdderRS; z++) {
+            //paint on diagram
+            if (addArr[z] != blank || addArr[z] != null) {
+                g.drawString(addArr[z].op, originX - opBoxWidth + addBase[0] + 5, originY + addBase[1] - (height * z - height) - 2);
+                g.drawString(addArr[z].src1, originX + addBase[0] + 5, originY + addBase[1] - (height * z - height) - 2);
+                g.drawString(addArr[z].src2, originX + operandWidth + addBase[0] + 5, originY + addBase[1] - (height * z - height) - 2);
+            }
+        }
 
         //fp multiplier FU
         int mulBase[] = {0, 60}; //used to set origin of multiplier FU on Tomasulo graph
-        //g.drawString("FPmultiplier", originX + mulBase[0], originY + mulBase[1]);
         for (int y = 0; y < fpMultiplierRS; y++) {
             g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
             g.drawRect(originX - opBoxWidth + mulBase[0], originY - (height * y) + mulBase[1], opBoxWidth, height);
@@ -209,10 +241,18 @@ public class Diagram extends JPanel {
             drawThickLine(g, originX + mulBase[0] + 90, originY + mulBase[1] + 17, originX + mulBase[0] + 90, originY + 110); //from CDB
             g.fillPolygon(new int[]{originX + mulBase[0] + 85, originX + mulBase[0] + 90, originX + mulBase[0] + 95}, new int[]{originY + mulBase[1] + 22, originY + mulBase[1] + 12, originY + mulBase[1] + 22}, 3);
         }
+        g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
+        for(int z = 0; z < fpMultiplierRS; z++){
+            //paint on diagram
+            if (mulArr[z] != null || mulArr[z] != blank) {
+                g.drawString(mulArr[z].op, originX + mulBase[0] + 5 - opBoxWidth, originY + mulBase[1] - (height * z - height) - 2);
+                g.drawString(mulArr[z].src1, originX + mulBase[0] + 5, originY + mulBase[1] - (height * z - height) - 2);
+                g.drawString(mulArr[z].src2, originX + operandWidth + mulBase[0] + 5, originY + mulBase[1] - (height * z - height) - 2);
+            }
+        }
 
         //fp Div FU
         int divBase[] = {150, 60};
-        //g.drawString("Divider", 190, 80);
         for (int z = 0; z < fpDividerRS; z++) {
             g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
             g.drawRect(originX - opBoxWidth + divBase[0], originY - (height * z) + divBase[1], opBoxWidth, height);
@@ -225,8 +265,192 @@ public class Diagram extends JPanel {
             g.fillPolygon(new int[]{originX + divBase[0] + 35, originX + divBase[0] + 40, originX + divBase[0] + 45}, new int[]{originY + 99, originY + 109, originY + 99}, 3);
             drawThickLine(g, originX + divBase[0] + 90, originY + divBase[1] + 17, originX + divBase[0] + 90, originY + 110); //from CDB
             g.fillPolygon(new int[]{originX + divBase[0] + 85, originX + divBase[0] + 90, originX + divBase[0] + 95}, new int[]{originY + divBase[1] + 22, originY + divBase[1] + 12, originY + divBase[1] + 22}, 3);
-
         }
+        g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
+        for(int z = 0; z < fpDividerRS; z++){
+            //paint on diagram
+            if (divArr[z] != null || divArr[z] != blank) {
+                g.drawString(divArr[z].op, originX + divBase[0] + 5 - opBoxWidth, originY + divBase[1] - (height * z - height) - 2);
+                g.drawString(divArr[z].src1, originX + divBase[0] + 5, originY + divBase[1] - (height * z - height) - 2);
+                g.drawString(divArr[z].src2, originX + operandWidth + divBase[0] + 5, originY + divBase[1] - (height * z - height) - 2);
+            }
+        }
+
+//       / boolean inserted = false;
+        g.setColor(Color.BLACK);
+        //***---Diagram Logic---***\\
+        if(tick != MainLogic.OperationInfoStation.size()){
+            boolean inserted = false;
+            for (int i = 0; i < MainLogic.OperationInfoStation.size(); i++) {
+                //Create respective Reservation Station arrays to hold instructions while they execute load on clock cycle
+                if (MainLogic.OperationInfoStation.get(i).state.equals("Issue") || MainLogic.OperationInfoStation.get(i).state.equals("EXE") || MainLogic.OperationInfoStation.get(i).equals("ExeEnd")) { //Hold in RS ExeEnd if CBD is occupied
+                    //System.out.println(MainLogic.OperationInfoStation.get(i).operand);
+                    //Color color = colorSchemeCycleCur[i]%DataUI.colorSchemeCycleCur.length]); //set highlight color of text
+                    switch (MainLogic.OperationInfoStation.get(i).operand) {
+                        case "LOAD":
+                            for (int z = 0; z < ldBuffer; z++) {
+                                //insert into load buffer if there is a blank space
+                                if (!inserted && (ldArr[z] == blank || ldArr[z] == null)) {
+                                    ldArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                                    System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
+                                    inserted = true;
+                                    break;
+                                }
+                            }
+                            break;
+
+                        case "SAVE":
+                            for (int z = 0; z < sdBuffer; z++) {
+                                //insert if there is a blank space
+                                if (!inserted && (sdArr[z] == blank || sdArr[z] == null)) {
+                                    sdArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                                    System.out.println("Save to memory");
+                                    inserted = true;
+                                    break;
+                                }
+                            }
+                            break;
+
+                        case "INT":
+                            for (int z = 0; z < integerRS; z++) {
+                                //insert if there is a blank space
+                                if (!inserted && (intArr[z] == blank || intArr[z] == null)) {
+                                    intArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                                    System.out.println("Integer op detected!");
+                                    inserted = true;
+                                    break;
+                                }
+                            }
+                            break;
+
+                        case "ADD":
+                            for (int z = 0; z < fpAdderRS; z++) {
+                                //insert if there is a blank space
+                                if (!inserted && (addArr[z] == blank || addArr[z] == null)) {
+                                    addArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                                    inserted = true;
+                                    System.out.println("Add issued!");
+                                    break;
+                                }
+                            }
+                            break;
+
+                        case "MUL":
+                            for (int z = 0; z < fpMultiplierRS; z++) {
+                                //insert if there is a blank space
+                                if (!inserted && (mulArr[z] == blank || mulArr[z] == null)) {
+                                    mulArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                                    System.out.println("Multiply issued!");
+                                    inserted = true;
+                                    break;
+                                }
+                            }
+                            break;
+
+                        case "DIV":
+                            for (int z = 0; z < fpDividerRS; z++) {
+                                //insert if there is a blank space
+                                if (!inserted && (divArr[z] == blank || divArr[z] == null)) {
+                                    divArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                                    System.out.println("Divide issued!");
+                                    inserted = true;
+                                    break;
+                                }
+                            }
+                            break;
+
+                        case "BRA":
+                            //---WIP---
+                            break;
+
+                        case "NOP":
+                            //do nothing
+                            break;
+
+                        case "HALT":
+                            //stop prgm
+                            break;
+                    }
+                }
+
+                //Place in awaiting RS/registers
+                else if (MainLogic.OperationInfoStation.get(i).state.equals("WB")) {
+                    switch (MainLogic.OperationInfoStation.get(i).operand) {
+                        //remove element from corresponding RS
+                        case "LOAD":
+                            for(int l = 0; l < ldBuffer; l++){
+                                if("WB".equals(ldArr[l].state)){
+                                    ldArr[l] = blank; //remove from buffer and replace with blank instr
+                                    break;
+                                }
+                            }
+/*                    for (int l = 0; l < ldBuffer-1; l++) {
+                        if (ldArr[l] != null) {
+                            ldArr[l] = ldArr[l+1]; //shift the elements down one index
+                        }
+ */
+                            break;
+
+                        case "SAVE":
+
+                            for(int l = 0; l < sdBuffer; l++){
+                                if("WB".equals(sdArr[l].state)){
+                                    sdArr[l] = blank; //remove from buffer and replace with blank instr
+                                    break;
+                                }
+                            }
+                            break;
+
+                        case "INT":
+                            for(int l = 0; l < integerRS; l++){
+                                if("WB".equals(intArr[l].state)){
+                                    intArr[l] = blank; //remove from buffer and replace with blank instr
+                                    break;
+                                }
+                            }
+                            break;
+
+                        case "ADD":
+                            for(int l = 0; l < fpAdderRS; l++){
+                                if("WB".equals(addArr[l].state)){
+                                    addArr[l] = blank; //remove from buffer and replace with blank instr
+                                    break;
+                                }
+                            }
+                            break;
+
+                        case "MUL":
+                            for(int l = 0; l < fpMultiplierRS; l++){
+                                if("WB".equals(mulArr[l].state)){
+                                    mulArr[l] = blank; //remove from buffer and replace with blank instr
+                                    break;
+                                }
+                            }
+                            break;
+
+                        case "DIV":
+                            for(int l = 0; l < fpDividerRS; l++){
+                                if("WB".equals(divArr[l].state)){
+                                    divArr[l] = blank; //remove from buffer and replace with blank instr
+                                    break;
+                                }
+                            }
+                            break;
+
+                        case "BRA":
+                    }
+                    for (int r = 0; r < registers; r++) {
+                        if (regArr[r] == blank || regArr[r] == null) {
+                            regArr[r] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                            System.out.println("Writing to register");
+                            break;
+                        }
+                    }
+                }
+            }
+            tick++;
+        }
+
 
         //---Connecting Wires---
         g.setColor((Color.decode(DataUI.colorSchemeMainCur[6])));
@@ -287,5 +511,26 @@ public class Diagram extends JPanel {
         repaint();
     }
 
-
+    public void flushBuffers(){
+        Arrays.fill(opQArr, blank);
+        Arrays.fill(ldArr, blank);
+        Arrays.fill(sdArr, blank);
+        Arrays.fill(intArr, blank);
+        Arrays.fill(addArr, blank);
+        Arrays.fill(mulArr, blank);
+        Arrays.fill(divArr, blank);
+        Arrays.fill(regArr, blank);
+        Arrays.fill(opQ, "");
+    }
 }
+
+/*
+Instruction[] opQArr = new Instruction[MainLogic.OpQueue];
+    Instruction[] ldArr = new Instruction[ldBuffer];
+    Instruction[] sdArr = new Instruction[sdBuffer];
+    Instruction[] intArr = new Instruction[integerRS];
+    Instruction[] addArr = new Instruction[fpAdderRS];
+    Instruction[] mulArr = new Instruction[fpMultiplierRS];
+    Instruction[] divArr = new Instruction[fpDividerRS];
+    Instruction[] regArr = new Instruction[registers];
+ */

@@ -59,7 +59,7 @@ public class MainLogic {
         public int currentStageCycleNum = 1;
         public int absoluteIndex = 0; // This is the line number of this instruction.
 
-        // Instruction related registers, jump lables or where to jump
+        // Instruction related registers, jump labels or where to jump
         public String label = null;     // The label in this line.
         public String jumpLabel = null; // Jump to label "X". For branch operands.
         public String DestReg = null;
@@ -174,10 +174,12 @@ public class MainLogic {
     ///////////////   Most Important Global Parameters End ////////////////////
     ///////////////////////////////////////////////////////////////////////////
 
+    /*
     Instruction in;
     public static Instruction blankInstr = new Instruction("", "", "", "", -1, 0);
     Instruction cdb = blankInstr; //holds instruction that has finished executing and pushes it to destination/waiting RS
-    public static Instruction[] ldBuffer = new Instruction[(int)architectureNum[0]];
+    */
+    //public static OperandInfo[] loadBuffer = new OperandInfo[(int)architectureNum[0]]; //used to interface with diagram for display
 
     // Push the list item to corresponding dictionary Key:Value pair
     private void mapListItems (String[]inputList, String listName){
@@ -476,30 +478,30 @@ public class MainLogic {
         {
             case "NOP" :
                 OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = 1;
-                OpsNOP();
+                OpsNOP(operandInfoIndex);
             case "HALT" :
                 OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = 0;
-                OpsHALT();
+                OpsHALT(operandInfoIndex);
                 break;
             case "DIV" :
                 OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[5];
-                OpsDIV();
+                OpsDIV(operandInfoIndex);
                 break;
             case "MUL" :
                 OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[4];
-                OpsMUL();
+                OpsMUL(operandInfoIndex);
                 break;
             case "LOAD" :
                 OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[0];
-                OpsLOAD();
+                OpsLOAD(operandInfoIndex);
                 break;
             case "SAVE":
                 OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[1];
-                OpsSAVE();
+                OpsSAVE(operandInfoIndex);
                 break;
             case "BRA":
                 OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = 1;
-                OpsBRANCH();
+                OpsBRANCH(operandInfoIndex);
                 break;
             default :
                 if(operandType.equals("ADD")){
@@ -509,19 +511,19 @@ public class MainLogic {
                     OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[2];
                 }
                 if(operandType.contains("ADD")){
-                    OpsADD();
+                    OpsADD(operandInfoIndex);
                 }
                 else if(operandType.contains("SUB")){
-                    OpsSUB();
+                    OpsSUB(operandInfoIndex);
                 }
                 else if(operandType.contains("SLT")){
-                    OpsSLT();
+                    OpsSLT(operandInfoIndex);
                 }
                 else if(operandType.contains("CVT")){
-                    OpsCVT();
+                    OpsCVT(operandInfoIndex);
                 }
                 else if(operandType.contains("AND") || operandType.contains("OR")){
-                    OpsLogic();
+                    OpsLogic(operandInfoIndex);
                 }
         }
     }
@@ -556,48 +558,43 @@ public class MainLogic {
     //////////////////       END TODO       //////////////////////////////
     //////////////////////////////////////////////////////////////////////
 
-    private void OpsNOP(){}
+    private void OpsNOP(int i){}
 
-    private void OpsHALT(){}
+    private void OpsHALT(int i){}
 
-    private void OpsADD(){
-//        OperandMapper.get(OperandsInfoStation.get(i).operand);
-//        OperandsInfoStation.get(i).DestReg=OperandsInfoStation.get(i).SourceReg1+OperandsInfoStation.get(i).SourceReg2;
-//        int index = Integer.parseInt("R11".replaceAll("\D+",""));
-//        FloatRegs[index].value = OperandsInfoStation.get(i).issue;
-//        FloatRegs[index].ready = Boolean.TRUE;
-//        OperationInfoStation.get(i).ValueReg1;
-//        Number i;
-//        float x=9.0;
-//        i=x;
-//        int e=3;
-//        i=e;
+    private void OpsADD(int i){}
 
+    private void OpsSUB(int i){
+        var instInfo = OperationInfoStation.get(i);
+        var instName = OperationMapper.get(instInfo.operand);
+
+        switch (instName) {
+            case "SUB": case"SUBS": case "SUBD": case "DSUB": case"DSUBU": case "SUBPS":
+                var reg1 = instInfo.SourceReg1;
+                var reg2 = instInfo.SourceReg2;
+
+        }
     }
 
-    private void OpsSUB(){
+    private void OpsSLT(int i){}
 
-    }
-
-    private void OpsSLT(){}
-
-    private void OpsLogic(){
+    private void OpsLogic(int i){
         // AND, OR, XOR
     }
 
-    private void OpsCVT(){
+    private void OpsCVT(int i){
         // CVTDL: to double precision, here we don't need to care. Leave the function empty.
     }
 
-    private void OpsMUL(){}
+    private void OpsMUL(int i){}
 
-    private void OpsDIV(){}
+    private void OpsDIV(int i){}
 
-    private void OpsBRANCH(){}
+    private void OpsBRANCH(int i){}
 
-    private void OpsLOAD(){}
+    private void OpsLOAD(int i){}
 
-    private void OpsSAVE(){
+    private void OpsSAVE(int i){
         // Two types, normal save and directly save to register like MTC0
     }
 
@@ -605,6 +602,9 @@ public class MainLogic {
     public void parseStep(){
         Boolean issueAvailable;
         parseInstruction(InstructionFullList.get(instructionLineCur));
+        //for debugging
+        //System.out.println(instr[instructionLineCur]);
+        //parseInstruction(instr[instructionLineCur]);
         issueAvailable = judgeIssue();
         if (issueAvailable){
             updateOperandsInfoStation();
@@ -684,6 +684,7 @@ public class MainLogic {
     //////////////////       END Attention       /////////////////////////
     //////////////////////////////////////////////////////////////////////
 
+    /*
     //clock set function --> Main logic updates every clock cycle
     public void runLogic(int clk){
         CycleNumCur = clk;
@@ -747,6 +748,8 @@ public class MainLogic {
             }
         }
     } //---end method---
+
+     */
 }
 
 /*
