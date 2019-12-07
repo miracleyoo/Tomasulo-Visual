@@ -171,7 +171,7 @@ public class Diagram extends JPanel {
         for(int z = 0; z < registers; z++) {
             //paint on diagram
             if (regArr[z] != null || regArr[z] != blank) {
-                g.drawString(regArr[z].op, originX + 55, originY - (height * z + height) - 2);
+                g.drawString(regArr[z].op, originX + 55, originY - (height * z) - 62);
             }
         }
 
