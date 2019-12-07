@@ -88,8 +88,9 @@ public class Diagram extends JPanel {
         //Push first 10 instructions onto opQArr initially at clk 0
         for (int o = 0; o < MainLogic.OpQueue; o++) {
             //if opQArr has a blank position, push next awaiting instruction
-            if (opQ[o] == null || opQ[o].equals("")) {
+            if (opQArr[o] == null || opQArr[o] == blank) {
                 //opQArr[o] = new Instruction(MainLogic.OperationInfoStation.getFirst().operand, MainLogic.OperationInfoStation.getFirst().DestReg, MainLogic.OperationInfoStation.getFirst().SourceReg1, MainLogic.OperationInfoStation.getFirst().SourceReg2, MainLogic.OperationInfoStation.getFirst().state, 0);//instr[instrIndex], "", "", "", 1 , 0);
+                //opQArr[o] = new Instruction(MainLogic.OperationInfoFull.getLast().operand, MainLogic.OperationInfoFull.getLast().DestReg, MainLogic.OperationInfoFull.getLast().SourceReg1, MainLogic.OperationInfoFull.getLast().SourceReg2, MainLogic.OperationInfoFull.getLast().state, 0);
                 //System.out.println("Instruction added: " + opQArr[o].op + " valO: " + o);
                 opQ[o] = MainLogic.instr[o];
                 break;
@@ -284,7 +285,7 @@ public class Diagram extends JPanel {
             for (int i = 0; i < MainLogic.OperationInfoStation.size(); i++) {
                 //Create respective Reservation Station arrays to hold instructions while they execute load on clock cycle
                 if (MainLogic.OperationInfoStation.get(i).state.equals("Issue") || MainLogic.OperationInfoStation.get(i).state.equals("EXE") || MainLogic.OperationInfoStation.get(i).equals("ExeEnd")) { //Hold in RS ExeEnd if CBD is occupied
-                    //System.out.println(MainLogic.OperationInfoStation.get(i).operand);
+                    //System.out.println(MainLogic.OperationInfoStation.get(i).state);
                     //Color color = colorSchemeCycleCur[i]%DataUI.colorSchemeCycleCur.length]); //set highlight color of text
                     switch (MainLogic.OperationInfoStation.get(i).operand) {
                         case "LOAD":
