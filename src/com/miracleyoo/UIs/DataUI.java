@@ -99,7 +99,7 @@ public class DataUI {
 
     private void constructCycleFullData(){
         for (int i = 0; i<MainLogic.OperationInfoStation.size(); i++){
-            cycleFullData[i][0] = Integer.toString((MainLogic.OperationInfoStation.get(i).absoluteIndex * 4)); //PC counter
+            cycleFullData[i][0] = Integer.toString((MainLogic.OperationInfoStation.get(i).absoluteIndex * 4)); //PC counter -- need to convert this into hex
             cycleFullData[i][1] = Integer.toString(MainLogic.OperationInfoStation.get(i).absoluteIndex);
             cycleFullData[i][2] = MainLogic.OperationInfoStation.get(i).inst;
             cycleFullData[i][3] = Integer.toString(MainLogic.OperationInfoStation.get(i).issue);
