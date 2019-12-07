@@ -261,6 +261,7 @@ public class DataUI {
 //        d.setBackground(Color.WHITE);
         diagram.setSize(new Dimension(Diagram.diagramWidth*10, Diagram.diagramHeight));
         diagram.setCycleNum(0);
+        diagram.flushBuffers();
         GraphPanel.setViewportView(diagram);
         GraphPanel.revalidate();
     }

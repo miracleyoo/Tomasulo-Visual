@@ -36,6 +36,7 @@ public class Diagram extends JPanel {
 
     Instruction blank = new Instruction("", "", "", "", "", 0);
     Instruction[] opQArr = new Instruction[MainLogic.OpQueue];
+    String[] opQ = new String[MainLogic.OpQueue];
     Instruction[] ldArr = new Instruction[ldBuffer];
     Instruction[] sdArr = new Instruction[sdBuffer];
     Instruction[] intArr = new Instruction[integerRS];
@@ -84,13 +85,13 @@ public class Diagram extends JPanel {
         //Push instructions to opQueue --> Instructions stored here until ISSUED to prevent structural hazard
         //Shift instructions down as they are processed through the OpQueue in FIFO manner. In order issue one instruction at a time!
 
-        //Push instructions onto opQArr initially
-
-        for (int o = 0; o < MainLogic.OperationInfoStation.size(); o++) {
+        //Push first 10 instructions onto opQArr initially at clk 0
+        for (int o = 0; o < MainLogic.OpQueue; o++) {
             //if opQArr has a blank position, push next awaiting instruction
-            if (opQArr[o] == null || opQArr[o] == blank) {
-                opQArr[o] = new Instruction(MainLogic.OperationInfoStation.getFirst().operand, MainLogic.OperationInfoStation.getFirst().DestReg, MainLogic.OperationInfoStation.getFirst().SourceReg1, MainLogic.OperationInfoStation.getFirst().SourceReg2, MainLogic.OperationInfoStation.getFirst().state, 0);//instr[instrIndex], "", "", "", 1 , 0);
+            if (opQ[o] == null || opQ[o].equals("")) {
+                //opQArr[o] = new Instruction(MainLogic.OperationInfoStation.getFirst().operand, MainLogic.OperationInfoStation.getFirst().DestReg, MainLogic.OperationInfoStation.getFirst().SourceReg1, MainLogic.OperationInfoStation.getFirst().SourceReg2, MainLogic.OperationInfoStation.getFirst().state, 0);//instr[instrIndex], "", "", "", 1 , 0);
                 //System.out.println("Instruction added: " + opQArr[o].op + " valO: " + o);
+                opQ[o] = MainLogic.instr[o];
                 break;
             }
         }
@@ -98,7 +99,8 @@ public class Diagram extends JPanel {
 
         for (int q = 0; q < MainLogic.OpQueue; q++) {
             if (opQArr[q] != null) {
-                g.drawString(opQArr[q].op, originX - 100 + 5, originY - (height * q) - 60);
+                //g.drawString(opQArr[q].op, originX - 100 + 5, originY - (height * q) - 60);
+                g.drawString(opQ[q], originX - 100 + 5, originY - (height * q) - 60);
             }
         }
 
@@ -193,7 +195,9 @@ public class Diagram extends JPanel {
         for(int z = 0; z < integerRS; z++) {
             //paint on diagram
             if (intArr[z] != null || intArr[z] != blank) {
-                g.drawString(intArr[z].op, originX + intBase[0] + 5, originY + intBase[1] - (height * z - height) - 2);
+                g.drawString(intArr[z].op, originX + intBase[0] + 5 - opBoxWidth, originY + intBase[1] - (height * z - height) - 2);
+                g.drawString(intArr[z].src1, originX + intBase[0] + 5, originY + intBase[1] - (height * z - height) - 2);
+                g.drawString(intArr[z].src2, originX + operandWidth + intBase[0] + 5, originY + intBase[1] - (height * z - height) - 2);
             }
         }
 
@@ -216,7 +220,9 @@ public class Diagram extends JPanel {
         for(int z = 0; z < fpAdderRS; z++) {
             //paint on diagram
             if (addArr[z] != blank || addArr[z] != null) {
-                g.drawString(addArr[z].op, originX + addBase[0] + 5, originY + addBase[1] - (height * z - height) - 2);
+                g.drawString(addArr[z].op, originX - opBoxWidth + addBase[0] + 5, originY + addBase[1] - (height * z - height) - 2);
+                g.drawString(addArr[z].src1, originX + addBase[0] + 5, originY + addBase[1] - (height * z - height) - 2);
+                g.drawString(addArr[z].src2, originX + operandWidth + addBase[0] + 5, originY + addBase[1] - (height * z - height) - 2);
             }
         }
 
@@ -239,7 +245,9 @@ public class Diagram extends JPanel {
         for(int z = 0; z < fpMultiplierRS; z++){
             //paint on diagram
             if (mulArr[z] != null || mulArr[z] != blank) {
-                g.drawString(mulArr[z].op, originX + mulBase[0] + 5, originY + mulBase[1] - (height * z - height) - 2);
+                g.drawString(mulArr[z].op, originX + mulBase[0] + 5 - opBoxWidth, originY + mulBase[1] - (height * z - height) - 2);
+                g.drawString(mulArr[z].src1, originX + mulBase[0] + 5, originY + mulBase[1] - (height * z - height) - 2);
+                g.drawString(mulArr[z].src2, originX + operandWidth + mulBase[0] + 5, originY + mulBase[1] - (height * z - height) - 2);
             }
         }
 
@@ -262,7 +270,9 @@ public class Diagram extends JPanel {
         for(int z = 0; z < fpDividerRS; z++){
             //paint on diagram
             if (divArr[z] != null || divArr[z] != blank) {
-                g.drawString(divArr[z].op, originX + divBase[0] + 5, originY + divBase[1] - (height * z - height) - 2);
+                g.drawString(divArr[z].op, originX + divBase[0] + 5 - opBoxWidth, originY + divBase[1] - (height * z - height) - 2);
+                g.drawString(divArr[z].src1, originX + divBase[0] + 5, originY + divBase[1] - (height * z - height) - 2);
+                g.drawString(divArr[z].src2, originX + operandWidth + divBase[0] + 5, originY + divBase[1] - (height * z - height) - 2);
             }
         }
 
@@ -319,6 +329,7 @@ public class Diagram extends JPanel {
                                 if (!inserted && (addArr[z] == blank || addArr[z] == null)) {
                                     addArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
                                     inserted = true;
+                                    System.out.println("Add issued!");
                                     break;
                                 }
                             }
@@ -327,7 +338,7 @@ public class Diagram extends JPanel {
                         case "MUL":
                             for (int z = 0; z < fpMultiplierRS; z++) {
                                 //insert if there is a blank space
-                                if (mulArr[z] == blank || mulArr[z] == null) {
+                                if (!inserted && (mulArr[z] == blank || mulArr[z] == null)) {
                                     mulArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
                                     System.out.println("Multiply issued!");
                                     inserted = true;
@@ -339,8 +350,9 @@ public class Diagram extends JPanel {
                         case "DIV":
                             for (int z = 0; z < fpDividerRS; z++) {
                                 //insert if there is a blank space
-                                if (divArr[z] == blank || divArr[z] == null) {
+                                if (!inserted && (divArr[z] == blank || divArr[z] == null)) {
                                     divArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum);
+                                    System.out.println("Divide issued!");
                                     inserted = true;
                                     break;
                                 }
@@ -364,25 +376,66 @@ public class Diagram extends JPanel {
                 //Place in awaiting RS/registers
                 else if (MainLogic.OperationInfoStation.get(i).state.equals("WB")) {
                     switch (MainLogic.OperationInfoStation.get(i).operand) {
-                        //Shift all elements in corresponding RS array down by one
+                        //remove element from corresponding RS
                         case "LOAD":
+                            for(int l = 0; l < ldBuffer; l++){
+                                if("WB".equals(ldArr[l].state)){
+                                    ldArr[l] = blank; //remove from buffer and replace with blank instr
+                                    break;
+                                }
+                            }
 /*                    for (int l = 0; l < ldBuffer-1; l++) {
                         if (ldArr[l] != null) {
                             ldArr[l] = ldArr[l+1]; //shift the elements down one index
                         }
-
  */
+                            break;
 
                         case "SAVE":
-                            //just shift down sdBuffer
+
+                            for(int l = 0; l < sdBuffer; l++){
+                                if("WB".equals(sdArr[l].state)){
+                                    sdArr[l] = blank; //remove from buffer and replace with blank instr
+                                    break;
+                                }
+                            }
+                            break;
 
                         case "INT":
+                            for(int l = 0; l < integerRS; l++){
+                                if("WB".equals(intArr[l].state)){
+                                    intArr[l] = blank; //remove from buffer and replace with blank instr
+                                    break;
+                                }
+                            }
+                            break;
 
                         case "ADD":
+                            for(int l = 0; l < fpAdderRS; l++){
+                                if("WB".equals(addArr[l].state)){
+                                    addArr[l] = blank; //remove from buffer and replace with blank instr
+                                    break;
+                                }
+                            }
+                            break;
 
                         case "MUL":
+                            for(int l = 0; l < fpMultiplierRS; l++){
+                                if("WB".equals(mulArr[l].state)){
+                                    mulArr[l] = blank; //remove from buffer and replace with blank instr
+                                    break;
+                                }
+                            }
+                            break;
 
                         case "DIV":
+                            for(int l = 0; l < fpDividerRS; l++){
+                                if("WB".equals(divArr[l].state)){
+                                    divArr[l] = blank; //remove from buffer and replace with blank instr
+                                    break;
+                                }
+                            }
+                            break;
 
                         case "BRA":
                     }
@@ -467,6 +520,7 @@ public class Diagram extends JPanel {
         Arrays.fill(mulArr, blank);
         Arrays.fill(divArr, blank);
         Arrays.fill(regArr, blank);
+        Arrays.fill(opQ, "");
     }
 }
 
