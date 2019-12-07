@@ -24,9 +24,6 @@
 
 
 package org.edumips64.core.is;
-import org.edumips64.core.*;
-import org.edumips64.core.fpu.*;
-
 /**
  *<pre>
  *  Format: MOVF.D fd, fs, cc
@@ -44,7 +41,6 @@ class MOVF_D extends FPConditionalCC_DMoveInstructions {
   }
 
   @Override
-  public void EX() throws IrregularStringOfBitsException, IntegerOverflowException, TwosComplementSumException, IrregularWriteOperationException, DivisionByZeroException, FPInvalidOperationException, FPUnderflowException, FPOverflowException, FPDivideByZeroException, FPInvalidOperationException {
-
+  public void EX() {
   }
 }

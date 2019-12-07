@@ -9,22 +9,7 @@ public class FPDividers extends FunctionUnit {
     }
 
     @Override
-    public void step() {
-
-    }
-
-    @Override
-    void step_fu() {
-
-    }
-
-    @Override
     public int steps_remain() {
-        return 0;
-    }
-
-    @Override
-    long get_fu_result() {
         return 0;
     }
 
