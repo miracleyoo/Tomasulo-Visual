@@ -57,7 +57,7 @@ public class TableUtils {
             Color background_color = Color.WHITE;
 //            String[] tempColorScheme = DataUI.colorSchemeCycleCur;//DataUI.DarkMode? DataUI.colorSchemeCycleDark:DataUI.colorSchemeCycleLight;
             if(tableModel.getValueAt(row, col) != null) {
-                background_color = Color.decode(DataUI.colorSchemeCycleCur[Integer.parseInt((String)tableModel.getValueAt(row, 0))%DataUI.colorSchemeCycleCur.length]);
+                background_color = Color.decode(DataUI.colorSchemeCycleCur[Integer.parseInt((String)tableModel.getValueAt(row, 1))%DataUI.colorSchemeCycleCur.length]);
 
 //                switch ((String) tableModel.getValueAt(row, col)) {
 //                    case "IF":

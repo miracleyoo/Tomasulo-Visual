@@ -98,7 +98,7 @@ public class DataUI {
 
     private void constructCycleFullData(){
         for (int i = 0; i<MainLogic.OperationInfoStation.size(); i++){
-            cycleFullData[i][0] = Integer.toString((MainLogic.OperationInfoStation.get(i).absoluteIndex * 4)); //PC counter
+            cycleFullData[i][0] = Integer.toHexString((MainLogic.OperationInfoStation.get(i).absoluteIndex * 4)); //PC counter
             cycleFullData[i][1] = Integer.toString(MainLogic.OperationInfoStation.get(i).absoluteIndex);
             cycleFullData[i][2] = MainLogic.OperationInfoStation.get(i).inst;
             cycleFullData[i][3] = Integer.toString(MainLogic.OperationInfoStation.get(i).issue);
@@ -199,7 +199,9 @@ public class DataUI {
     // Initialize the cycle Table
     private void initCycleTable() {
         cycleColumnNames = new String[]{"PC", "Index", "Instruction", "ISSUE", "EXE START", "EXE END", "WB"};
-        cycleFullData = new String[MainLogic.OpQueue][7];
+        //cycleFullData = new String[MainLogic.OpQueue][7];
+        cycleFullData = new String[10000][7];
+
         constructCycleFullData();
 //        cycleColumnWidths = new int[MainLogic.CycleNumCur];
 //        Arrays.fill(cycleColumnWidths, 100);

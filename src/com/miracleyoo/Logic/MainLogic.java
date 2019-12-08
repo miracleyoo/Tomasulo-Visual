@@ -126,7 +126,7 @@ public class MainLogic {
     public static long[] architectureNumMax = new long[]{9, 9, 9, 9, 9, 9};
 
     // Architecture cycle numbers' value.
-    public static long[] architectureCycle = new long[]{3, 3, 2, 2, 2, 2}; //new long[]{10, 10, 4, 7, 24, 5};
+    public static long[] architectureCycle = new long[]{2, 2, 2, 2, 2, 2}; //new long[]{10, 10, 4, 7, 24, 5};
 
     // Architecture cycle numbers' max value.
     public static long[] architectureCycleMax = new long[]{100,100,100,100,100,100};
@@ -140,7 +140,8 @@ public class MainLogic {
     //public static String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "lw", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
     //public static String[] instr = {"ld $R6,0($R1)", "ld $R5,0($R4)", "add $f3,$f2,$f5", "sw $R3,0($R8)" , "sub $R4,$R3,$R5", "mul $R10,$R11,R12", "sw $R10, 0($R11)", "div $R2,$R7,$R9", "add $f1,$f1,$f1", "add $f2,$f2,$f2", "sub $R3,$R3,$R3", "sw $R3, 0($R3)"};
     //public static  String[] instr = {"add $R3,$R2,$R5", "sub $R4,$R3,$R5", "mul $R10,$R11,R12"};
-    public static String[] instr = {"ld $R5,0($R4)", "add $r3,$r3,$r3"};
+    //public static String[] instr = {"ld $R5,0($R4)", "add $r3,$r3,$r3"};
+    public static String[] instr = {"ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)"};
 
     // Operand info structures. It's length equals to the number of Operand cells in Diagram.
     public static LinkedList<OperandInfo> OperationInfoStation = new LinkedList<OperandInfo>();
@@ -149,10 +150,6 @@ public class MainLogic {
     boolean WBoccurred = false;
     boolean src1Ready = true;
     boolean src2Ready = true;
-
-    //////////////////////////////////////////////////////////////////////
-    //////////////////        TODO       /////////////////////////////////
-    //////////////////////////////////////////////////////////////////////
 
     // Keep track of the new change of OperandsInfoStation element
     public static LinkedList<OperandInfo> OperationInfoFull = new LinkedList<OperandInfo>();
@@ -323,14 +320,14 @@ public class MainLogic {
     // 2. Update the Issue value and state of newly placed member
     private void updateOperandsInfoStation(){
         if (OperationInfoStation.size()>=OpQueue){
-            OperationInfoStation.removeLast();
+            //OperationInfoStation.removeLast();
         }
         OperationInfoStation.addFirst(tempOperationInfo);
         OperationInfoStation.getFirst().issue = CycleNumCur;
         OperationInfoStation.getFirst().state = InstructionState[0];
         OperationInfoStation.getFirst().absoluteIndex = instructionLineCur;
 
-        OperationInfoFull.addFirst(OperationInfoStation.getFirst());
+        OperationInfoFull.addLast(OperationInfoStation.getFirst());
         //OperationInfoStation.getFirst().inst = InstructionFullList.get(instructionLineCur);
     }
 
@@ -409,7 +406,7 @@ public class MainLogic {
                     break;
 
                 case "ExeEnd":
-                    if(judgeWB(WBoccurred)){ ///---WIP---
+                    if(judgeWB(WBoccurred)){ //---WIP---
                         //reverse OperationInfoStation to get instructions in chronological order
                         System.out.println(OperationInfoStation.get(i).operand + " Writeback");
                         //cdbBusy = true;
@@ -529,17 +526,17 @@ public class MainLogic {
                 statisticsInfo[3]++; //if issue not available, it is due to structural stall
             }
 
-            //for debugging
-            for(int i = 0; i < OperationInfoStation.size(); i++) {
-                System.out.println(OperationInfoStation.get(i).operand + " " + OperationInfoStation.get(i).DestReg + " " + OperationInfoStation.get(i).SourceReg1 + " " + OperationInfoStation.get(i).SourceReg2 + " " +  OperationInfoStation.get(i).state);
-            }
-
             checkAllOperandMember();
             statisticsInfo[1] = instructionLineCur;
         }
 
         else{
             checkAllOperandMember();
+        }
+
+        //for debugging
+        for(int i = 0; i < OperationInfoStation.size(); i++) {
+            System.out.println(OperationInfoStation.get(i).operand + " " + OperationInfoStation.get(i).DestReg + " " + OperationInfoStation.get(i).SourceReg1 + " " + OperationInfoStation.get(i).SourceReg2 + " " +  OperationInfoStation.get(i).state);
         }
 
         CycleNumCur++;
