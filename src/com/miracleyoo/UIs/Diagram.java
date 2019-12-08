@@ -280,91 +280,82 @@ public class Diagram extends JPanel {
 //       / boolean inserted = false;
         g.setColor(Color.BLACK);
         //***---Diagram Logic---***\\
-        if(tick != MainLogic.OperationInfoStation.size()){
+        if(tick != MainLogic.CycleNumCur){
             boolean inserted = false;
-            //flushBuffers();
+            flushBuffers();
+            System.out.println("Buffers flushed");
+            //Maybe clear all buffers and rewrite every clock tick depending on states of instructions
+
             //updateState();
 
             for (int i = 0; i < MainLogic.OperationInfoStation.size(); i++) {
-
-
-
-                //System.out.println(MainLogic.OperationInfoStation.get(i).state);
+                System.out.println(MainLogic.OperationInfoStation.get(i).state);
                 //Create respective Reservation Station arrays to hold instructions while they execute load on clock cycle
                 if (MainLogic.OperationInfoStation.get(i).state.equals("Issue") || MainLogic.OperationInfoStation.get(i).state.equals("EXE") || MainLogic.OperationInfoStation.get(i).equals("ExeEnd")) { //Hold in RS ExeEnd if CBD is occupied
-
                     //Color color = colorSchemeCycleCur[i]%DataUI.colorSchemeCycleCur.length]); //set highlight color of text
                     switch (MainLogic.OperationInfoStation.get(i).operand) {
                         case "LOAD":
                             for (int z = 0; z < ldBuffer; z++) {
                                 //insert into load buffer if there is a blank space
-                                if (!inserted && (ldArr[z] == blank || ldArr[z] == null)) {
+                                if (ldArr[z] == blank || ldArr[z] == null) {
                                     ldArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum, MainLogic.OperationInfoStation.get(i).exeStart);
                                     //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
-                                    inserted = true;
                                     break;
                                 }
                             }
                             break;
 
                         case "SAVE":
-                            for (int z = 0; z < sdBuffer; z++) {
-                                //insert if there is a blank space
-                                if (!inserted && (sdArr[z] == blank || sdArr[z] == null)) {
-                                    sdArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum, MainLogic.OperationInfoStation.get(i).exeStart);
-                                    //System.out.println("Save to memory");
-                                    inserted = true;
-                                    break;
-                                }
-                            }
+
+
                             break;
 
                         case "INT":
                             for (int z = 0; z < integerRS; z++) {
-                                //insert if there is a blank space
-                                if (!inserted && (intArr[z] == blank || intArr[z] == null)) {
+                                //insert into load buffer if there is a blank space
+                                if (intArr[z] == blank || intArr[z] == null) {
                                     intArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum, MainLogic.OperationInfoStation.get(i).exeStart);
-                                    //System.out.println("Integer op detected!");
-                                    inserted = true;
+                                    //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
                             }
+
                             break;
 
                         case "ADD":
                             for (int z = 0; z < fpAdderRS; z++) {
-                                //insert if there is a blank space
-                                if (!inserted && (addArr[z] == blank || addArr[z] == null)) {
+                                //insert into load buffer if there is a blank space
+                                if (addArr[z] == blank || addArr[z] == null) {
                                     addArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum, MainLogic.OperationInfoStation.get(i).exeStart);
-                                    inserted = true;
-                                    //System.out.println("Add issued!");
+                                    //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
                             }
+
                             break;
 
                         case "MUL":
                             for (int z = 0; z < fpMultiplierRS; z++) {
-                                //insert if there is a blank space
-                                if (!inserted && (mulArr[z] == blank || mulArr[z] == null)) {
+                                //insert into load buffer if there is a blank space
+                                if (mulArr[z] == blank || mulArr[z] == null) {
                                     mulArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum, MainLogic.OperationInfoStation.get(i).exeStart);
-                                    //System.out.println("Multiply issued!");
-                                    inserted = true;
+                                    //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
                             }
+
                             break;
 
                         case "DIV":
                             for (int z = 0; z < fpDividerRS; z++) {
-                                //insert if there is a blank space
-                                if (!inserted && (divArr[z] == blank || divArr[z] == null)) {
+                                //insert into load buffer if there is a blank space
+                                if (divArr[z] == blank || divArr[z] == null) {
                                     divArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum, MainLogic.OperationInfoStation.get(i).exeStart);
-                                    //System.out.println("Divide issued!");
-                                    inserted = true;
+                                    //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
                             }
+
                             break;
 
                         case "BRA":
@@ -384,68 +375,9 @@ public class Diagram extends JPanel {
                 //Place in awaiting RS/registers
                 else if (MainLogic.OperationInfoStation.get(i).state.equals("WB")) {
                     System.out.println("Instruction is in WB");
-                    switch (MainLogic.OperationInfoStation.get(i).operand) {
-                        //remove element from corresponding RS
-                        case "LOAD":
-                            //System.out.println("Removing load");
-                            for(int l = 0; l < ldBuffer; l++){
-                                if(ldArr[l] != blank && "WB".equals(ldArr[l].state)){
-                                    ldArr[l] = blank; //remove from buffer and replace with blank instr
-                                 break;
-                                }
-                            }
-                            break;
 
-                        case "SAVE":
-
-                            for(int l = 0; l < sdBuffer; l++){
-                                if("WB".equals(sdArr[l].state)){
-                                    sdArr[l] = blank; //remove from buffer and replace with blank instr
-                                    break;
-                                }
-                            }
-                            break;
-
-                        case "INT":
-                            for(int l = 0; l < integerRS; l++){
-                                if("WB".equals(intArr[l].state)){
-                                    intArr[l] = blank; //remove from buffer and replace with blank instr
-                                    break;
-                                }
-                            }
-                            break;
-
-                        case "ADD":
-                            for(int l = 0; l < fpAdderRS; l++){
-                                if("WB".equals(addArr[l].state)){
-                                    addArr[l] = blank; //remove from buffer and replace with blank instr
-                                    break;
-                                }
-                            }
-                            break;
-
-                        case "MUL":
-                            for(int l = 0; l < fpMultiplierRS; l++){
-                                if("WB".equals(mulArr[l].state)){
-                                    mulArr[l] = blank; //remove from buffer and replace with blank instr
-                                    break;
-                                }
-                            }
-                            break;
-
-                        case "DIV":
-                            for(int l = 0; l < fpDividerRS; l++){
-                                if("WB".equals(divArr[l].state)){
-                                    divArr[l] = blank; //remove from buffer and replace with blank instr
-                                    break;
-                                }
-                            }
-                            break;
-
-                        case "BRA":
-                    }
                     for (int r = 0; r < registers; r++) {
-                        if (!MainLogic.OperationInfoStation.get(i).state.equals("SAVE") && (regArr[r] == blank || regArr[r] == null)) {
+                        if (!MainLogic.OperationInfoStation.get(i).operand.equals("SAVE") && (regArr[r] == blank || regArr[r] == null)) {
                             regArr[r] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum, MainLogic.OperationInfoStation.get(i).exeStart);
                             System.out.println("Writing to register");
                             break;
@@ -526,42 +458,6 @@ public class Diagram extends JPanel {
         Arrays.fill(divArr, blank);
         Arrays.fill(regArr, blank);
         Arrays.fill(opQ, "");
-    }
-
-    public void updateState(){
-        for (int z = 0; z < ldBuffer; z++) {
-            //Keep track of exeTime that has passed for the things in the buffers
-            if (ldArr[z] != blank || ldArr[z] != null) {
-                //System.out.println(ldArr[z].currentClk);
-                if (ldArr[z].currentClk <= MainLogic.CycleNumCur - ldArr[z].startTime) {
-                    ldArr[z].state = "WB";
-                    //System.out.println("State " + ldArr[z].state);
-                    //break;
-                }
-            }
-        }
-
-        for (int z = 0; z < sdBuffer; z++) {
-            //Keep track of exeTime that has passed for the things in the buffers
-            if (sdArr[z] != blank || sdArr[z] != null) {
-                //System.out.println(ldArr[z].currentClk);
-                if (sdArr[z].currentClk <= MainLogic.CycleNumCur - sdArr[z].startTime) {
-                    sdArr[z].state = "WB";
-                    //System.out.println("State " + ldArr[z].state);
-                }
-            }
-        }
-
-        for (int z = 0; z < integerRS; z++) {
-            //Keep track of exeTime that has passed for the things in the buffers
-            if (intArr[z] != blank || intArr[z] != null) {
-                //System.out.println(ldArr[z].currentClk);
-                if (intArr[z].currentClk <= MainLogic.CycleNumCur - intArr[z].startTime) {
-                    intArr[z].state = "WB";
-                    //System.out.println("State " + ldArr[z].state);
-                }
-            }
-        }
     }
 }
 

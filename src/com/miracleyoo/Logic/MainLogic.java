@@ -138,10 +138,10 @@ public class MainLogic {
     public static List<String> InstructionFullList = new ArrayList<>();
 
     //public static String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "lw", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
-    //public static String[] instr = {"ld $R6,0($R1)", "ld $R5,0($R4)", "add $f3,$f2,$f5", "sw $R3,0($R8)" , "sub $R4,$R3,$R5", "mul $R10,$R11,R12", "sw $R10, 0($R11)", "div $R2,$R7,$R9", "add $f1,$f1,$f1", "add $f2,$f2,$f2", "sub $R3,$R3,$R3", "sw $R3, 0($R3)"};
+    public static String[] instr = {"ld $R6,0($R1)", "ld $R5,0($R4)", "add $f3,$f2,$f5", "sw $R3,0($R8)" , "sub $R4,$R3,$R5", "mul $R10,$R11,R12", "sw $R10, 0($R11)", "div $R2,$R7,$R9", "add $f1,$f1,$f1", "add $f2,$f2,$f2", "sub $R3,$R3,$R3", "sw $R3, 0($R3)"};
     //public static  String[] instr = {"add $R3,$R2,$R5", "sub $R4,$R3,$R5", "mul $R10,$R11,R12"};
     //public static String[] instr = {"ld $R5,0($R4)", "add $r3,$r3,$r3"};
-    public static String[] instr = {"ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)"};
+    //public static String[] instr = {"ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)"};
 
     // Operand info structures. It's length equals to the number of Operand cells in Diagram.
     public static LinkedList<OperandInfo> OperationInfoStation = new LinkedList<OperandInfo>();
