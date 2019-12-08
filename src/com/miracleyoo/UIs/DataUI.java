@@ -58,7 +58,7 @@ public class DataUI {
     private int[] operandColumnWidths = new int[]{100, 400};
     private int[] registerColumnWidths = new int[]{120, 160, 120, 160};
 
-    private int[] cycleColumnWidths = new int[]{50, 50, 200,70,70,70,70};
+    private int[] cycleColumnWidths = new int[]{50, 50, 180,70,70,70,70};
 
     private TableUtils.StatusColumnCellRenderer cycleTableRender = new TableUtils.StatusColumnCellRenderer();
 
@@ -260,17 +260,18 @@ public class DataUI {
 
         // sets the background color of this component
         // the background color is used only if the component is opaque
+        //Include RS numbers
         StatisticsText.setText(
                 "<html><font color="+ colorSchemeMainCur[7]+"><b>Execution</b></font><br>" +
-                        MainLogic.statisticsInfo[0] + " Cycles" + Integer.toString(mainLogic.CycleNumCur) + "<br>"+
+                        MainLogic.statisticsInfo[0] + " Cycles<br>" +
                         MainLogic.statisticsInfo[1] + " Instructions<br><br>" +
                         "<font color="+ colorSchemeMainCur[7]+"><b>Stalls</b></font><br>" +
                         MainLogic.statisticsInfo[2] + " RAW Stalls<br>" +
                         MainLogic.statisticsInfo[3] + " Structural Stalls<br>" +
-                        MainLogic.statisticsInfo[4] + " Branch Taken Stalls<br>" +
-                        MainLogic.statisticsInfo[5] + " Branch Mis-prediction Stalls<br><br>" +
-                        "<font color="+ colorSchemeMainCur[7]+"><b>Code Size</b></font><br>" +
-                        MainLogic.statisticsInfo[6] + " Bytes"
+                        //MainLogic.statisticsInfo[4] + " Branch Taken Stalls<br>" +
+                        //MainLogic.statisticsInfo[5] + " Branch Mis-prediction Stalls<br><br>" +
+                        "<font color="+ colorSchemeMainCur[7]+"><b>Code Size</b></font><br>" //+
+                        //MainLogic.statisticsInfo[6] + " Bytes"
         );
     }
 

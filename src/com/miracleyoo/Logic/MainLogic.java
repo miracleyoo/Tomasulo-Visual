@@ -146,6 +146,7 @@ public class MainLogic {
     public static LinkedList<OperandInfo> OperationInfoStation = new LinkedList<OperandInfo>();
 
     boolean cdbBusy = false; //if true cdb is currently being used for write back!
+    boolean WBoccurred = false;
     boolean src1Ready = true;
     boolean src2Ready = true;
 
@@ -245,16 +246,7 @@ public class MainLogic {
         }
     }
 
-    // Judge whether it is available to write back
-    private Boolean judgeWB(){
-        //Writeback can occur if cdb is free
-        if(cdbBusy){
-            return false;
-        }
-        else{
-            return true;
-        }
-    }
+
 
     // Parse the next instruction and return a tempOperandsInfo
     private void parseInstruction(String operandLine){
@@ -324,6 +316,8 @@ public class MainLogic {
         }
     }
 
+
+
     // Update the OperandsInfoStation(current Operands station infos)
     // 1. Put tempOperandsInfo in the right place
     // 2. Update the Issue value and state of newly placed member
@@ -338,6 +332,18 @@ public class MainLogic {
 
         OperationInfoFull.addFirst(OperationInfoStation.getFirst());
         //OperationInfoStation.getFirst().inst = InstructionFullList.get(instructionLineCur);
+    }
+
+    // Judge whether it is available to write back
+    int wbClk = 0;
+    private Boolean judgeWB(boolean w){
+        //Writeback can occur if cdb is free. ONE WRITEBACK PER CLOCK CYCLE
+        if(!w){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     // Sequentially check all of the items in the Operands station,
@@ -355,6 +361,7 @@ public class MainLogic {
                         }
                     }
                     break;
+
                 case "EXE":
                     switch(OperationInfoStation.get(i).operand){
                         case "LOAD":
@@ -400,18 +407,22 @@ public class MainLogic {
                         }
                     }
                     break;
-                case "ExeEnd":
-                    if(judgeWB()){
-                        System.out.println(OperationInfoStation.get(i).operand + " Writeback");
-                        cdbBusy = true;
-                        OperationInfoStation.get(i).state = InstructionState[3];
 
+                case "ExeEnd":
+                    if(judgeWB(WBoccurred)){ ///---WIP---
+                        //reverse OperationInfoStation to get instructions in chronological order
+                        System.out.println(OperationInfoStation.get(i).operand + " Writeback");
+                        //cdbBusy = true;
+                        OperationInfoStation.get(i).state = InstructionState[3];
                         //if two instructions finish execution at the same time, need to stagger the WB
                         OperationInfoStation.get(i).writeBack = CycleNumCur;
                         OperationInfoStation.get(i).currentStageCycleNum = 1;
+                        WBoccurred = true; //don't writeback twice in one clock!
                     }
+                    break;
+
                 case "WB":
-                    cdbBusy = false;
+                    //cdbBusy = false;
                     if (CycleNumCur - OperationInfoStation.get(i).writeBack >= OperationInfoStation.get(i).currentStageCycleNum){
                         System.out.println(OperationInfoStation.get(i).operand + " WB done!");
                         OperationInfoStation.get(i).state = InstructionState[4];
@@ -452,13 +463,8 @@ public class MainLogic {
 
     // The operations applied to an instruction which is in write back state
     private void WBOps(){
-        //
+        //write computed value to destination register specified in instruction. Display on GUI
     }
-
-
-    //////////////////////////////////////////////////////////////////////
-    //////////////////        TODO       /////////////////////////////////
-    //////////////////////////////////////////////////////////////////////
 
     // Operations going to be executed when this type of instructions are
     // called. Please refer to mips instruction guide to make them functional.
@@ -529,15 +535,16 @@ public class MainLogic {
             }
 
             checkAllOperandMember();
-            CycleNumCur++;
-            statisticsInfo[0] = CycleNumCur;
             statisticsInfo[1] = instructionLineCur;
         }
 
         else{
             checkAllOperandMember();
-            CycleNumCur++;
         }
+
+        CycleNumCur++;
+        WBoccurred = false;
+        statisticsInfo[0] = CycleNumCur;
     }
 
     public MainLogic() {
