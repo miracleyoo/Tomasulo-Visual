@@ -69,6 +69,9 @@ public class MainLogic {
         public String SourceReg1 = null;
         public String SourceReg2 = null;
 
+        public int src1 = 0;
+        public int src2 = 0;
+        public int destination = 0;
         // If there is an numerical data in the registers' place, please store
         // it in ValueReg1 or ValueReg2
         public Number ValueReg1 = null;
@@ -80,14 +83,14 @@ public class MainLogic {
     // Struct for float registers list
     public static class FloatRegTemplate{
         public float value= (float) 0.0;
-        public Boolean ready = Boolean.FALSE;
+        public Boolean ready = true;
         public int occupyInstId = 0;
     }
 
     // Struct for integer registers list
     public static class IntRegTemplate{
         public int value= 0;
-        public Boolean ready = Boolean.FALSE;
+        public Boolean ready = true;
         public int occupyInstId = 0;
     }
 
@@ -139,9 +142,9 @@ public class MainLogic {
     public static List<String> InstructionFullList = new ArrayList<>();
 
     //public static String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "lw", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
-    public static String[] instr = {"ld $R6,0($R1)", "ld $R5,0($R4)", "add $f3,$f2,$f5", "sw $R3,0($R8)" , "sub $R4,$R3,$R5", "mul $R10,$R11,R12", "sw $R10, 0($R11)", "div $R2,$R7,$R9", "add $f1,$f1,$f1", "add $f2,$f2,$f2", "sub $R3,$R3,$R3", "sw $R3, 0($R3)"};
+    //public static String[] instr = {"ld $R6,0($R1)", "ld $R5,0($R4)", "add $f3,$f2,$f5", "sw $R3,0($R8)" , "sub $R4,$R3,$R5", "mul $R10,$R11,R12", "sw $R10, 0($R11)", "div $R2,$R7,$R9", "add $f1,$f1,$f1", "add $f2,$f2,$f2", "sub $R3,$R3,$R3", "sw $R3, 0($R3)"};
     //public static  String[] instr = {"add $R3,$R2,$R5", "sub $R4,$R3,$R5", "mul $R10,$R11,R12"};
-    //public static String[] instr = {"ld $R5,0($R4)", "add $r3,$r3,$r3"};
+    public static String[] instr = {"ADD $f3,$f1,$f2"};
     //public static String[] instr = {"ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)"};
 
     // Operand info structures. It's length equals to the number of Operand cells in Diagram.
@@ -234,8 +237,19 @@ public class MainLogic {
 
 
     // Judge whether it is available to start execution
-    private Boolean judgeExe(){
+    private Boolean judgeExe(String s, int i){
         //Start execution once data dependencies have been resolved --> ---WIP---
+        if("INT".equals(s)) {
+            src1Ready = IntRegs[OperationInfoStation.get(i).src1].ready;
+            src2Ready = IntRegs[OperationInfoStation.get(i).src2].ready;
+        }
+
+        else{
+            src1Ready = FloatRegs[OperationInfoStation.get(i).src1].ready;
+            src2Ready = FloatRegs[OperationInfoStation.get(i).src2].ready;
+        }
+
+
         if (src1Ready && src2Ready){
             return true;
         }
@@ -260,7 +274,6 @@ public class MainLogic {
         tempOperationInfo = new OperandInfo();
         //operation = operandLine.split("\\s+")[0].toUpperCase().trim(); //operation=operandLine.split(";")[0].trim();
 
-
         tempOperationInfo.inst = operandLine;
 
         String[] separateEmpty = operandLine.split("\\s+");
@@ -269,6 +282,7 @@ public class MainLogic {
         operandType = OperationMapper.get(operation);
         tempOperationInfo.operand = operandType;
         System.out.println("OperationType: " + tempOperationInfo.operand);
+        tempOperationInfo.op = operation; //specifies if sub/add, etc.
 
         //Need to deal with SAVE and LOAD
 /*
@@ -308,9 +322,16 @@ public class MainLogic {
                 System.out.println("integer operation!");
             }
 
+            tempOperationInfo.destination = Integer.parseInt(tempOperationInfo.DestReg.replaceAll("[^\\d]", ""));
+
             tempOperationInfo.SourceReg1 = regParts[1].toUpperCase().trim();
+            tempOperationInfo.src1 = Integer.parseInt(tempOperationInfo.SourceReg1.replaceAll("[^\\d]", ""));
+
 
             tempOperationInfo.SourceReg2 = regParts[2].toUpperCase().trim();
+            tempOperationInfo.src2 = Integer.parseInt(tempOperationInfo.SourceReg2.replaceAll("[^\\d]", ""));
+
+
         }
     }
 
@@ -328,12 +349,20 @@ public class MainLogic {
         OperationInfoStation.getFirst().state = InstructionState[0];
         OperationInfoStation.getFirst().absoluteIndex = instructionLineCur;
 
-        OperationInfoFull.addLast(OperationInfoStation.getFirst());
+        //set respective destination register to busy as it may be a source register for another instruction
+        if("INT".equals(OperationInfoStation.getFirst().operand)){
+            IntRegs[OperationInfoStation.getFirst().destination].ready = false; //busy until instruction writes back
+        }
+
+        else{
+            FloatRegs[OperationInfoStation.getFirst().destination].ready = false;
+        }
+
+        //OperationInfoFull.addLast(OperationInfoStation.getFirst());
         //OperationInfoStation.getFirst().inst = InstructionFullList.get(instructionLineCur);
     }
 
     // Judge whether it is available to write back
-    int wbClk = 0;
     private Boolean judgeWB(boolean w){
         //Writeback can occur if cdb is free. ONE WRITEBACK PER CLOCK CYCLE
         if(!w){
@@ -395,18 +424,18 @@ public class MainLogic {
                             break;
                     }
                     if (CycleNumCur - OperationInfoStation.get(i).exeStart >= OperationInfoStation.get(i).currentStageCycleNum){
-                        System.out.println(OperationInfoStation.get(i).operand + " Instruction EXE done!");
-                        if(judgeExe()){
+                        if(judgeExe(OperationInfoStation.get(i).operand, i)){
                             OperationInfoStation.get(i).state = InstructionState[2];
                             OperationInfoStation.get(i).exeEnd = CycleNumCur;
                             //Execute using switch statement here
                             switch(OperationInfoStation.get(i).operand){
                                 case "ADD":
                                     //fp addition of src1 and src2
-
+                                    OpsADD(i);
 
                                 break;
                             }
+                            System.out.println(OperationInfoStation.get(i).operand + " Instruction EXE done!");
                         }
                     }
                     break;
@@ -429,6 +458,8 @@ public class MainLogic {
                     if (CycleNumCur - OperationInfoStation.get(i).writeBack >= OperationInfoStation.get(i).currentStageCycleNum){
                         System.out.println(OperationInfoStation.get(i).operand + " WB done!");
                         OperationInfoStation.get(i).state = InstructionState[4];
+                        IntRegs[OperationInfoStation.get(i).destination].ready = true; //ready until instruction writes back
+                        WBOps(OperationInfoStation.get(i).SourceReg1, OperationInfoStation.get(i).SourceReg2);
                     }
                     break;
 
@@ -465,8 +496,9 @@ public class MainLogic {
     // registers free here and update the data computed.
 
     // The operations applied to an instruction which is in write back state
-    private void WBOps(){
+    private void WBOps(String s1, String s2){
         //write computed value to destination register specified in instruction. Display on GUI
+
     }
 
     // Operations going to be executed when this type of instructions are
@@ -479,7 +511,14 @@ public class MainLogic {
     private void OpsHALT(int i){}
 
     private void OpsADD(int i){
+        //fp addition (or subtraction)
+        if("SUB".equals(OperationInfoStation.get(i).op)){
 
+        }
+
+        else{
+            FloatRegs[OperationInfoStation.get(i).destination].value = FloatRegs[OperationInfoStation.get(i).src1].value + FloatRegs[OperationInfoStation.get(i).src2].value;
+        }
     }
 
     private void OpsSUB(int i){
