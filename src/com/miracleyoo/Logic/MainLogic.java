@@ -51,6 +51,7 @@ public class MainLogic {
         public String operand = ""; // Only the operand name, like ADDD, MULD
         public String inst = "";    // The whole instruction, like ADDD R1, R2, R3
         public String state = "";   // Current state. It can only be
+        public String op = ""; //holds sub/add, etc.
 
         // Tomasulo execution cycle data
         public int prgmCount = 0;
@@ -398,9 +399,14 @@ public class MainLogic {
                         if(judgeExe()){
                             OperationInfoStation.get(i).state = InstructionState[2];
                             OperationInfoStation.get(i).exeEnd = CycleNumCur;
-                            //ExeOps(i);
-
                             //Execute using switch statement here
+                            switch(OperationInfoStation.get(i).operand){
+                                case "ADD":
+                                    //fp addition of src1 and src2
+
+
+                                break;
+                            }
                         }
                     }
                     break;
@@ -557,10 +563,12 @@ public class MainLogic {
 
         for (int i=0; i< IntRegs.length; i++){
             IntRegs[i] = new IntRegTemplate();
+            IntRegs[i].value = 1; //init values
         }
 
         for (int i=0; i< FloatRegs.length; i++){
             FloatRegs[i] = new FloatRegTemplate();
+            FloatRegs[i].value = 1; //init values
         }
 
         for (int i=0; i< AddFUs.length; i++){

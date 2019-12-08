@@ -196,6 +196,24 @@ public class DataUI {
         TableUtils.setAllPreferredColumnSize(RegisterTable, registerColumnWidths);
     }
 
+    private void updateRegisterTable(){
+        registerColumnNames = new String[]{"IntReg", "Value", "FloatReg", "Value"};
+        for (int i = 0; i < 32; i++) {
+            //32 int and 32 fp registers available
+            registerData[i][0] = "R" + i + "=";
+            registerData[i][1] = String.format("%08d", MainLogic.IntRegs[i].value); //write integer register value
+            registerData[i][2] = "F" + i + "=";
+            registerData[i][3] = String.format("%.8f", MainLogic.FloatRegs[i].value); //write fp register value
+        }
+        registerModel = new DefaultTableModel(registerData, registerColumnNames);
+
+        RegisterTable.setModel(registerModel);
+        RegisterTable.setFillsViewportHeight(true);
+
+        TableUtils.setAllMinColumnSize(RegisterTable, registerColumnWidths);
+        TableUtils.setAllPreferredColumnSize(RegisterTable, registerColumnWidths);
+    }
+
     // Initialize the cycle Table
     private void initCycleTable() {
         cycleColumnNames = new String[]{"PC", "Index", "Instruction", "ISSUE", "EXE START", "EXE END", "WB"};
@@ -468,6 +486,7 @@ public class DataUI {
             //operandTableUpdate();
             cycleTableUpdate();
             updateStatisticsPanel();
+            updateRegisterTable();
             //Update graph to show motion of instr.
 //////////////////////////////////////////////////////////////////////
 //////////////////        TEMP       /////////////////////////////////

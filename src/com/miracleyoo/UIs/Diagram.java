@@ -93,15 +93,15 @@ public class Diagram extends JPanel {
                 //opQArr[o] = new Instruction(MainLogic.OperationInfoFull.getLast().operand, MainLogic.OperationInfoFull.getLast().DestReg, MainLogic.OperationInfoFull.getLast().SourceReg1, MainLogic.OperationInfoFull.getLast().SourceReg2, MainLogic.OperationInfoFull.getLast().state, 0);
                 //System.out.println("Instruction added: " + opQArr[o].op + " valO: " + o);
                 opQ[o] = MainLogic.instr[o];
-                break;
             }
+            break;
         }
 
 
         for (int q = 0; q < MainLogic.OpQueue; q++) {
-            if (opQArr[q] != null) {
+            if (opQArr[q] != null || opQArr[q] != blank) {
                 //g.drawString(opQArr[q].op, originX - 100 + 5, originY - (height * q) - 60);
-                g.drawString(opQ[q], originX - 100 + 5, originY - (height * q) - 60);
+                g.drawString(opQArr[q].op, originX - 100 + 5, originY - (height * q) - 60);
             }
         }
 
