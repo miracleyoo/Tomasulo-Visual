@@ -27,24 +27,6 @@
           </grid>
         </constraints>
       </hspacer>
-      <scrollpane id="f9529">
-        <constraints>
-          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <minimum-size width="500" height="-1"/>
-            <preferred-size width="500" height="150"/>
-          </grid>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <component id="98827" class="javax.swing.JTable" binding="OperandTable">
-            <constraints/>
-            <properties>
-              <preferredScrollableViewportSize width="-1" height="-1"/>
-            </properties>
-          </component>
-        </children>
-      </scrollpane>
       <scrollpane id="8674d">
         <constraints>
           <grid row="1" column="2" row-span="1" col-span="4" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -83,16 +65,6 @@
           </component>
         </children>
       </scrollpane>
-      <component id="54eeb" class="javax.swing.JLabel" binding="CodeLabel">
-        <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <font style="1"/>
-          <foreground color="-4473925"/>
-          <text value="Code"/>
-        </properties>
-      </component>
       <component id="22bf" class="javax.swing.JLabel" binding="DataLabel">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -141,36 +113,9 @@
           <text value="Execute 1 Step"/>
         </properties>
       </component>
-      <component id="cd05e" class="javax.swing.JLabel" binding="StatisticsLabel">
-        <constraints>
-          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <font style="1"/>
-          <text value="Statistics"/>
-        </properties>
-      </component>
-      <scrollpane id="9a906">
-        <constraints>
-          <grid row="3" column="2" row-span="3" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <minimum-size width="200" height="-1"/>
-            <preferred-size width="200" height="-1"/>
-          </grid>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <component id="68e7f" class="javax.swing.JLabel" binding="StatisticsText">
-            <constraints/>
-            <properties>
-              <text value=""/>
-            </properties>
-          </component>
-        </children>
-      </scrollpane>
       <scrollpane id="20474" binding="GraphPanel">
         <constraints>
-          <grid row="3" column="4" row-span="3" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="3" column="2" row-span="3" col-span="4" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="500" height="-1"/>
           </grid>
         </constraints>
@@ -197,9 +142,36 @@
           <grid row="6" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
+      <scrollpane id="9a906">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="200" height="-1"/>
+            <preferred-size width="200" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="68e7f" class="javax.swing.JLabel" binding="StatisticsText">
+            <constraints/>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
+      <component id="cd05e" class="javax.swing.JLabel" binding="StatisticsLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font style="1"/>
+          <text value="Statistics"/>
+        </properties>
+      </component>
       <component id="b2214" class="javax.swing.JLabel" binding="TomasuloLabel">
         <constraints>
-          <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <font style="1"/>
