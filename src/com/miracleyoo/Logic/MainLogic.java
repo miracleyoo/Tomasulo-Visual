@@ -120,6 +120,9 @@ public class MainLogic {
     // All Float Registers.
     public static FloatRegTemplate[] FloatRegs = new FloatRegTemplate[32];
 
+    //Memory
+    public static Number[] memory = new Number[1000];
+
     // All statistics information.
     public static int[] statisticsInfo = new int[9];
 
@@ -305,8 +308,11 @@ public class MainLogic {
 
 
         if("LOAD".equals(operandType)){
-            tempOperationInfo.SourceReg1 = "";
+            tempOperationInfo.SourceReg1 = regParts[1].toUpperCase().trim(); //the thing loading from memory. This will correspond to an index from mem
             tempOperationInfo.SourceReg2 = "";
+
+            tempOperationInfo.destination = Integer.parseInt(tempOperationInfo.DestReg.replaceAll("[^\\d]", ""));
+            tempOperationInfo.src1 = Integer.parseInt(tempOperationInfo.SourceReg1.replaceAll("[^\\d]", ""));
         }
 
         else if("SAVE".equals(operandType)){
@@ -319,7 +325,7 @@ public class MainLogic {
             //distinguish between int and fp instructions
             if(regParts[0].startsWith("R") || regParts[0].startsWith("$R")){
                 tempOperationInfo.operand = "INT"; //By default an integer operation
-                System.out.println("integer operation!");
+                //System.out.println("integer operation!");
             }
 
             tempOperationInfo.destination = Integer.parseInt(tempOperationInfo.DestReg.replaceAll("[^\\d]", ""));
@@ -444,7 +450,6 @@ public class MainLogic {
                     if(judgeWB(WBoccurred)){ //---WIP---
                         //reverse OperationInfoStation to get instructions in chronological order
                         System.out.println(OperationInfoStation.get(i).operand + " Writeback");
-                        //cdbBusy = true;
                         OperationInfoStation.get(i).state = InstructionState[3];
                         //if two instructions finish execution at the same time, need to stagger the WB
                         OperationInfoStation.get(i).writeBack = CycleNumCur;
@@ -513,7 +518,7 @@ public class MainLogic {
     private void OpsADD(int i){
         //fp addition (or subtraction)
         if("SUB".equals(OperationInfoStation.get(i).op)){
-
+            FloatRegs[OperationInfoStation.get(i).destination].value = FloatRegs[OperationInfoStation.get(i).src1].value - FloatRegs[OperationInfoStation.get(i).src2].value;
         }
 
         else{
@@ -521,38 +526,38 @@ public class MainLogic {
         }
     }
 
-    private void OpsSUB(int i){
-        var instInfo = OperationInfoStation.get(i);
-        var instName = OperationMapper.get(instInfo.operand);
-
-        switch (instName) {
-            case "SUB": case"SUBS": case "SUBD": case "DSUB": case"DSUBU": case "SUBPS":
-                var reg1 = instInfo.SourceReg1; //need to grab data from respective registers
-                var reg2 = instInfo.SourceReg2;
-
-        }
-    }
-
-    private void OpsSLT(int i){}
-
     private void OpsLogic(int i){
         // AND, OR, XOR
     }
 
-    private void OpsCVT(int i){
-        // CVTDL: to double precision, here we don't need to care. Leave the function empty.
+    private void OpsMUL(int i){
+        FloatRegs[OperationInfoStation.get(i).destination].value = FloatRegs[OperationInfoStation.get(i).src1].value * FloatRegs[OperationInfoStation.get(i).src2].value;
     }
 
-    private void OpsMUL(int i){}
-
-    private void OpsDIV(int i){}
+    private void OpsDIV(int i){
+        FloatRegs[OperationInfoStation.get(i).destination].value = FloatRegs[OperationInfoStation.get(i).src1].value / FloatRegs[OperationInfoStation.get(i).src2].value;
+    }
 
     private void OpsBRANCH(int i){}
 
-    private void OpsLOAD(int i){}
+    private void OpsLOAD(int i){
+
+        //load data into int register
+        if(OperationInfoStation.get(i).DestReg.startsWith("R") || OperationInfoStation.get(i).DestReg.startsWith("$R")){
+            IntRegs[OperationInfoStation.get(i).destination].value = (int) memory[OperationInfoStation.get(i).src1]; //Loaded data value from memory
+        }
+
+        //load data into floating pt register
+        else{
+            FloatRegs[OperationInfoStation.get(i).destination].value = (float) memory[OperationInfoStation.get(i).src1]; //Loaded data value from memory
+        }
+
+
+    }
 
     private void OpsSAVE(int i){
         // Two types, normal save and directly save to register like MTC0
+        //mem[] = FloatRegs[OperationInfoStation.get(i).destination].value
     }
 
     // The core logic. Called for each cycle update.
