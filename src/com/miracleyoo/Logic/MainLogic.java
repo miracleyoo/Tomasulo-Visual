@@ -33,6 +33,10 @@ import jdk.dynalink.Operation;
 import java.util.*;
 import java.util.Map;
 
+/*
+Need to create temporary src regs for every instruction so that WAW and WAR aren't an issue!
+ */
+
 public class MainLogic {
     private String[] AddOps = {"ADD","DADD","DADDU","ADDD","ADDDS","SUB","SUBS","SUBD","DSUB","DSUBU","SUBPS","SLT","SLTU","AND","OR","XOR","CVTDL"};
     private String[] MulOps = {"MUL", "DMUL","DMULU","MULS","MULD","MULPS"};
