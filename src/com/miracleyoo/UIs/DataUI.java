@@ -162,6 +162,7 @@ public class DataUI {
         updateArchitecture();
         MainLogic.architectureNum = new long[]{6, 6, 5, 4, 4, 3};
         MainLogic.architectureCycle = new long[]{10, 10, 4, 7, 24, 5};
+        initGraphPanel();
         SetUIScheme();
     }
 

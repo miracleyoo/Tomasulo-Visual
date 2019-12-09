@@ -19,7 +19,7 @@ public class Diagram extends JPanel {
     int fontSize = 9;
 
     //Standardize block widths/heights
-    public static int height = 12;
+    public int height = 12;
     static int opBoxWidth = 30;
     static int operandWidth = 50;
 
@@ -31,7 +31,7 @@ public class Diagram extends JPanel {
     int fpMultiplierRS = (int) DataUI.mainLogic.architectureNum[4];
     int fpDividerRS = (int) DataUI.mainLogic.architectureNum[5];
 
-    static int registers = 10;
+    int registers = 10;
     public int diagramWidth = 600 + 200 + 50 + 50; // Most left: -200; Most right: 200 + 50(rect width)
     public int diagramHeight = 110 + height * DataUI.mainLogic.OpQueue + height + 30; // Most down: -110; Most top: Reg rects top
     //Allows for window scaling while keeping objects in their relative positions
