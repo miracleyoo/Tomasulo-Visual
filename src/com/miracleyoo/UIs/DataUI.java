@@ -135,7 +135,7 @@ public class DataUI {
         constructCycleFullData();
         dataTableUpdate();
         regTableUpdate();
-        statisticsPanelUpdate();
+        initStatisticsPanel();
         cycleTableUpdate();
         updateArchitecture();
         MainLogic.architectureNum = new long[]{6, 6, 5, 4, 4, 3};
@@ -155,7 +155,7 @@ public class DataUI {
         constructCycleFullData();
         dataTableUpdate();
         regTableUpdate();
-        statisticsPanelUpdate();
+        initStatisticsPanel();
         cycleTableUpdate();
         updateArchitecture();
         //MainLogic.architectureNum = new long[]{6, 6, 5, 4, 4, 3};
@@ -235,34 +235,24 @@ public class DataUI {
                         mainLogic.statisticsInfo[1] + " Instructions<br><br>" +
                         "<font color=" + colorSchemeMainCur[7] + "><b>Stalls</b></font><br>" +
                         mainLogic.statisticsInfo[2] + " RAW Stalls<br>" +
-                        mainLogic.statisticsInfo[3] + " Structural Stalls<br>" +
-                        mainLogic.statisticsInfo[4] + " Branch Taken Stalls<br>" +
-                        mainLogic.statisticsInfo[5] + " Branch Mis-prediction Stalls<br><br>" +
-                        "<font color=" + colorSchemeMainCur[7] + "><b>Code Size</b></font><br>" +
-                        mainLogic.statisticsInfo[6] + " Bytes"
+                        mainLogic.statisticsInfo[3] + " Structural Stalls<br><br>" +
+                        "<font color=" + colorSchemeMainCur[7] + "><b>RS Number for</b></font><br>" +
+                        "SD Buffer: " + MainLogic.architectureNum[0] + "<br>" +
+                        "LD Buffer: " + MainLogic.architectureNum[1] + "<br>" +
+                        "Integer RS: " + MainLogic.architectureNum[2] + "<br>" +
+                        "FP Adder RS: " + MainLogic.architectureNum[3] + "<br>" +
+                        "FP Multiply RS: " + MainLogic.architectureNum[4] + "<br>" +
+                        "FP Divider RS: " + MainLogic.architectureNum[5] + "<br><br>" +
+                        "<font color=" + colorSchemeMainCur[7] + "><b>Cycle Number for</b></font><br>" +
+                        "SD Buffer: " + MainLogic.architectureCycle[0] + "<br>" +
+                        "LD Buffer: " + MainLogic.architectureCycle[1] + "<br>" +
+                        "Integer RS: " + MainLogic.architectureCycle[2] + "<br>" +
+                        "FP Adder RS: " + MainLogic.architectureCycle[3] + "<br>" +
+                        "FP Multiply RS: " + MainLogic.architectureCycle[4] + "<br>" +
+                        "FP Divider RS: " + MainLogic.architectureCycle[5] + "<br>"
         );
     }
 
-
-    // Initialize Statistics Panel
-    private void statisticsPanelUpdate() {
-
-        // sets the background color of this component
-        // the background color is used only if the component is opaque
-        //Include RS numbers
-        StatisticsText.setText(
-                "<html><font color=" + colorSchemeMainCur[7] + "><b>Execution</b></font><br>" +
-                        mainLogic.statisticsInfo[0] + " Cycles<br>" +
-                        mainLogic.statisticsInfo[1] + " Instructions<br><br>" +
-                        "<font color=" + colorSchemeMainCur[7] + "><b>Stalls</b></font><br>" +
-                        mainLogic.statisticsInfo[2] + " RAW Stalls<br>" +
-                        mainLogic.statisticsInfo[3] + " Structural Stalls<br>" +
-                        //MainLogic.statisticsInfo[4] + " Branch Taken Stalls<br>" +
-                        //MainLogic.statisticsInfo[5] + " Branch Mis-prediction Stalls<br><br>" +
-                        "<font color=" + colorSchemeMainCur[7] + "><b>Code Size</b></font><br>" //+
-                //MainLogic.statisticsInfo[6] + " Bytes"
-        );
-    }
 
     // Tomasulo Diagram
     private void initGraphPanel() {
@@ -445,7 +435,7 @@ public class DataUI {
             cycleTableUpdate();
             regTableUpdate();
             diagramUpdate();
-            statisticsPanelUpdate();
+            initStatisticsPanel();
             System.out.println("Execute step");
         }
     }
@@ -501,9 +491,6 @@ public class DataUI {
         // Initialize Main Logic
         mainLogic = new MainLogic();
         mainLogic.initLabelMap();
-
-        // Initialize the operand Table
-        //initOperandTable(inputOperandFieldData);
 
         // Initialize the register Table
         initRegisterTable();

@@ -1,11 +1,14 @@
 package com.miracleyoo.Logic;
 
-import com.miracleyoo.UIs.DataUI;
-
 import java.util.*;
 import java.util.Map;
 
 public class MainLogic {
+    ///////////////////////////////////////////////////////////////////////////
+    ////////////////   Most Important Global Parameters ///////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
+    // -- ARCHITECTURE PART -- \\
     // Architecture parameters' value. "ld, sd, int, fpAdd, fpMul, fpDiv"
     public static long[] architectureNum = new long[]{6, 6, 5, 4, 4, 3}; //may need to change this back to type long if bugs
     // Architecture parameters' max value.
@@ -16,46 +19,52 @@ public class MainLogic {
     public static long[] architectureCycleMax = new long[]{100, 100, 100, 100, 100, 100};
     // How many cycles to proceed when "Execute multiple cycle" button is pressed.
     public static long multiStepNum = 3;
-    // All of the instruction lines in this file.
-    public static List<String> InstructionFullList = new ArrayList<>(); //holds all instructions after parsing file
-    public static Map<String, Number> dataMap = new HashMap<>(); // Counters for data and code
+    // The number of Operand queue. Sharing opQueue for int and fp.
+    public int OpQueue = 10;
 
+    // -- STATISTICS PART -- \\
+    // Judge whether all of the instructions have been issued
+    public boolean isEnd = false;
+    // The current cycle number.
+    public int CycleNumCur = 0;
+    // The index of the line of instruction which is going to be parsed
+    public int instructionLineCur = 0;
+    // The number of the instructions issued
+    public int totalInstructionNum = 0;
+    // Statistics information which will be shown in DataUI's statistics part
+    public int[] statisticsInfo = new int[9];
+
+    // -- FUNCTIONAL UINTS PART -- \\
+    // All of the instruction lines in the currently opened file. Initialized during the ParseFile.
+    public static List<String> InstructionFullList = new ArrayList<>();
+    // A map which enable the search for certain functional units list by its name
+    private static Map<String, FUTemplate[]> Type2FUsMap = new HashMap<>(); // Find corresponding FUs Struct List using Map
+    // All Integer Registers.
+    public RegTemplate[] IntRegs = new RegTemplate[32];
+    // All Float Registers.
+    public RegTemplate[] FloatRegs = new RegTemplate[32];
+    // Operand info structures. It's length equals to the number of Operand cells in Diagram.
+    public LinkedList<InstructionInfo> OperationInfoStation = new LinkedList<InstructionInfo>();
+    // How many instruction which is being executed in the whole Tomasulo process
+    public int OperationInfoStationActualSize = 0;
 
     private static InstructionInfo tempOperationInfo;
     // Operand classify dictionary. Key:Value -> Operand:Class
     private static Map<String, String> OperationMapper = new HashMap<>();
     private static Map<String, Integer> label2index = new HashMap<>();
-    // Reservation stations definition
+
+    // -- Reservation stations definition -- \\
     private static FUTemplate[] LoadFUs = new FUTemplate[(int) architectureNum[0]];
     private static FUTemplate[] SaveFUs = new FUTemplate[(int) architectureNum[1]];
     private static FUTemplate[] IntFUs = new FUTemplate[(int) architectureNum[2]];
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    ////////////////   Most Important Global Parameters ///////////////////////
-    ///////////////////////////////////////////////////////////////////////////
     private static FUTemplate[] AddFUs = new FUTemplate[(int) architectureNum[3]];
     private static FUTemplate[] MulFUs = new FUTemplate[(int) architectureNum[4]];
     private static FUTemplate[] DivFUs = new FUTemplate[(int) architectureNum[5]];
-    private static Map<String, FUTemplate[]> Type2FUsMap = new HashMap<>(); // Find corresponding FUs Struct List using Map
-    // The current cycle number.
-    public int CycleNumCur = 0;
-    // The index of the line of instruction which is going to be parsed
-    public int instructionLineCur = 0; //use this + 10 to display on the OpQueue
-    public int totalInstructionNum = 0;
-    // The number of Operand queue. Sharing opQueue for int and fp.
-    public int OpQueue = 10;//instr.length; //size of instruction array
-    // Judge whether all of the instructions have been issued
-    public boolean isEnd = false;
-    // All Integer Registers.
-    public RegTemplate[] IntRegs = new RegTemplate[32];
-    // All Float Registers.
-    public RegTemplate[] FloatRegs = new RegTemplate[32];
-    // All statistics information.
-    public int[] statisticsInfo = new int[9];
-    // Operand info structures. It's length equals to the number of Operand cells in Diagram.
-    public LinkedList<InstructionInfo> OperationInfoStation = new LinkedList<InstructionInfo>();
-    public int OperationInfoStationActualSize = 0;
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////   Most Important Global Parameters End ////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
     private String[] AddOps = {"ADD", "DADD", "DADDU", "ADDD", "ADDDS", "SUB", "SUBS", "SUBD", "DSUB", "DSUBU", "SUBPS", "SLT", "SLTU", "AND", "OR", "XOR", "CVTDL"};
     private String[] MulOps = {"DMUL", "DMULU", "MULS", "MULD", "MULPS"};
     private String[] DivOps = {"DDIV", "DDIVU", "DIVS", "DIVD", "DIVPS"};
@@ -135,9 +144,6 @@ public class MainLogic {
             }
         }
     }
-    ///////////////////////////////////////////////////////////////////////////
-    ///////////////   Most Important Global Parameters End ////////////////////
-    ///////////////////////////////////////////////////////////////////////////
 
     // Push the list item to corresponding dictionary Key:Value pair
     private void mapListItems(String[] inputList, String listName) {
@@ -151,7 +157,7 @@ public class MainLogic {
     // 2. Check whether there are some free and corresponding FUs
     private boolean judgeIssue() {
         boolean flag = false;
-        String type_ = OperationMapper.get(tempOperationInfo.operand);
+        String type_ = OperationMapper.get(tempOperationInfo.operation);
 
         // Check available reservation station at first. BRA, NOP, HALT don't need RS.
         if (type_.equals("HALT")) {
@@ -253,7 +259,7 @@ public class MainLogic {
         operand = separateEmpty[0].replace(".", "").toUpperCase().trim();
         operandType = OperationMapper.get(operand);
         tempOperationInfo.op = operandType;
-        tempOperationInfo.operand = operand;
+        tempOperationInfo.operation = operand;
         if (separateEmpty.length <= 1) { // HALT, NOP
             return;
         } else {
@@ -398,7 +404,7 @@ public class MainLogic {
 
     // Set Execution cycle number
     private void SetExeOpsNum(int operandInfoIndex) {
-        String operandType = OperationMapper.get(OperationInfoStation.get(operandInfoIndex).operand);
+        String operandType = OperationMapper.get(OperationInfoStation.get(operandInfoIndex).operation);
         switch (operandType) {
             case "DIV":
                 OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[5];
@@ -426,7 +432,7 @@ public class MainLogic {
 
     // The operations applied to an instruction which is in execute state
     private void ExeOps(int operandInfoIndex) {
-        String operandType = OperationMapper.get(OperationInfoStation.get(operandInfoIndex).operand);
+        String operandType = OperationMapper.get(OperationInfoStation.get(operandInfoIndex).operation);
         switch (operandType) {
             case "DIV":
                 OpsDIV(operandInfoIndex);
@@ -616,7 +622,7 @@ public class MainLogic {
     // A data structure which store all data by parsing an instruction
     // As well as cycle data during the Tomasulo execution.
     public static class InstructionInfo {
-        public String operand = ""; // Only the operand name, like ADDD, MULD
+        public String operation = ""; // Only the operand name, like ADDD, MULD
         public String inst = "";    // The whole instruction, like ADDD R1, R2, R3
         public String op = "";
         public String state = "";   // Current state. It can only be
