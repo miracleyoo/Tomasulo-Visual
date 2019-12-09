@@ -146,7 +146,7 @@ public class DataUI {
     }
 
     // Reset all panels and tables
-    void ResetALLData() {
+    public void ResetALLData() {
         mainLogic = new MainLogic();
         mainLogic.initLabelMap();
         operandSlice[0] = 0;
