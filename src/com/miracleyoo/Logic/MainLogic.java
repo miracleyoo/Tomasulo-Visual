@@ -19,7 +19,7 @@ public class MainLogic {
     public static Map<String, Number> dataMap = new HashMap<>(); // Counters for data and code
 
 
-    private static OperandInfo tempOperationInfo;
+    private static InstructionInfo tempOperationInfo;
     // Operand classify dictionary. Key:Value -> Operand:Class
     private static Map<String, String> OperationMapper = new HashMap<>();
     private static Map<String, Integer> label2index = new HashMap<>();
@@ -52,7 +52,7 @@ public class MainLogic {
     // All statistics information.
     public int[] statisticsInfo = new int[9];
     // Operand info structures. It's length equals to the number of Operand cells in Diagram.
-    public LinkedList<OperandInfo> OperationInfoStation = new LinkedList<OperandInfo>();
+    public LinkedList<InstructionInfo> OperationInfoStation = new LinkedList<InstructionInfo>();
     public int OperationInfoStationActualSize = 0;
     private String[] AddOps = {"ADD", "DADD", "DADDU", "ADDD", "ADDDS", "SUB", "SUBS", "SUBD", "DSUB", "DSUBU", "SUBPS", "SLT", "SLTU", "AND", "OR", "XOR", "CVTDL"};
     private String[] MulOps = {"DMUL", "DMULU", "MULS", "MULD", "MULPS"};
@@ -190,7 +190,7 @@ public class MainLogic {
     // Judge whether it is available to start execution
     private boolean judgeExeStart(int i) {
         int tempIndex = 0;
-        OperandInfo tempOperation = OperationInfoStation.get(i);
+        InstructionInfo tempOperation = OperationInfoStation.get(i);
         if (tempOperation.waiForIndexReg1 != null) {
             tempIndex = tempOperation.waiForIndexReg1;
             if (OperationInfoStation.get(OperationInfoStationActualSize - 1 - tempIndex).state.equals(InstructionState[4])) {
@@ -236,7 +236,7 @@ public class MainLogic {
     private void parseInstruction(String operandLine) {
         String operand, srcTemp, operandType;
 
-        tempOperationInfo = new OperandInfo();
+        tempOperationInfo = new InstructionInfo();
         operandLine = operandLine.split(";")[0].trim();
         tempOperationInfo.inst = operandLine;
 
@@ -324,7 +324,7 @@ public class MainLogic {
             OperationInfoStationActualSize--;
         }
         OperationInfoStation.addFirst(tempOperationInfo);
-        OperandInfo fistOperation = OperationInfoStation.getFirst();
+        InstructionInfo fistOperation = OperationInfoStation.getFirst();
         fistOperation.issue = CycleNumCur;
         fistOperation.state = InstructionState[0];
         fistOperation.absoluteIndex = totalInstructionNum;
@@ -613,7 +613,7 @@ public class MainLogic {
 
     // A data structure which store all data by parsing an instruction
     // As well as cycle data during the Tomasulo execution.
-    public static class OperandInfo {
+    public static class InstructionInfo {
         public String operand = ""; // Only the operand name, like ADDD, MULD
         public String inst = "";    // The whole instruction, like ADDD R1, R2, R3
         public String op = "";
