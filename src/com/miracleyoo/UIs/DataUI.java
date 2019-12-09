@@ -257,10 +257,16 @@ public class DataUI {
                         "<font color="+ colorSchemeMainCur[7]+"><b>Stalls</b></font><br>" +
                         mainLogic.statisticsInfo[2] + " RAW Stalls<br>" +
                         mainLogic.statisticsInfo[3] + " Structural Stalls<br>" +
-                        mainLogic.statisticsInfo[4] + " Branch Taken Stalls<br>" +
-                        mainLogic.statisticsInfo[5] + " Branch Mis-prediction Stalls<br><br>" +
-                        "<font color="+ colorSchemeMainCur[7]+"><b>Code Size</b></font><br>" +
-                        mainLogic.statisticsInfo[6] + " Bytes"
+                        //mainLogic.statisticsInfo[4] + " Branch Taken Stalls<br>" +
+                        //mainLogic.statisticsInfo[5] + " Branch Mis-prediction Stalls<br><br>" +
+                        "<font color="+ colorSchemeMainCur[7]+"><b> Architecture Info</b></font><br>" +
+                        //mainLogic.statisticsInfo[6] + " Bytes"
+                        mainLogic.architectureNum[0] + " Save Buffers<br>" +
+                        mainLogic.architectureNum[1] + " Load Buffers<br>" +
+                        mainLogic.architectureNum[2] + " Integer RS<br>" +
+                        mainLogic.architectureNum[3] + " FP Add RS<br>" +
+                        mainLogic.architectureNum[4] + " FP Multiply RS<br>" +
+                        mainLogic.architectureNum[5] + " FP Divide RS<br>"
         );
     }
 
@@ -278,10 +284,16 @@ public class DataUI {
                         "<font color="+ colorSchemeMainCur[7]+"><b>Stalls</b></font><br>" +
                         mainLogic.statisticsInfo[2] + " RAW Stalls<br>" +
                         mainLogic.statisticsInfo[3] + " Structural Stalls<br>" +
-                        //MainLogic.statisticsInfo[4] + " Branch Taken Stalls<br>" +
-                        //MainLogic.statisticsInfo[5] + " Branch Mis-prediction Stalls<br><br>" +
-                        "<font color="+ colorSchemeMainCur[7]+"><b>Code Size</b></font><br>" //+
-                        //MainLogic.statisticsInfo[6] + " Bytes"
+                        //mainLogic.statisticsInfo[4] + " Branch Taken Stalls<br>" +
+                        //mainLogic.statisticsInfo[5] + " Branch Mis-prediction Stalls<br><br>" +
+                        "<font color="+ colorSchemeMainCur[7]+"><b> Architecture Info</b></font><br>" +
+                        //mainLogic.statisticsInfo[6] + " Bytes"
+                        mainLogic.architectureNum[0] + " Save Buffers<br>" +
+                        mainLogic.architectureNum[1] + " Load Buffers<br>" +
+                        mainLogic.architectureNum[2] + " Integer RS<br>" +
+                        mainLogic.architectureNum[3] + " FP Add RS<br>" +
+                        mainLogic.architectureNum[4] + " FP Multiply RS<br>" +
+                        mainLogic.architectureNum[5] + " FP Divide RS<br>"
         );
     }
 
