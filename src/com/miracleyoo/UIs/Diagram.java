@@ -2,7 +2,6 @@ package com.miracleyoo.UIs;
 
 import com.miracleyoo.utils.Instruction;
 import com.miracleyoo.Logic.MainLogic;
-import com.miracleyoo.utils.TableUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -144,7 +143,7 @@ public class Diagram extends JPanel {
         for (int i = 0; i < ldBuffer; i++) {
             g.drawRect(originX + ldBase[0], originY - (height * i + height) + ldBase[1], 50, height);
         }
-        for(int z = 0; z < ldBuffer; z++) {
+        for (int z = 0; z < ldBuffer; z++) {
             //paint on diagram
             if (ldArr[z] != null && ldArr[z] != blank) {
                 g.drawString(ldArr[z].op, originX + ldBase[0] + 5, originY + ldBase[1] - (height * z) - 2);
@@ -158,7 +157,7 @@ public class Diagram extends JPanel {
             g.drawRect(originX + sdBase[0], originY - (height * i + height) + sdBase[1], 50, height);
         }
 
-        for(int z = 0; z < sdBuffer; z++) {
+        for (int z = 0; z < sdBuffer; z++) {
             //paint on diagram
             if (sdArr[z] != null && sdArr[z] != blank) {
                 g.drawString(sdArr[z].op, originX + sdBase[0] + 5, originY + sdBase[1] - (height * z) - 2);
@@ -170,13 +169,12 @@ public class Diagram extends JPanel {
         for (int q = 0; q < registers; q++) {
             g.drawRect(originX + 50, originY - (height * q + height) - 60, 80, height);
         }
-        for(int z = 0; z < registers; z++) {
+        for (int z = 0; z < registers; z++) {
             //paint on diagram
             if (regArr[z] != null && regArr[z] != blank) {
                 g.drawString(regArr[z].op, originX + 55, originY - (height * z) - 62);
             }
         }
-
 
         //Place integer FU
         int intBase[] = {-300, 60}; //x, y
@@ -195,7 +193,7 @@ public class Diagram extends JPanel {
             g.fillPolygon(new int[]{originX + intBase[0] + 85, originX + intBase[0] + 90, originX + intBase[0] + 95}, new int[]{originY + intBase[1] + 22, originY + intBase[1] + 12, originY + intBase[1] + 22}, 3);
         }
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
-        for(int z = 0; z < integerRS; z++) {
+        for (int z = 0; z < integerRS; z++) {
             //paint on diagram
             if (intArr[z] != null && intArr[z] != blank) {
                 g.drawString(intArr[z].op, originX + intBase[0] + 5 - opBoxWidth, originY + intBase[1] - (height * z - height) - 2);
@@ -220,7 +218,7 @@ public class Diagram extends JPanel {
             g.fillPolygon(new int[]{originX + addBase[0] + 85, originX + addBase[0] + 90, originX + addBase[0] + 95}, new int[]{originY + addBase[1] + 22, originY + addBase[1] + 12, originY + addBase[1] + 22}, 3);
         }
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
-        for(int z = 0; z < fpAdderRS; z++) {
+        for (int z = 0; z < fpAdderRS; z++) {
             //paint on diagram
             if (addArr[z] != blank && addArr[z] != null) {
                 g.drawString(addArr[z].op, originX - opBoxWidth + addBase[0] + 5, originY + addBase[1] - (height * z - height) - 2);
@@ -245,7 +243,7 @@ public class Diagram extends JPanel {
             g.fillPolygon(new int[]{originX + mulBase[0] + 85, originX + mulBase[0] + 90, originX + mulBase[0] + 95}, new int[]{originY + mulBase[1] + 22, originY + mulBase[1] + 12, originY + mulBase[1] + 22}, 3);
         }
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
-        for(int z = 0; z < fpMultiplierRS; z++){
+        for (int z = 0; z < fpMultiplierRS; z++) {
             //paint on diagram
             if (mulArr[z] != null && mulArr[z] != blank) {
                 g.drawString(mulArr[z].op, originX + mulBase[0] + 5 - opBoxWidth, originY + mulBase[1] - (height * z - height) - 2);
@@ -270,7 +268,7 @@ public class Diagram extends JPanel {
             g.fillPolygon(new int[]{originX + divBase[0] + 85, originX + divBase[0] + 90, originX + divBase[0] + 95}, new int[]{originY + divBase[1] + 22, originY + divBase[1] + 12, originY + divBase[1] + 22}, 3);
         }
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
-        for(int z = 0; z < fpDividerRS; z++){
+        for (int z = 0; z < fpDividerRS; z++) {
             //paint on diagram
             if (divArr[z] != null && divArr[z] != blank) {
                 g.drawString(divArr[z].op, originX + divBase[0] + 5 - opBoxWidth, originY + divBase[1] - (height * z - height) - 2);
@@ -282,7 +280,7 @@ public class Diagram extends JPanel {
 //       / boolean inserted = false;
         g.setColor(Color.BLACK);
         //***---Diagram Logic---***\\
-        if(tick != DataUI.mainLogic.CycleNumCur){
+        if (tick != DataUI.mainLogic.CycleNumCur) {
             boolean inserted = false;
             flushBuffers();
             System.out.println("Buffers flushed");
@@ -385,7 +383,7 @@ public class Diagram extends JPanel {
                     System.out.println("Instruction is in WB");
 
                     for (int r = 0; r < registers; r++) {
-                        if (!DataUI.mainLogic.OperationInfoStation.get(i).op.equals("SAVE") && !DataUI.mainLogic.OperationInfoStation.get(i).op.equals("BRA") &&  (regArr[r] == blank || regArr[r] == null)) {
+                        if (!DataUI.mainLogic.OperationInfoStation.get(i).op.equals("SAVE") && !DataUI.mainLogic.OperationInfoStation.get(i).op.equals("BRA") && (regArr[r] == blank || regArr[r] == null)) {
                             regArr[r] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operand, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
                             System.out.println("Writing to register");
                             break;
@@ -456,7 +454,7 @@ public class Diagram extends JPanel {
         repaint();
     }
 
-    public void flushBuffers(){
+    public void flushBuffers() {
         Arrays.fill(opQArr, blank);
         Arrays.fill(ldArr, blank);
         Arrays.fill(sdArr, blank);

@@ -85,4 +85,82 @@ public class TempSnippet {
 //    public static final String[] colorSchemeMainLight =new String[]{"#FEDFE1","#DFFEFC","#DFFEED","#FEFCDF", "#565656"};
 
 
+    // Update the operand model when data are updated
+    /*
+    private void operandTableUpdate() {
+        if (operandSlice[0] >= operandFullData.length - 1) {
+            operandRawData = null;
+        } else {
+            operandRawData = Arrays.copyOfRange(operandFullData, operandSlice[0], operandSlice[1]);
+        }
+        operandModel.setDataVector(operandRawData, operandColumnNames);
+        operandModel.fireTableDataChanged();
+        TableUtils.setAllMinColumnSize(OperandTable, operandColumnWidths);
+        TableUtils.setAllPreferredColumnSize(OperandTable, operandColumnWidths);
+    }
+
+     */
+
+/*
+    // Initialize the operand Table
+    private void initOperandTable(Object[][] inputTotalData) {
+        operandFullData = inputTotalData;
+        operandRawData = Arrays.copyOfRange(operandFullData, operandSlice[0], operandSlice[1]);
+        operandColumnNames = new String[]{"PC", "Operand"};
+        operandModel = new DefaultTableModel(operandRawData, operandColumnNames);
+
+        OperandTable.setModel(operandModel);
+        OperandTable.setFillsViewportHeight(true);
+
+        TableUtils.setAllMinColumnSize(OperandTable, operandColumnWidths);
+        TableUtils.setAllPreferredColumnSize(OperandTable, operandColumnWidths);
+    }
+
+ */
+    /*
+    //When Reservation Stations are updated, need to refresh the Tomasulo Graph
+    public void updateGraphPanel(){
+        GraphPanel.validate();
+        GraphPanel.repaint();
+    }
+     */
+
+    //        if ((OperationInfoStation.get(i).SourceReg1==null || getReg(i, "Src1").ready ||
+//                getReg(i, "Src1").occupyInstId == OperationInfoStation.get(i).absoluteIndex) &&
+//                (OperationInfoStation.get(i).SourceReg2==null || getReg(i, "Src2").ready ||
+//                        getReg(i, "Src2").occupyInstId == OperationInfoStation.get(i).absoluteIndex)){
+//            if(OperationInfoStation.get(i).SourceReg1!=null) {
+//                getReg(i, "Src1").ready = false;
+//                getReg(i, "Src1").occupyInstId=OperationInfoStation.get(i).absoluteIndex;
+//            }
+//            if(OperationInfoStation.get(i).SourceReg2!=null) {
+//                getReg(i, "Src2").ready = false;
+//                getReg(i, "Src2").occupyInstId=OperationInfoStation.get(i).absoluteIndex;
+//            }
+//            if(OperationInfoStation.get(i).DestReg!=null) {
+//                getReg(i, "Dest").ready = false;
+//                getReg(i, "Dest").occupyInstId=OperationInfoStation.get(i).absoluteIndex;
+//            }
+//            return true;
+//        }
+
+//    private final int[] operandSlice = {0, 5};
+
+
+//    // The operations applied to an instruction which is in issue state
+//    private void IssueOps() {
+//        String regName;
+//        int index_;
+//        regName = OperationInfoStation.getFirst().DestReg;
+//        if (regName != null) {
+//            index_ = Integer.parseInt(regName.replaceAll("\\D+", ""));
+//            if (regName.toUpperCase().startsWith("R")) {
+//                IntRegs[index_].ready = false;
+//                IntRegs[index_].occupyInstId = OperationInfoStation.getFirst().absoluteIndex;
+//            } else if (regName.toUpperCase().startsWith("F")) {
+//                FloatRegs[index_].ready = false;
+//                FloatRegs[index_].occupyInstId = OperationInfoStation.getFirst().absoluteIndex;
+//            }
+//        }
+//    }
 }
