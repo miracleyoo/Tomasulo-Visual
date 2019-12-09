@@ -87,7 +87,7 @@ public class Diagram extends JPanel {
 
         //Push first 10 instructions onto opQArr initially at clk 0
         if(!DataUI.mainLogic.isEnd) {
-            for (int o = 0; o < min(DataUI.mainLogic.OpQueue, DataUI.mainLogic.OperationInfoStationActualSize); o++) {
+            for (int o = 0; o < DataUI.mainLogic.OpQueue; o++) {
                 //if opQArr has a blank position, push next awaiting instruction
                 if (opQ[o] == null || opQ[o].equals("")) {
                     String temp = "";
@@ -98,8 +98,6 @@ public class Diagram extends JPanel {
                     else{
                         opQ[o] = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + o).split(";")[0].trim();
                     }
-
-
                 }
             }
         }
@@ -109,7 +107,7 @@ public class Diagram extends JPanel {
         }
 
 
-        for (int q = 0; q < min(DataUI.mainLogic.OpQueue, DataUI.mainLogic.OperationInfoStationActualSize); q++) {
+        for (int q = 0; q < DataUI.mainLogic.OpQueue; q++) {
             if (opQ[q] != null && !opQ[q].equals("")) {
                 //g.drawString(opQArr[q].op, originX - 100 + 5, originY - (height * q) - 60);
                 g.drawString(opQ[q], originX - 100 + 5, originY - (height * q) - 60);
