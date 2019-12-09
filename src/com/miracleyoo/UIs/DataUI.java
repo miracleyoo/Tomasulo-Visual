@@ -135,7 +135,7 @@ public class DataUI {
         constructCycleFullData();
         dataTableUpdate();
         regTableUpdate();
-        initStatisticsPanel();
+        updateStatisticsPanel();
         cycleTableUpdate();
         updateArchitecture();
         MainLogic.architectureNum = new long[]{6, 6, 5, 4, 4, 3};
@@ -155,7 +155,7 @@ public class DataUI {
         constructCycleFullData();
         dataTableUpdate();
         regTableUpdate();
-        initStatisticsPanel();
+        updateStatisticsPanel();
         cycleTableUpdate();
         updateArchitecture();
         //MainLogic.architectureNum = new long[]{6, 6, 5, 4, 4, 3};
@@ -225,7 +225,7 @@ public class DataUI {
     }
 
     // Initialize Statistics Panel
-    private void initStatisticsPanel() {
+    private void updateStatisticsPanel() {
 
         // sets the background color of this component
         // the background color is used only if the component is opaque
@@ -435,8 +435,8 @@ public class DataUI {
             cycleTableUpdate();
             regTableUpdate();
             diagramUpdate();
-            initStatisticsPanel();
-            System.out.println("Execute step");
+            updateStatisticsPanel();
+            System.out.println("==> Execute step");
         }
     }
 
@@ -499,7 +499,7 @@ public class DataUI {
         initDataTable(inputDataFieldData);
 
         // Initialize the Statistics Panel
-        initStatisticsPanel();
+        updateStatisticsPanel();
 
         // Initialize the Cycle Table
         initCycleTable();
