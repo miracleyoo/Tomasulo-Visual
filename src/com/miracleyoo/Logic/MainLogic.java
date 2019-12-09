@@ -149,7 +149,7 @@ public class MainLogic {
     // 2. Check whether there are some free and corresponding FUs
     private boolean judgeIssue() {
         boolean flag = false;
-        String type_ = OperationMapper.get(tempOperationInfo.operand);
+        String type_ = OperationMapper.get(tempOperationInfo.operation);
 
         // Check available reservation station at first. BRA, NOP, HALT don't need RS.
         if (type_.equals("HALT")) {
@@ -251,7 +251,7 @@ public class MainLogic {
         operand = separateEmpty[0].replace(".", "").toUpperCase().trim();
         operandType = OperationMapper.get(operand);
         tempOperationInfo.op = operandType;
-        tempOperationInfo.operand = operand;
+        tempOperationInfo.operation = operand;
         if (separateEmpty.length <= 1) { // HALT, NOP
             return;
         } else {
@@ -396,7 +396,7 @@ public class MainLogic {
 
     // Set Execution cycle number
     private void SetExeOpsNum(int operandInfoIndex) {
-        String operandType = OperationMapper.get(OperationInfoStation.get(operandInfoIndex).operand);
+        String operandType = OperationMapper.get(OperationInfoStation.get(operandInfoIndex).operation);
         switch (operandType) {
             case "DIV":
                 OperationInfoStation.get(operandInfoIndex).currentStageCycleNum = (int) architectureCycle[5];
@@ -424,7 +424,7 @@ public class MainLogic {
 
     // The operations applied to an instruction which is in execute state
     private void ExeOps(int operandInfoIndex) {
-        String operandType = OperationMapper.get(OperationInfoStation.get(operandInfoIndex).operand);
+        String operandType = OperationMapper.get(OperationInfoStation.get(operandInfoIndex).operation);
         switch (operandType) {
             case "DIV":
                 OpsDIV(operandInfoIndex);
@@ -614,7 +614,7 @@ public class MainLogic {
     // A data structure which store all data by parsing an instruction
     // As well as cycle data during the Tomasulo execution.
     public static class InstructionInfo {
-        public String operand = ""; // Only the operand name, like ADDD, MULD
+        public String operation = ""; // Only the operand name, like ADDD, MULD
         public String inst = "";    // The whole instruction, like ADDD R1, R2, R3
         public String op = "";
         public String state = "";   // Current state. It can only be

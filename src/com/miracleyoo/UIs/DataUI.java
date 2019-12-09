@@ -236,11 +236,9 @@ public class DataUI {
                         mainLogic.statisticsInfo[1] + " Instructions<br><br>" +
                         "<font color=" + colorSchemeMainCur[7] + "><b>Stalls</b></font><br>" +
                         mainLogic.statisticsInfo[2] + " RAW Stalls<br>" +
-                        mainLogic.statisticsInfo[3] + " Structural Stalls<br>" +
-                        //MainLogic.statisticsInfo[4] + " Branch Taken Stalls<br>" +
-                        //MainLogic.statisticsInfo[5] + " Branch Mis-prediction Stalls<br><br>" +
-                        "<font color=" + colorSchemeMainCur[7] + "><b>Code Size</b></font><br>" //+
-                //MainLogic.statisticsInfo[6] + " Bytes"
+                        mainLogic.statisticsInfo[3] + " Structural Stalls<br><br>" +
+                        "<font color=" + colorSchemeMainCur[7] + "><b>Cycle Number for</b></font><br><br>" +
+                        "SD Buffer"
         );
     }
 
@@ -481,9 +479,6 @@ public class DataUI {
         // Initialize Main Logic
         mainLogic = new MainLogic();
         mainLogic.initLabelMap();
-
-        // Initialize the operand Table
-        //initOperandTable(inputOperandFieldData);
 
         // Initialize the register Table
         initRegisterTable();

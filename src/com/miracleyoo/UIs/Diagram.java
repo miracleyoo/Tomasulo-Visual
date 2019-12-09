@@ -1,7 +1,6 @@
 package com.miracleyoo.UIs;
 
 import com.miracleyoo.utils.Instruction;
-import com.miracleyoo.Logic.MainLogic;
 
 import javax.swing.*;
 import java.awt.*;
@@ -298,7 +297,7 @@ public class Diagram extends JPanel {
                             for (int z = 0; z < ldBuffer; z++) {
                                 //insert into load buffer if there is a blank space
                                 if (ldArr[z] == blank || ldArr[z] == null) {
-                                    ldArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operand, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
+                                    ldArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
                                     //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
@@ -309,7 +308,7 @@ public class Diagram extends JPanel {
                             for (int z = 0; z < sdBuffer; z++) {
                                 //insert into load buffer if there is a blank space
                                 if (sdArr[z] == blank || sdArr[z] == null) {
-                                    sdArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operand, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
+                                    sdArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
                                     //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
@@ -320,7 +319,7 @@ public class Diagram extends JPanel {
                             for (int z = 0; z < integerRS; z++) {
                                 //insert into load buffer if there is a blank space
                                 if (intArr[z] == blank || intArr[z] == null) {
-                                    intArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operand, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
+                                    intArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
                                     //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
@@ -332,7 +331,7 @@ public class Diagram extends JPanel {
                             for (int z = 0; z < fpAdderRS; z++) {
                                 //insert into load buffer if there is a blank space
                                 if (addArr[z] == blank || addArr[z] == null) {
-                                    addArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operand, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
+                                    addArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
                                     //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
@@ -344,7 +343,7 @@ public class Diagram extends JPanel {
                             for (int z = 0; z < fpMultiplierRS; z++) {
                                 //insert into load buffer if there is a blank space
                                 if (mulArr[z] == blank || mulArr[z] == null) {
-                                    mulArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operand, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
+                                    mulArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
                                     //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
@@ -356,7 +355,7 @@ public class Diagram extends JPanel {
                             for (int z = 0; z < fpDividerRS; z++) {
                                 //insert into load buffer if there is a blank space
                                 if (divArr[z] == blank || divArr[z] == null) {
-                                    divArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operand, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
+                                    divArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
                                     //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
@@ -384,7 +383,7 @@ public class Diagram extends JPanel {
 
                     for (int r = 0; r < registers; r++) {
                         if (!DataUI.mainLogic.OperationInfoStation.get(i).op.equals("SAVE") && !DataUI.mainLogic.OperationInfoStation.get(i).op.equals("BRA") && (regArr[r] == blank || regArr[r] == null)) {
-                            regArr[r] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operand, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
+                            regArr[r] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
                             System.out.println("Writing to register");
                             break;
                         }
