@@ -64,8 +64,10 @@ public class DataUI {
     private TableUtils.StatusColumnCellRenderer cycleTableRender = new TableUtils.StatusColumnCellRenderer();
 
     // Initiate the DataUI window
-    JFrame frame = new JFrame("Operands");
-    public static MainLogic mainLogic;
+    private JFrame frame = new JFrame("Operands");
+
+    // Define the main logic
+    static MainLogic mainLogic;
 
     // Update the data model when data are updated
     private void dataTableUpdate() {
@@ -93,8 +95,8 @@ public class DataUI {
         cycleModel.setDataVector(cycleFullData, cycleColumnNames);
         cycleModel.fireTableDataChanged();
 
-        for (int i = 0; i < cycleColumnNames.length; i++) {
-            CycleTable.getColumn(cycleColumnNames[i]).setCellRenderer(cycleTableRender);//new TableUtils.StatusColumnCellRenderer());
+        for (String cycleColumnName : cycleColumnNames) {
+            CycleTable.getColumn(cycleColumnName).setCellRenderer(cycleTableRender);//new TableUtils.StatusColumnCellRenderer());
         }
 
         TableUtils.setAllMinColumnSize(CycleTable, cycleColumnWidths);
@@ -124,7 +126,7 @@ public class DataUI {
     }
 
     // Reset all panels and tables
-    public void ResetALLData() {
+    void ResetALLData() {
         mainLogic = new MainLogic();
         mainLogic.initLabelMap();
         mainLogic.CycleNumCur = 0;
@@ -163,7 +165,7 @@ public class DataUI {
     }
 
     //Refreshes diagram when reservation stations have been modified via ArchitectureNumUI
-    public void updateArchitecture() {
+    private void updateArchitecture() {
         diagram = new Diagram();
         GraphPanel.setViewportView(diagram);
         GraphPanel.revalidate();
