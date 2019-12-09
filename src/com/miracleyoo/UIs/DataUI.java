@@ -54,7 +54,7 @@ public class DataUI {
 
     // Color theme used in main UI
     // Table Background || Table Foreground || Table Header Background || Table Header Foreground || Label Color || Main Background || Main Foreground || High Light
-    private static final String[] colorSchemeMainLight = new String[]{"#DFFEFC", "#565656", "#FEFCDF", "#565656", "#565656", "#FEDFE1", "#2B2B2B", "#5BB7E3"};
+    private static final String[] colorSchemeMainLight = new String[]{"#DFFEFC", "#565656", "#FEFCDF", "#565656", "#565656", "#FFF8F8", "#2B2B2B", "#5BB7E3"};
     private static final String[] colorSchemeMainDark = new String[]{"#2B2B2B", "#DCDCDC", "#3F5467", "#E4FDFE", "#E4FDFE", "#2B2B2B", "#FFFFFF", "#5BB7E3"};
 
     // Current using UI/Diagram color theme
@@ -341,6 +341,8 @@ public class DataUI {
         // Execute multiple steps
         execItems.get("Multi Cycles").addActionListener(e -> ExeSteps(MainLogic.multiStepNum));
 
+        execItems.get("Run to").addActionListener(e -> ExeSteps(500));
+
         // Add menu items to menu mConf
         // Here may need some other Configures
         String[] confItemNames = {"Architecture Number", "Architecture Cycle", "Multi-Step", "Change Scheme"};
@@ -437,6 +439,9 @@ public class DataUI {
             diagramUpdate();
             updateStatisticsPanel();
             System.out.println("==> Execute step");
+            if(mainLogic.isEnd){
+                break;
+            }
         }
     }
 
