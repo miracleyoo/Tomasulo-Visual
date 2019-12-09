@@ -17,7 +17,7 @@ public class Diagram extends JPanel {
     int fontSize = 9;
 
     //Standardize block widths/heights
-    public int height = 12;
+    static int height = 12;
     static int opBoxWidth = 30;
     static int operandWidth = 50;
 

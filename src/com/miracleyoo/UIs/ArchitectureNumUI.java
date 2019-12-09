@@ -42,7 +42,7 @@ class ArchitectureNumUI {
                 MainLogic.architectureNum[i] = (long) InputTextField.get(i).getValue(); //---ADD LIMITATIONS FOR RS'S---
             }
         }
-        CoolMainUI.DataUIFrame.ResetALLData();
+        CoolMainUI.DataUIFrame.resetOnArchitectureChange();
         //need to update diagram if reservation stations have been changed.
         System.out.println("Architecture updated");
         MainFrame.dispose();

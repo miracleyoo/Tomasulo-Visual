@@ -144,6 +144,26 @@ public class DataUI {
         SetUIScheme();
     }
 
+    public void resetOnArchitectureChange(){
+        mainLogic = new MainLogic();
+        mainLogic.initLabelMap();
+        //operandSlice[0] = 0;
+        //operandSlice[1] = 5;
+        mainLogic.CycleNumCur = 0;
+        CycleLabel.setText("Cycles(Preview)");
+        cycleFullData = new String[10000][7];
+        constructCycleFullData();
+        dataTableUpdate();
+        regTableUpdate();
+        statisticsPanelUpdate();
+        cycleTableUpdate();
+        updateArchitecture();
+        //MainLogic.architectureNum = new long[]{6, 6, 5, 4, 4, 3};
+        MainLogic.architectureCycle = new long[]{10, 10, 4, 7, 24, 5};
+        initGraphPanel();
+        SetUIScheme();
+    }
+
     //Refreshes diagram when reservation stations have been modified via ArchitectureNumUI
     private void updateArchitecture() {
         diagram = new Diagram();
