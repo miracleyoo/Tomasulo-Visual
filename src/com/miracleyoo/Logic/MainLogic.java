@@ -21,6 +21,8 @@ public class MainLogic {
     public static long multiStepNum = 3;
     // The number of Operand queue. Sharing opQueue for int and fp.
     public int OpQueue = 10;
+    // The artificial memory
+    public Number[] Memory=new Number[100];
 
     // -- STATISTICS PART -- \\
     // Judge whether all of the instructions have been issued
@@ -47,12 +49,14 @@ public class MainLogic {
     public LinkedList<InstructionInfo> OperationInfoStation = new LinkedList<InstructionInfo>();
     // How many instruction which is being executed in the whole Tomasulo process
     public int OperationInfoStationActualSize = 0;
+    // The temporal InstructionInfo in
     //List to hold all instructions that have been written back. This is used for Diagram register part
     public LinkedList<String> wbList = new LinkedList<String>();
 
     private static InstructionInfo tempOperationInfo;
     // Operand classify dictionary. Key:Value -> Operand:Class
     private static Map<String, String> OperationMapper = new HashMap<>();
+    // Map the label string shown in the file to the line number
     private static Map<String, Integer> label2index = new HashMap<>();
 
     // -- Reservation stations definition -- \\
@@ -126,6 +130,12 @@ public class MainLogic {
         Type2FUsMap.put("SAVE", SaveFUs);
         Type2FUsMap.put("LOAD", LoadFUs);
         Type2FUsMap.put("INT", IntFUs);
+
+        // Initialize the Memory
+        Random random = new Random();
+        for (int i_=0; i_<100; i_++) {
+            Memory[i_] = (Number)(random.nextInt(100) + 1);
+        }
     }
 
     // Judge whether a string toCheckValue is in the string list arr
@@ -138,6 +148,7 @@ public class MainLogic {
         return false;
     }
 
+    // Initialized the label map
     public void initLabelMap() {
         for (int i = 0; i < InstructionFullList.size(); i++) {
             String operandLine = InstructionFullList.get(i).split(";")[0].trim();
@@ -203,22 +214,31 @@ public class MainLogic {
         InstructionInfo tempOperation = OperationInfoStation.get(i);
         if (tempOperation.waiForIndexReg1 != null) {
             tempIndex = tempOperation.waiForIndexReg1;
-            if (OperationInfoStation.get(OperationInfoStationActualSize - 1 - tempIndex).state.equals(InstructionState[4])) {
-                tempOperation.ValueReg1 = getReg(OperationInfoStationActualSize - 1 - tempIndex, "Dest").value;
+            if (OperationInfoStation.get(OperationInfoStation.size() - 1 - tempIndex).state.equals(InstructionState[4])) {
+                tempOperation.ValueReg1 = getReg(OperationInfoStation.size() - 1 - tempIndex, "Dest").value;
             }
         }
         if (tempOperation.waiForIndexReg2 != null) {
             tempIndex = tempOperation.waiForIndexReg2;
-            if (OperationInfoStation.get(OperationInfoStationActualSize - 1 - tempIndex).state.equals(InstructionState[4])) {
-                tempOperation.ValueReg2 = getReg(OperationInfoStationActualSize - 1 - tempIndex, "Dest").value;
+            if (OperationInfoStation.get(OperationInfoStation.size() - 1 - tempIndex).state.equals(InstructionState[4])) {
+                tempOperation.ValueReg2 = getReg(OperationInfoStation.size() - 1 - tempIndex, "Dest").value;
             }
         }
-        if ((tempOperation.ValueReg1 != null || tempOperation.waiForIndexReg1 == null) && (tempOperation.ValueReg2 != null || tempOperation.waiForIndexReg2 == null)) {
+        if (tempOperation.waiForIndexDest != null) {
+            tempIndex = tempOperation.waiForIndexDest;
+            if (OperationInfoStation.get(OperationInfoStation.size() - 1 - tempIndex).state.equals(InstructionState[4])) {
+                tempOperation.ValueDest = getReg(OperationInfoStation.size() - 1 - tempIndex, "Dest").value;
+            }
+        }
+        if ((tempOperation.ValueReg1 != null || tempOperation.waiForIndexReg1 == null) &&
+                (tempOperation.ValueReg2 != null || tempOperation.waiForIndexReg2 == null) &&
+                (tempOperation.ValueDest != null || tempOperation.waiForIndexDest == null)) {
             return true;
         }
         return false;
     }
 
+    // Judge whether it is available to go to the end of execution
     private boolean judgeExeEnd(int i) {
         boolean flag = true;
         for (int j = i; j < OperationInfoStationActualSize; j++) {
@@ -354,9 +374,19 @@ public class MainLogic {
             }
         }
         if (fistOperation.DestReg != null) {
-            getReg(0, "Dest").ready = false;
-            getReg(0, "Dest").occupyInstId = fistOperation.absoluteIndex;
+            if (!OperationMapper.get(fistOperation.operation).equals("SAVE")) {
+                getReg(0, "Dest").ready = false;
+                getReg(0, "Dest").occupyInstId = fistOperation.absoluteIndex;
+            }
+            else{
+                if (getReg(0, "Dest").ready) {
+                    fistOperation.ValueDest = getReg(0, "Dest").value;
+                } else {
+                    fistOperation.waiForIndexDest = getReg(0, "Dest").occupyInstId;
+                }
+            }
         }
+
     }
 
     // Sequentially check all of the items in the Operands station,
@@ -498,16 +528,12 @@ public class MainLogic {
     }
 
     private void OpsADD(int i) {
-        Number[] operands = getTwoOperand(i);
-
-        getReg(i, "Dest").value = operands[0].floatValue() + operands[1].floatValue();
+        getReg(i, "Dest").value = OperationInfoStation.get(i).ValueReg1.floatValue() + OperationInfoStation.get(i).ValueReg2.floatValue();
         getReg(i, "Dest").ready = true;
     }
 
     private void OpsSUB(int i) {
-        Number[] operands = getTwoOperand(i);
-
-        getReg(i, "Dest").value = operands[0].floatValue() - operands[1].floatValue();
+        getReg(i, "Dest").value = OperationInfoStation.get(i).ValueReg1.floatValue() - OperationInfoStation.get(i).ValueReg2.floatValue();
         getReg(i, "Dest").ready = true;
     }
 
@@ -523,14 +549,12 @@ public class MainLogic {
     }
 
     private void OpsMUL(int i) {
-        Number[] operands = getTwoOperand(i);
-        getReg(i, "Dest").value = (float) operands[0] * (float) operands[1];
+        getReg(i, "Dest").value = OperationInfoStation.get(i).ValueReg1.floatValue() * OperationInfoStation.get(i).ValueReg2.floatValue();
         getReg(i, "Dest").ready = true;
     }
 
     private void OpsDIV(int i) {
-        Number[] operands = getTwoOperand(i);
-        getReg(i, "Dest").value = (float) operands[0] / (float) operands[1];
+        getReg(i, "Dest").value = OperationInfoStation.get(i).ValueReg1.floatValue() / OperationInfoStation.get(i).ValueReg2.floatValue();
         getReg(i, "Dest").ready = true;
     }
 
@@ -543,10 +567,11 @@ public class MainLogic {
     }
 
     private void OpsLOAD(int i) {
-        setRegValue(i, "Dest", 1);
+        setRegValue(i, "Dest", Memory[(int)(OperationInfoStation.get(i).ValueReg1.floatValue() + OperationInfoStation.get(i).ValueReg2.floatValue())%100]);
     }
 
     private void OpsSAVE(int i) {
+        Memory[(int)(OperationInfoStation.get(i).ValueReg1.floatValue() + OperationInfoStation.get(i).ValueReg2.floatValue())%100] = OperationInfoStation.get(i).ValueDest;
         // Two types, normal save and directly save to register like MTC0
     }
 
@@ -647,15 +672,19 @@ public class MainLogic {
         public String label = null;     // The label in this line.
         public String jumpLabel = null; // Jump to label "X". For branch operands.
         public String DestReg = null;
+
         String SourceReg1 = null;
         String SourceReg2 = null;
+
         Integer waiForIndexReg1 = null;
         Integer waiForIndexReg2 = null;
+        Integer waiForIndexDest = null;
 
         // If there is an numerical data in the registers' place, please store
         // it in ValueReg1 or ValueReg2
         Number ValueReg1 = null;
         Number ValueReg2 = null;
+        Number ValueDest = null;
     }
 
     // Struct for registers list
