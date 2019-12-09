@@ -2,7 +2,6 @@ package com.miracleyoo.UIs;
 
 import com.miracleyoo.utils.Instruction;
 import com.miracleyoo.Logic.MainLogic;
-import com.miracleyoo.utils.TableUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -176,7 +175,6 @@ public class Diagram extends JPanel {
                 g.drawString(regArr[z].op, originX + 55, originY - (height * z) - 62);
             }
         }
-
 
         //Place integer FU
         int intBase[] = {-300, 60}; //x, y
