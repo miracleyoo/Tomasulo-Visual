@@ -15,6 +15,7 @@ public class Diagram extends JPanel {
     int tick = 0;
 
     int fontSize = 9;
+    String charFont = "Arial";
 
     //Standardize block widths/heights
     static int height = 12;
@@ -72,7 +73,7 @@ public class Diagram extends JPanel {
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
         int originX = getWidth() / 2 - 25;// getViewport().getSize().width;// getWidth()/2;
         int originY = getHeight() / 2 + 35; //getViewport().getSize().height;//getHeight()/2;
-        g.setFont(new Font("TimesRoman", Font.PLAIN, fontSize));
+        g.setFont(new Font(charFont, Font.PLAIN, fontSize)); //fontSize));
 
 
         g.drawString(Integer.toString(DataUI.mainLogic.CycleNumCur), originX, originY); //debugging to keep track of updating diagram in sync with DataUI.mainLogic.CycleNumCur
