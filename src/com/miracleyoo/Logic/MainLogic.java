@@ -16,11 +16,13 @@ public class MainLogic {
     public static long multiStepNum = 3;
     // All of the instruction lines in this file.
     public static List<String> InstructionFullList = new ArrayList<>();
-    // Operand classify dictionary. Key:Value -> Operand:Class
-    public static Map<String, String> OperationMapper = new HashMap<>();
-    public static Map<String, Integer> label2index = new HashMap<>();
     public static Map<String, Number> dataMap = new HashMap<>(); // Counters for data and code
+
+
     private static OperandInfo tempOperationInfo;
+    // Operand classify dictionary. Key:Value -> Operand:Class
+    private static Map<String, String> OperationMapper = new HashMap<>();
+    private static Map<String, Integer> label2index = new HashMap<>();
     // Reservation stations definition
     private static FUTemplate[] LoadFUs = new FUTemplate[(int) architectureNum[0]];
     private static FUTemplate[] SaveFUs = new FUTemplate[(int) architectureNum[1]];
@@ -60,7 +62,7 @@ public class MainLogic {
     private String[] LoadOps = {"LB", "LH", "LW", "LD", "LS", "LBU", "LHU", "LWU"};
     private String[] BranchOps = {"BEQZ", "BNEZ", "BEQ", "BNE", "J", "JR", "JAL", "JALR"};
     private String[] InstructionState = {"Issue", "EXE", "ExeEnd", "WB", "End"};
-    private String[] TypeNames = {"NOP", "HALT", "ADD", "INT", "DIV", "MUL", "LOAD", "SAVE", "BRA"};
+//    private String[] TypeNames = {"NOP", "HALT", "ADD", "INT", "DIV", "MUL", "LOAD", "SAVE", "BRA"};
 
     public MainLogic() {
         mapListItems(AddOps, "ADD");
@@ -224,6 +226,7 @@ public class MainLogic {
         for (int i = start; i < OperationInfoStationActualSize; i++) {
             if (OperationInfoStation.get(i).writeBack == CycleNumCur) {
                 flag = false;
+                break;
             }
         }
         return flag;
@@ -387,23 +390,6 @@ public class MainLogic {
                     break;
                 case "End":
                     break;
-            }
-        }
-    }
-
-    // The operations applied to an instruction which is in issue state
-    private void IssueOps() {
-        String regName;
-        int index_;
-        regName = OperationInfoStation.getFirst().DestReg;
-        if (regName != null) {
-            index_ = Integer.parseInt(regName.replaceAll("\\D+", ""));
-            if (regName.toUpperCase().startsWith("R")) {
-                IntRegs[index_].ready = false;
-                IntRegs[index_].occupyInstId = OperationInfoStation.getFirst().absoluteIndex;
-            } else if (regName.toUpperCase().startsWith("F")) {
-                FloatRegs[index_].ready = false;
-                FloatRegs[index_].occupyInstId = OperationInfoStation.getFirst().absoluteIndex;
             }
         }
     }
@@ -577,22 +563,26 @@ public class MainLogic {
     private void setRegValue(int i, String type, Number value) {
         String regName;
         int index_;
-        if (type.equals("Dest")) {
-            regName = OperationInfoStation.get(i).DestReg;
-        } else if (type.equals("Src1")) {
-            regName = OperationInfoStation.get(i).SourceReg1;
-        } else if (type.equals("Src2")) {
-            regName = OperationInfoStation.get(i).SourceReg2;
-        } else {
-            throw new Error("getRegValue Type Error");
+        switch (type) {
+            case "Dest":
+                regName = OperationInfoStation.get(i).DestReg;
+                break;
+            case "Src1":
+                regName = OperationInfoStation.get(i).SourceReg1;
+                break;
+            case "Src2":
+                regName = OperationInfoStation.get(i).SourceReg2;
+                break;
+            default:
+                throw new Error("getRegValue Type Error");
         }
 
         index_ = Integer.parseInt(regName.replaceAll("\\D+", ""));
         if (regName.toUpperCase().startsWith("R")) {
-            IntRegs[index_].value = (int) value;
+            IntRegs[index_].value = value;
             IntRegs[index_].ready = true;
         } else if (regName.toUpperCase().startsWith("F")) {
-            FloatRegs[index_].value = (float) value;
+            FloatRegs[index_].value = value;
             FloatRegs[index_].ready = true;
         } else {
             throw new Error("getRegValue Type Error");
@@ -644,27 +634,27 @@ public class MainLogic {
         public String label = null;     // The label in this line.
         public String jumpLabel = null; // Jump to label "X". For branch operands.
         public String DestReg = null;
-        public String SourceReg1 = null;
-        public String SourceReg2 = null;
-        public Integer waiForIndexReg1 = null;
-        public Integer waiForIndexReg2 = null;
+        String SourceReg1 = null;
+        String SourceReg2 = null;
+        Integer waiForIndexReg1 = null;
+        Integer waiForIndexReg2 = null;
 
         // If there is an numerical data in the registers' place, please store
         // it in ValueReg1 or ValueReg2
-        public Number ValueReg1 = null;
-        public Number ValueReg2 = null;
+        Number ValueReg1 = null;
+        Number ValueReg2 = null;
     }
 
     // Struct for registers list
     public static class RegTemplate {
         public Number value = 0;
-        public boolean ready = true;
-        public int occupyInstId = 0;
+        boolean ready = true;
+        int occupyInstId = 0;
     }
 
     // Struct for all kinds of functional units
     public static class FUTemplate {
-        public boolean busy = false;
+        boolean busy = false;
         public int occupyInstId = 0;
     }
 }

@@ -147,4 +147,20 @@ public class TempSnippet {
 //    private final int[] operandSlice = {0, 5};
 
 
+//    // The operations applied to an instruction which is in issue state
+//    private void IssueOps() {
+//        String regName;
+//        int index_;
+//        regName = OperationInfoStation.getFirst().DestReg;
+//        if (regName != null) {
+//            index_ = Integer.parseInt(regName.replaceAll("\\D+", ""));
+//            if (regName.toUpperCase().startsWith("R")) {
+//                IntRegs[index_].ready = false;
+//                IntRegs[index_].occupyInstId = OperationInfoStation.getFirst().absoluteIndex;
+//            } else if (regName.toUpperCase().startsWith("F")) {
+//                FloatRegs[index_].ready = false;
+//                FloatRegs[index_].occupyInstId = OperationInfoStation.getFirst().absoluteIndex;
+//            }
+//        }
+//    }
 }
