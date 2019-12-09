@@ -145,8 +145,8 @@ public class DataUI {
     public void resetOnArchitectureChange(){
         mainLogic = new MainLogic();
         mainLogic.initLabelMap();
-        operandSlice[0] = 0;
-        operandSlice[1] = 5;
+        //operandSlice[0] = 0;
+        //operandSlice[1] = 5;
         mainLogic.CycleNumCur = 0;
         CycleLabel.setText("Cycles(Preview)");
         cycleFullData = new String[10000][7];
