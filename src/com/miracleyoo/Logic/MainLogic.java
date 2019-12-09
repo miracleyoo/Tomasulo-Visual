@@ -76,10 +76,10 @@ public class MainLogic {
         public int src1 = 0;
         public int src2 = 0;
         public int destination = 0;
-        // If there is an numerical data in the registers' place, please store
-        // it in ValueReg1 or ValueReg2
-        public Number ValueReg1 = null;
-        public Number ValueReg2 = null;
+
+        //temp reg to hold values to prevent WAR
+        public Number valReg1 = 0;
+        public Number valReg2 = 0;
     };
 
     private static OperandInfo tempOperationInfo;
@@ -136,8 +136,8 @@ public class MainLogic {
     // Architecture parameters' max value.
     public static long[] architectureNumMax = new long[]{9, 9, 9, 9, 9, 9};
 
-    // Architecture cycle numbers' value.
-    public static long[] architectureCycle = new long[]{2, 2, 2, 2, 2, 2}; //new long[]{10, 10, 4, 7, 24, 5};
+    // Architecture cycle numbers' value. "ld, sd, int, fpAdd, fpMul, fpDiv"
+    public static long[] architectureCycle = new long[]{2, 2, 2, 2, 4, 2}; //new long[]{10, 10, 4, 7, 24, 5};
 
     // Architecture cycle numbers' max value.
     public static long[] architectureCycleMax = new long[]{100,100,100,100,100,100};
@@ -151,7 +151,7 @@ public class MainLogic {
     //public static String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "lw", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
     //public static String[] instr = {"ld $R6,0($R1)", "ld $R5,0($R4)", "add $f3,$f2,$f5", "sw $R3,0($R8)" , "sub $R4,$R3,$R5", "mul $R10,$R11,R12", "sw $R10, 0($R11)", "div $R2,$R7,$R9", "add $f1,$f1,$f1", "add $f2,$f2,$f2", "sub $R3,$R3,$R3", "sw $R3, 0($R3)"};
     //public static  String[] instr = {"add $R3,$R2,$R5", "sub $R4,$R3,$R5", "mul $R10,$R11,R12"};
-    public static String[] instr = {"ADD $f3,$f1,$f2"};
+    public static String[] instr = {"MUL $f2,$f1,$f3", "ADD $f3,$f1,$f1"}; //to test WAR
     //public static String[] instr = {"ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)"};
 
     // Operand info structures. It's length equals to the number of Operand cells in Diagram.
@@ -415,10 +415,16 @@ public class MainLogic {
 
                         case "ADD":
                             OperationInfoStation.get(i).currentStageCycleNum = (int) architectureCycle[3];
+                            //Hold values in valReg to prevent WAR
+                            OperationInfoStation.get(i).valReg1 = FloatRegs[OperationInfoStation.get(i).src1].value;
+                            OperationInfoStation.get(i).valReg2 = FloatRegs[OperationInfoStation.get(i).src2].value;
                             break;
 
                         case "MUL":
                             OperationInfoStation.get(i).currentStageCycleNum = (int) architectureCycle[4];
+                            //Hold values in valReg to prevent WAR
+                            OperationInfoStation.get(i).valReg1 = FloatRegs[OperationInfoStation.get(i).src1].value;
+                            OperationInfoStation.get(i).valReg2 = FloatRegs[OperationInfoStation.get(i).src2].value;
                             break;
 
                         case "DIV":
@@ -440,9 +446,11 @@ public class MainLogic {
                             //Execute using switch statement here
                             switch(OperationInfoStation.get(i).operand){
                                 case "ADD":
-                                    //fp addition of src1 and src2
-                                    OpsADD(i);
+                                    OpsADD(i); //FPaddition
+                                break;
 
+                                case "MUL":
+                                    OpsMUL(i); //FPmultiplication
                                 break;
                             }
                             System.out.println(OperationInfoStation.get(i).operand + " Instruction EXE done!");
@@ -522,11 +530,11 @@ public class MainLogic {
     private void OpsADD(int i){
         //fp addition (or subtraction)
         if("SUB".equals(OperationInfoStation.get(i).op)){
-            FloatRegs[OperationInfoStation.get(i).destination].value = FloatRegs[OperationInfoStation.get(i).src1].value - FloatRegs[OperationInfoStation.get(i).src2].value;
+            FloatRegs[OperationInfoStation.get(i).destination].value = (float) OperationInfoStation.get(i).valReg1 - (float) OperationInfoStation.get(i).valReg2;;
         }
 
         else{
-            FloatRegs[OperationInfoStation.get(i).destination].value = FloatRegs[OperationInfoStation.get(i).src1].value + FloatRegs[OperationInfoStation.get(i).src2].value;
+            FloatRegs[OperationInfoStation.get(i).destination].value = (float) OperationInfoStation.get(i).valReg1 + (float) OperationInfoStation.get(i).valReg2;
         }
     }
 
@@ -535,7 +543,7 @@ public class MainLogic {
     }
 
     private void OpsMUL(int i){
-        FloatRegs[OperationInfoStation.get(i).destination].value = FloatRegs[OperationInfoStation.get(i).src1].value * FloatRegs[OperationInfoStation.get(i).src2].value;
+        FloatRegs[OperationInfoStation.get(i).destination].value = (float) OperationInfoStation.get(i).valReg1 * (float) OperationInfoStation.get(i).valReg2;
     }
 
     private void OpsDIV(int i){
@@ -616,7 +624,7 @@ public class MainLogic {
 
         for (int i=0; i< FloatRegs.length; i++){
             FloatRegs[i] = new FloatRegTemplate();
-            FloatRegs[i].value = 1; //init values
+            FloatRegs[i].value = 2; //Test init values
         }
 
         for (int i=0; i< AddFUs.length; i++){
