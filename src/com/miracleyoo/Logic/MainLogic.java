@@ -19,7 +19,11 @@ public class MainLogic {
     public static class OperandInfo {
         public String operand = ""; // Only the operand name, like ADDD, MULD
         public String inst = "";    // The whole instruction, like ADDD R1, R2, R3
+        public String op = "";
         public String state = "";   // Current state. It can only be
+
+        public String s1 = "";
+        public String s2 = "";
 
         // Tomasulo execution cycle data
         public int issue = 0;
@@ -297,7 +301,7 @@ public class MainLogic {
         String[] separateEmpty = operandLine.split("\\s+");
         operand = separateEmpty[0].replace(".", "").toUpperCase().trim();
         operandType = OperationMapper.get(operand);
-
+        tempOperationInfo.op = operandType;
         tempOperationInfo.operand = operand;
         if (separateEmpty.length <= 1) { // HALT, NOP
             return;
@@ -371,6 +375,9 @@ public class MainLogic {
 //                throw new AssertionError("Destination Register wrong");
                 tempOperationInfo.ValueReg2=0;
             }
+            tempOperationInfo.s1 = regParts[1];
+            tempOperationInfo.s2 = regParts[2];
+            System.out.println(tempOperationInfo.s1 + " " + tempOperationInfo.s2);
         }
     }
 
