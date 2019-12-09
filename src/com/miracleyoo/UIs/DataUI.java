@@ -130,7 +130,7 @@ public class DataUI {
         GraphPanel.repaint();
     }
 
-    private void regTableUpdate(){
+    private void regTableUpdate(){ //---currently not updating on GUI---
         for (int i = 0; i < 32; i++) {
             //32 int and 32 fp registers available
             registerData[i][0] = "R" + i + "=";
@@ -139,6 +139,7 @@ public class DataUI {
             registerData[i][3] = String.format("%.8f", mainLogic.FloatRegs[i].value.floatValue()); //write fp register value
         }
         registerModel.setDataVector(registerData, registerColumnNames);
+        RegisterTable.setModel(registerModel);
         registerModel.fireTableDataChanged();
 
         TableUtils.setAllMinColumnSize(RegisterTable, registerColumnWidths);
@@ -153,7 +154,7 @@ public class DataUI {
         operandSlice[1] = 5;
         mainLogic.CycleNumCur = 0;
         CycleLabel.setText("Cycles(Preview)");
-        cycleFullData = new String[1000][7];
+        cycleFullData = new String[10000][7];
         constructCycleFullData();
         dataTableUpdate();
         regTableUpdate();
