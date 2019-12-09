@@ -29,7 +29,7 @@ public class DataUI {
     private JLabel TomasuloLabel;
     private JScrollPane GraphPanel;
     private JScrollPane CyclePanel;
-    private Diagram diagram = new Diagram();
+    private Diagram diagram;
 
 
     // Define the data, models, infos of all panels
@@ -159,9 +159,10 @@ public class DataUI {
         regTableUpdate();
         statisticsPanelUpdate();
         cycleTableUpdate();
-        diagramUpdate();
+        updateArchitecture();
         MainLogic.architectureNum = new long[]{6, 6, 5, 4, 4, 3};
         MainLogic.architectureCycle = new long[]{10, 10, 4, 7, 24, 5};
+        SetUIScheme();
     }
 
     //Refreshes diagram when reservation stations have been modified via ArchitectureNumUI
@@ -284,6 +285,7 @@ public class DataUI {
 
     // Tomasulo Diagram
     private void initGraphPanel() {
+        diagram = new Diagram();
         diagram.setSize(new Dimension(diagram.diagramWidth*10, diagram.diagramHeight));
         diagram.setCycleNum(0);
         diagram.flushBuffers();

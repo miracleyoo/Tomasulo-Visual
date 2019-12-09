@@ -101,7 +101,7 @@ public class Diagram extends JPanel {
 
 
         for (int q = 0; q < min(DataUI.mainLogic.OpQueue, DataUI.mainLogic.OperationInfoStationActualSize); q++) {
-            if (opQArr[q] != null || opQArr[q] != blank) {
+            if (opQArr[q] != null && opQArr[q] != blank) {
                 //g.drawString(opQArr[q].op, originX - 100 + 5, originY - (height * q) - 60);
                 g.drawString(opQArr[q].op, originX - 100 + 5, originY - (height * q) - 60);
             }
@@ -146,11 +146,10 @@ public class Diagram extends JPanel {
         }
         for(int z = 0; z < ldBuffer; z++) {
             //paint on diagram
-            if (ldArr[z] != null || ldArr[z] != blank) {
+            if (ldArr[z] != null && ldArr[z] != blank) {
                 g.drawString(ldArr[z].op, originX + ldBase[0] + 5, originY + ldBase[1] - (height * z) - 2);
             }
         }
-
 
         //---sdBuffers---\\
         int[] sdBase = {250, -60};
@@ -158,9 +157,10 @@ public class Diagram extends JPanel {
         for (int i = 0; i < sdBuffer; i++) {
             g.drawRect(originX + sdBase[0], originY - (height * i + height) + sdBase[1], 50, height);
         }
+
         for(int z = 0; z < sdBuffer; z++) {
             //paint on diagram
-            if (sdArr[z] != null || sdArr[z] != blank) {
+            if (sdArr[z] != null && sdArr[z] != blank) {
                 g.drawString(sdArr[z].op, originX + sdBase[0] + 5, originY + sdBase[1] - (height * z) - 2);
             }
         }
@@ -172,7 +172,7 @@ public class Diagram extends JPanel {
         }
         for(int z = 0; z < registers; z++) {
             //paint on diagram
-            if (regArr[z] != null || regArr[z] != blank) {
+            if (regArr[z] != null && regArr[z] != blank) {
                 g.drawString(regArr[z].op, originX + 55, originY - (height * z) - 62);
             }
         }
@@ -197,7 +197,7 @@ public class Diagram extends JPanel {
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
         for(int z = 0; z < integerRS; z++) {
             //paint on diagram
-            if (intArr[z] != null || intArr[z] != blank) {
+            if (intArr[z] != null && intArr[z] != blank) {
                 g.drawString(intArr[z].op, originX + intBase[0] + 5 - opBoxWidth, originY + intBase[1] - (height * z - height) - 2);
                 g.drawString(intArr[z].src1, originX + intBase[0] + 5, originY + intBase[1] - (height * z - height) - 2);
                 g.drawString(intArr[z].src2, originX + operandWidth + intBase[0] + 5, originY + intBase[1] - (height * z - height) - 2);
@@ -222,7 +222,7 @@ public class Diagram extends JPanel {
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
         for(int z = 0; z < fpAdderRS; z++) {
             //paint on diagram
-            if (addArr[z] != blank || addArr[z] != null) {
+            if (addArr[z] != blank && addArr[z] != null) {
                 g.drawString(addArr[z].op, originX - opBoxWidth + addBase[0] + 5, originY + addBase[1] - (height * z - height) - 2);
                 g.drawString(addArr[z].src1, originX + addBase[0] + 5, originY + addBase[1] - (height * z - height) - 2);
                 g.drawString(addArr[z].src2, originX + operandWidth + addBase[0] + 5, originY + addBase[1] - (height * z - height) - 2);
@@ -247,7 +247,7 @@ public class Diagram extends JPanel {
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
         for(int z = 0; z < fpMultiplierRS; z++){
             //paint on diagram
-            if (mulArr[z] != null || mulArr[z] != blank) {
+            if (mulArr[z] != null && mulArr[z] != blank) {
                 g.drawString(mulArr[z].op, originX + mulBase[0] + 5 - opBoxWidth, originY + mulBase[1] - (height * z - height) - 2);
                 g.drawString(mulArr[z].src1, originX + mulBase[0] + 5, originY + mulBase[1] - (height * z - height) - 2);
                 g.drawString(mulArr[z].src2, originX + operandWidth + mulBase[0] + 5, originY + mulBase[1] - (height * z - height) - 2);
@@ -272,7 +272,7 @@ public class Diagram extends JPanel {
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
         for(int z = 0; z < fpDividerRS; z++){
             //paint on diagram
-            if (divArr[z] != null || divArr[z] != blank) {
+            if (divArr[z] != null && divArr[z] != blank) {
                 g.drawString(divArr[z].op, originX + divBase[0] + 5 - opBoxWidth, originY + divBase[1] - (height * z - height) - 2);
                 g.drawString(divArr[z].src1, originX + divBase[0] + 5, originY + divBase[1] - (height * z - height) - 2);
                 g.drawString(divArr[z].src2, originX + operandWidth + divBase[0] + 5, originY + divBase[1] - (height * z - height) - 2);

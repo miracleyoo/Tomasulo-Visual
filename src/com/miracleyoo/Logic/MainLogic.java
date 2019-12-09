@@ -71,7 +71,7 @@ public class MainLogic {
     public int totalInstructionNum = 0;
 
     // The number of Operand queue. Sharing opQueue for int and fp.
-    public static int OpQueue = 10;//instr.length; //size of instruction array
+    public int OpQueue = 10;//instr.length; //size of instruction array
 
     // Judge whether all of the instructions have been issued
     public boolean isEnd = false;
