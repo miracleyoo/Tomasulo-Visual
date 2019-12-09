@@ -43,8 +43,9 @@ public class Diagram extends JPanel {
     Instruction[] addArr = new Instruction[fpAdderRS];
     Instruction[] mulArr = new Instruction[fpMultiplierRS];
     Instruction[] divArr = new Instruction[fpDividerRS];
-    Instruction[] regArr = new Instruction[registers];
-    String issueBuffer = "";
+    //Instruction[] regArr = new Instruction[registers];
+    String[] regArr = new String[registers];
+    String[] testArr = new String[registers];
 
     @Override
     public Dimension getPreferredSize() {
@@ -79,7 +80,7 @@ public class Diagram extends JPanel {
         //Place OpQueue -- Note Op Queue is currently implementing both int and fp, THIS MAY NEED TO CHANGE!
         g.drawString("OP Queue", originX - 100, originY - (height * DataUI.mainLogic.OpQueue + height) - 60);
         for (int q = 0; q < DataUI.mainLogic.OpQueue; q++) {
-            g.drawRect(originX - 100, originY - (height * q + height) - 60, 80, height);
+            g.drawRect(originX - 100, originY - (height * q + height) - 60, 100, height);
         }
 
         //Push instructions to opQueue --> Instructions stored here until ISSUED to prevent structural hazard
@@ -110,9 +111,11 @@ public class Diagram extends JPanel {
         for (int q = 0; q < DataUI.mainLogic.OpQueue; q++) {
             if (opQ[q] != null && !opQ[q].equals("")) {
                 //g.drawString(opQArr[q].op, originX - 100 + 5, originY - (height * q) - 60);
-                g.drawString(opQ[q], originX - 100 + 5, originY - (height * q) - 60);
+                g.drawString(opQ[q], originX - 100 + 5, originY - (height * q) - 62);
             }
         }
+
+
 
 /*
         //Try to push next instruction every clock cycle
@@ -167,6 +170,7 @@ public class Diagram extends JPanel {
         }
 
         //---Registers---\\
+        /*
         g.drawString("Int/FP Registers", originX + 50, originY - (height * registers + height) - 60);
         for (int q = 0; q < registers; q++) {
             g.drawRect(originX + 50, originY - (height * q + height) - 60, 80, height);
@@ -177,6 +181,30 @@ public class Diagram extends JPanel {
                 g.drawString(regArr[z].op, originX + 55, originY - (height * z) - 62);
             }
         }
+
+         */
+
+        //---TEST Registers---\\
+        g.drawString("Registers", originX + 50, originY - (height * registers + height) - 60);
+        for (int q = 0; q < registers; q++) {
+            g.drawRect(originX + 50, originY - (height * q + height) - 60, 80, height);
+        }
+
+
+            for (int o = 0; o < min(registers, DataUI.mainLogic.wbList.size()); o++) {
+                //if opQArr has a blank position, push next awaiting instruction
+                if (regArr[o] == null || regArr[o].equals("")) {
+                    regArr[o] = DataUI.mainLogic.wbList.get(o);
+                }
+            }
+
+        for (int z = 0; z < registers; z++) {
+            //paint on diagram
+            if (regArr[z] != null && !regArr[z].equals("")) {
+                g.drawString(regArr[z], originX + 50 + 5, originY - (height * z) - 62);
+            }
+        }
+
 
         //Place integer FU
         int intBase[] = {-300, 60}; //x, y
@@ -198,7 +226,7 @@ public class Diagram extends JPanel {
         for (int z = 0; z < integerRS; z++) {
             //paint on diagram
             if (intArr[z] != null && intArr[z] != blank) {
-                g.drawString(intArr[z].op, originX + intBase[0] + 5 - opBoxWidth, originY + intBase[1] - (height * z - height) - 2);
+                g.drawString(intArr[z].op, originX + intBase[0] + 5 - opBoxWidth - 2, originY + intBase[1] - (height * z - height) - 2);
                 g.drawString(intArr[z].src1, originX + intBase[0] + 5, originY + intBase[1] - (height * z - height) - 2);
                 g.drawString(intArr[z].src2, originX + operandWidth + intBase[0] + 5, originY + intBase[1] - (height * z - height) - 2);
             }
@@ -223,7 +251,7 @@ public class Diagram extends JPanel {
         for (int z = 0; z < fpAdderRS; z++) {
             //paint on diagram
             if (addArr[z] != blank && addArr[z] != null) {
-                g.drawString(addArr[z].op, originX - opBoxWidth + addBase[0] + 5, originY + addBase[1] - (height * z - height) - 2);
+                g.drawString(addArr[z].op, originX - opBoxWidth + addBase[0] + 5 - 2, originY + addBase[1] - (height * z - height) - 2);
                 g.drawString(addArr[z].src1, originX + addBase[0] + 5, originY + addBase[1] - (height * z - height) - 2);
                 g.drawString(addArr[z].src2, originX + operandWidth + addBase[0] + 5, originY + addBase[1] - (height * z - height) - 2);
             }
@@ -248,7 +276,7 @@ public class Diagram extends JPanel {
         for (int z = 0; z < fpMultiplierRS; z++) {
             //paint on diagram
             if (mulArr[z] != null && mulArr[z] != blank) {
-                g.drawString(mulArr[z].op, originX + mulBase[0] + 5 - opBoxWidth, originY + mulBase[1] - (height * z - height) - 2);
+                g.drawString(mulArr[z].op, originX + mulBase[0] + 5 - opBoxWidth - 2, originY + mulBase[1] - (height * z - height) - 2);
                 g.drawString(mulArr[z].src1, originX + mulBase[0] + 5, originY + mulBase[1] - (height * z - height) - 2);
                 g.drawString(mulArr[z].src2, originX + operandWidth + mulBase[0] + 5, originY + mulBase[1] - (height * z - height) - 2);
             }
@@ -273,7 +301,7 @@ public class Diagram extends JPanel {
         for (int z = 0; z < fpDividerRS; z++) {
             //paint on diagram
             if (divArr[z] != null && divArr[z] != blank) {
-                g.drawString(divArr[z].op, originX + divBase[0] + 5 - opBoxWidth, originY + divBase[1] - (height * z - height) - 2);
+                g.drawString(divArr[z].op, originX + divBase[0] + 5 - opBoxWidth - 2, originY + divBase[1] - (height * z - height) - 2);
                 g.drawString(divArr[z].src1, originX + divBase[0] + 5, originY + divBase[1] - (height * z - height) - 2);
                 g.drawString(divArr[z].src2, originX + operandWidth + divBase[0] + 5, originY + divBase[1] - (height * z - height) - 2);
             }
@@ -378,7 +406,7 @@ public class Diagram extends JPanel {
                             break;
                     }
                 }
-
+/*
                 //Place in awaiting RS/registers
                 else if (DataUI.mainLogic.OperationInfoStation.get(i).state.equals("WB")) {
                     System.out.println("Instruction is in WB");
@@ -391,6 +419,7 @@ public class Diagram extends JPanel {
                         }
                     }
                 }
+*/
             }
             tick++;
         }
@@ -463,8 +492,9 @@ public class Diagram extends JPanel {
         Arrays.fill(addArr, blank);
         Arrays.fill(mulArr, blank);
         Arrays.fill(divArr, blank);
-        Arrays.fill(regArr, blank);
+        Arrays.fill(regArr, "");
         Arrays.fill(opQ, "");
+        Arrays.fill(testArr, "");
     }
 }
 

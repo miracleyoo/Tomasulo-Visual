@@ -34,7 +34,7 @@ public class MainLogic {
     // Statistics information which will be shown in DataUI's statistics part
     public int[] statisticsInfo = new int[9];
 
-    // -- FUNCTIONAL UINTS PART -- \\
+    // -- FUNCTIONAL UNITS PART -- \\
     // All of the instruction lines in the currently opened file. Initialized during the ParseFile.
     public static List<String> InstructionFullList = new ArrayList<>();
     // A map which enable the search for certain functional units list by its name
@@ -47,6 +47,8 @@ public class MainLogic {
     public LinkedList<InstructionInfo> OperationInfoStation = new LinkedList<InstructionInfo>();
     // How many instruction which is being executed in the whole Tomasulo process
     public int OperationInfoStationActualSize = 0;
+    //List to hold all instructions that have been written back. This is used for Diagram register part
+    public LinkedList<String> wbList = new LinkedList<String>();
 
     private static InstructionInfo tempOperationInfo;
     // Operand classify dictionary. Key:Value -> Operand:Class
@@ -388,6 +390,9 @@ public class MainLogic {
                             OperationInfoStation.get(i).state = InstructionState[3];
                             OperationInfoStation.get(i).writeBack = CycleNumCur;
                             OperationInfoStation.get(i).currentStageCycleNum = 1;
+                            if(!"BRA".equals(OperationInfoStation.get(i).op) && !"SAVE".equals(OperationInfoStation.get(i).op)){
+                                wbList.addFirst(OperationInfoStation.get(i).operation);
+                            }
                         }
                     }
                 case "WB":
