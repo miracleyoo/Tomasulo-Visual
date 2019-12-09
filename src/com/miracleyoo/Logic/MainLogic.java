@@ -35,6 +35,8 @@ public class MainLogic {
         public String DestReg = null;
         public String SourceReg1 = null;
         public String SourceReg2 = null;
+        public Integer waiForIndexReg1 = null;
+        public Integer waiForIndexReg2 = null;
 
         // If there is an numerical data in the registers' place, please store
         // it in ValueReg1 or ValueReg2
@@ -100,10 +102,6 @@ public class MainLogic {
 
     // All of the instruction lines in this file.
     public static List<String> InstructionFullList = new ArrayList<>();
-
-    //public static String[] instr = {"lw", "sw", "lw", "FPadd", "FPmul", "FPdiv", "sw", "lw", "INTadd", "INTsub", "FPsub", "sw", "INTadd", "INTmul", "FPdiv"};
-    //public static String[] instr = {"ld $R5,0($R4)", "add $R3,$R2,$R5", "sw $R3,0($R8)" , "sub $R4,$R3,$R5", "mul $R10,$R11,R12", "sw $10, 0($R11)"};
-//    public static String[] instr = {"ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)", "ld $R5,0($R4)"};
 
     // Operand info structures. It's length equals to the number of Operand cells in Diagram.
     public LinkedList<OperandInfo> OperationInfoStation = new LinkedList<OperandInfo>();
@@ -220,22 +218,40 @@ public class MainLogic {
 
     // Judge whether it is available to start execution
     private boolean judgeExeStart(int i) {
-        if ((OperationInfoStation.get(i).SourceReg1==null || getReg(i, "Src1").ready ||
-                getReg(i, "Src1").occupyInstId == OperationInfoStation.get(i).absoluteIndex) &&
-                (OperationInfoStation.get(i).SourceReg2==null || getReg(i, "Src2").ready ||
-                        getReg(i, "Src2").occupyInstId == OperationInfoStation.get(i).absoluteIndex)){
-            if(OperationInfoStation.get(i).SourceReg1!=null) {
-                getReg(i, "Src1").ready = false;
-                getReg(i, "Src1").occupyInstId=OperationInfoStation.get(i).absoluteIndex;
+//        if ((OperationInfoStation.get(i).SourceReg1==null || getReg(i, "Src1").ready ||
+//                getReg(i, "Src1").occupyInstId == OperationInfoStation.get(i).absoluteIndex) &&
+//                (OperationInfoStation.get(i).SourceReg2==null || getReg(i, "Src2").ready ||
+//                        getReg(i, "Src2").occupyInstId == OperationInfoStation.get(i).absoluteIndex)){
+//            if(OperationInfoStation.get(i).SourceReg1!=null) {
+//                getReg(i, "Src1").ready = false;
+//                getReg(i, "Src1").occupyInstId=OperationInfoStation.get(i).absoluteIndex;
+//            }
+//            if(OperationInfoStation.get(i).SourceReg2!=null) {
+//                getReg(i, "Src2").ready = false;
+//                getReg(i, "Src2").occupyInstId=OperationInfoStation.get(i).absoluteIndex;
+//            }
+//            if(OperationInfoStation.get(i).DestReg!=null) {
+//                getReg(i, "Dest").ready = false;
+//                getReg(i, "Dest").occupyInstId=OperationInfoStation.get(i).absoluteIndex;
+//            }
+//            return true;
+//        }
+        int tempIndex = 0;
+        OperandInfo tempOperation=OperationInfoStation.get(i);
+        if (tempOperation.waiForIndexReg1!=null){
+            tempIndex=tempOperation.waiForIndexReg1;
+            if(OperationInfoStation.get(OperationInfoStationActualSize - 1 - tempIndex).state.equals(InstructionState[4])){
+                tempOperation.ValueReg1 = getReg(OperationInfoStationActualSize - 1 - tempIndex,"Dest").value;
             }
-            if(OperationInfoStation.get(i).SourceReg2!=null) {
-                getReg(i, "Src2").ready = false;
-                getReg(i, "Src2").occupyInstId=OperationInfoStation.get(i).absoluteIndex;
+        }
+        if (tempOperation.waiForIndexReg2!=null){
+            tempIndex=tempOperation.waiForIndexReg2;
+            if(OperationInfoStation.get(OperationInfoStationActualSize - 1 - tempIndex).state.equals(InstructionState[4])){
+                tempOperation.ValueReg2 = getReg(OperationInfoStationActualSize - 1 - tempIndex,"Dest").value;
             }
-            if(OperationInfoStation.get(i).DestReg!=null) {
-                getReg(i, "Dest").ready = false;
-                getReg(i, "Dest").occupyInstId=OperationInfoStation.get(i).absoluteIndex;
-            }
+        }
+
+        if ((tempOperation.ValueReg1!=null||tempOperation.waiForIndexReg1==null) && (tempOperation.ValueReg2!=null || tempOperation.waiForIndexReg2==null)){
             return true;
         }
         return false;
@@ -366,11 +382,29 @@ public class MainLogic {
             OperationInfoStationActualSize--;
         }
         OperationInfoStation.addFirst(tempOperationInfo);
-        OperationInfoStation.getFirst().issue = CycleNumCur;
-        OperationInfoStation.getFirst().state = InstructionState[0];
-        OperationInfoStation.getFirst().absoluteIndex = totalInstructionNum;
-        OperationInfoStation.getFirst().currentStageCycleNum = 1;
-        //        OperandsInfoStation.getFirst().inst = InstructionFullList.get(instructionLineCur);
+        OperandInfo fistOperation = OperationInfoStation.getFirst();
+        fistOperation.issue = CycleNumCur;
+        fistOperation.state = InstructionState[0];
+        fistOperation.absoluteIndex = totalInstructionNum;
+        fistOperation.currentStageCycleNum = 1;
+        if (fistOperation.SourceReg1 != null) {
+            if (getReg(0, "Src1").ready) {
+                fistOperation.ValueReg1 = getReg(0, "Src1").value;
+            } else {
+                fistOperation.waiForIndexReg1 = getReg(0, "Src1").occupyInstId;
+            }
+        }
+        if (fistOperation.SourceReg2 != null) {
+            if (getReg(0, "Src2").ready) {
+                fistOperation.ValueReg2 = getReg(0, "Src2").value;
+            } else {
+                fistOperation.waiForIndexReg2 = getReg(0, "Src2").occupyInstId;
+            }
+        }
+        if (fistOperation.DestReg != null) {
+            getReg(0, "Dest").ready = false;
+            getReg(0, "Dest").occupyInstId = fistOperation.absoluteIndex;
+        }
     }
 
     // Sequentially check all of the items in the Operands station,
@@ -383,7 +417,7 @@ public class MainLogic {
                         if (judgeExeStart(i)) {
                             OperationInfoStation.get(i).state = InstructionState[1];
                             OperationInfoStation.get(i).exeStart = CycleNumCur;
-                            IssueOps();
+//                            IssueOps();
                             SetExeOpsNum(i);
                         }
                     }
@@ -697,7 +731,7 @@ public class MainLogic {
         checkAllOperandMember();
         CycleNumCur++;
         statisticsInfo[0] = CycleNumCur;
-        statisticsInfo[1] = instructionLineCur;
+        statisticsInfo[1] = totalInstructionNum;
     }
 
     public MainLogic() {
