@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 
+import static java.lang.StrictMath.min;
+
 public class Diagram extends JPanel {
 
     private int cycleNumOld = 0;
@@ -22,21 +24,21 @@ public class Diagram extends JPanel {
     static int operandWidth = 50;
 
     //Designate number of RS per Functional unit here
-    int sdBuffer = (int) MainLogic.architectureNum[0];
-    int ldBuffer = (int) MainLogic.architectureNum[1];
-    int integerRS = (int) MainLogic.architectureNum[2];
-    int fpAdderRS = (int) MainLogic.architectureNum[3];
-    int fpMultiplierRS = (int) MainLogic.architectureNum[4];
-    int fpDividerRS = (int) MainLogic.architectureNum[5];
+    int sdBuffer = (int) DataUI.mainLogic.architectureNum[0];
+    int ldBuffer = (int) DataUI.mainLogic.architectureNum[1];
+    int integerRS = (int) DataUI.mainLogic.architectureNum[2];
+    int fpAdderRS = (int) DataUI.mainLogic.architectureNum[3];
+    int fpMultiplierRS = (int) DataUI.mainLogic.architectureNum[4];
+    int fpDividerRS = (int) DataUI.mainLogic.architectureNum[5];
 
     static int registers = 10;
-    public static int diagramWidth = 600 + 200 + 50 + 50; // Most left: -200; Most right: 200 + 50(rect width)
-    public static int diagramHeight = 110 + height * MainLogic.OpQueue + height + 30; // Most down: -110; Most top: Reg rects top
+    public int diagramWidth = 600 + 200 + 50 + 50; // Most left: -200; Most right: 200 + 50(rect width)
+    public int diagramHeight = 110 + height * DataUI.mainLogic.OpQueue + height + 30; // Most down: -110; Most top: Reg rects top
     //Allows for window scaling while keeping objects in their relative positions
 
     Instruction blank = new Instruction("", "", "", "", "", 0, 0);
-    Instruction[] opQArr = new Instruction[MainLogic.OpQueue];
-    String[] opQ = new String[MainLogic.OpQueue];
+    Instruction[] opQArr = new Instruction[DataUI.mainLogic.OpQueue];
+    String[] opQ = new String[DataUI.mainLogic.OpQueue];
     Instruction[] ldArr = new Instruction[ldBuffer];
     Instruction[] sdArr = new Instruction[sdBuffer];
     Instruction[] intArr = new Instruction[integerRS];
@@ -63,7 +65,7 @@ public class Diagram extends JPanel {
     }
 
     public void setCycleNum(int c) {
-        MainLogic.CycleNumCur = c;
+        DataUI.mainLogic.CycleNumCur = c;
     }
 
     protected void paintComponent(Graphics2D g) {
@@ -74,11 +76,11 @@ public class Diagram extends JPanel {
         g.setFont(new Font("TimesRoman", Font.PLAIN, fontSize));
 
 
-        g.drawString(Integer.toString(MainLogic.CycleNumCur), originX, originY); //debugging to keep track of updating diagram in sync with MainLogic.CycleNumCur
+        g.drawString(Integer.toString(DataUI.mainLogic.CycleNumCur), originX, originY); //debugging to keep track of updating diagram in sync with DataUI.mainLogic.CycleNumCur
 
         //Place OpQueue -- Note Op Queue is currently implementing both int and fp, THIS MAY NEED TO CHANGE!
-        g.drawString("OP Queue", originX - 100, originY - (height * MainLogic.OpQueue + height) - 60);
-        for (int q = 0; q < MainLogic.OpQueue; q++) {
+        g.drawString("OP Queue", originX - 100, originY - (height * DataUI.mainLogic.OpQueue + height) - 60);
+        for (int q = 0; q < DataUI.mainLogic.OpQueue; q++) {
             g.drawRect(originX - 100, originY - (height * q + height) - 60, 80, height);
         }
 
@@ -86,50 +88,50 @@ public class Diagram extends JPanel {
         //Shift instructions down as they are processed through the OpQueue in FIFO manner. In order issue one instruction at a time!
 
         //Push first 10 instructions onto opQArr initially at clk 0
-        for (int o = 0; o < MainLogic.OpQueue; o++) {
+        for (int o = 0; o < min(DataUI.mainLogic.OpQueue, DataUI.mainLogic.OperationInfoStationActualSize); o++) {
             //if opQArr has a blank position, push next awaiting instruction
             if (opQArr[o] == null || opQArr[o] == blank) {
-                //opQArr[o] = new Instruction(MainLogic.OperationInfoStation.getFirst().operand, MainLogic.OperationInfoStation.getFirst().DestReg, MainLogic.OperationInfoStation.getFirst().SourceReg1, MainLogic.OperationInfoStation.getFirst().SourceReg2, MainLogic.OperationInfoStation.getFirst().state, 0);//instr[instrIndex], "", "", "", 1 , 0);
-                //opQArr[o] = new Instruction(MainLogic.OperationInfoFull.getLast().operand, MainLogic.OperationInfoFull.getLast().DestReg, MainLogic.OperationInfoFull.getLast().SourceReg1, MainLogic.OperationInfoFull.getLast().SourceReg2, MainLogic.OperationInfoFull.getLast().state, 0);
+                //opQArr[o] = new Instruction(DataUI.mainLogic.OperationInfoStation.getFirst().operand, DataUI.mainLogic.OperationInfoStation.getFirst().DestReg, DataUI.mainLogic.OperationInfoStation.getFirst().SourceReg1, DataUI.mainLogic.OperationInfoStation.getFirst().SourceReg2, DataUI.mainLogic.OperationInfoStation.getFirst().state, 0);//instr[instrIndex], "", "", "", 1 , 0);
+                //opQArr[o] = new Instruction(DataUI.mainLogic.OperationInfoFull.getLast().operand, DataUI.mainLogic.OperationInfoFull.getLast().DestReg, DataUI.mainLogic.OperationInfoFull.getLast().SourceReg1, DataUI.mainLogic.OperationInfoFull.getLast().SourceReg2, DataUI.mainLogic.OperationInfoFull.getLast().state, 0);
                 //System.out.println("Instruction added: " + opQArr[o].op + " valO: " + o);
-                opQ[o] = MainLogic.instr[o];
-                break;
+                opQ[o] = DataUI.mainLogic.OperationInfoStation.get(o).inst;
             }
+            break;
         }
 
 
-        for (int q = 0; q < MainLogic.OpQueue; q++) {
-            if (opQArr[q] != null) {
+        for (int q = 0; q < min(DataUI.mainLogic.OpQueue, DataUI.mainLogic.OperationInfoStationActualSize); q++) {
+            if (opQArr[q] != null || opQArr[q] != blank) {
                 //g.drawString(opQArr[q].op, originX - 100 + 5, originY - (height * q) - 60);
-                g.drawString(opQ[q], originX - 100 + 5, originY - (height * q) - 60);
+                g.drawString(opQArr[q].op, originX - 100 + 5, originY - (height * q) - 60);
             }
         }
 
 /*
         //Try to push next instruction every clock cycle
-        if (MainLogic.CycleNumCur != cycleNumOld) {
+        if (DataUI.mainLogic.CycleNumCur != cycleNumOld) {
             //need to shift all elements in opQArr down by 1 index
             issueBuffer = opQArr[0].op;
             //System.out.println("issueBuffer holds: " + issueBuffer);
-            for (int q = 0; q < MainLogic.OpQueue - 1; q++) {
+            for (int q = 0; q < DataUI.mainLogic.OpQueue - 1; q++) {
                 opQArr[q] = opQArr[q + 1];
             }
             //Check if instr array has awaiting instr.
-            if (instrIndex < MainLogic.OperationInfoStation.size()) {
-                opQArr[MainLogic.OpQueue - 1] = new Instruction(MainLogic.OperationInfoStation.get(instrIndex).operand, MainLogic.OperationInfoStation.get(instrIndex).DestReg,MainLogic.OperationInfoStation.get(instrIndex).SourceReg1,MainLogic.OperationInfoStation.get(instrIndex).SourceReg2, MainLogic.OperationInfoStation.get(instrIndex).state, MainLogic.CycleNumCur); //Grab next instruction from instruction array
+            if (instrIndex < DataUI.mainLogic.OperationInfoStation.size()) {
+                opQArr[DataUI.mainLogic.OpQueue - 1] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(instrIndex).operand, DataUI.mainLogic.OperationInfoStation.get(instrIndex).DestReg,DataUI.mainLogic.OperationInfoStation.get(instrIndex).SourceReg1,DataUI.mainLogic.OperationInfoStation.get(instrIndex).SourceReg2, DataUI.mainLogic.OperationInfoStation.get(instrIndex).state, DataUI.mainLogic.CycleNumCur); //Grab next instruction from instruction array
                 instrIndex++;
             }
 
             //If no more instructions, begin clearing the Opqueue
             else {
-                opQArr[MainLogic.OpQueue - 1] = blank;
+                opQArr[DataUI.mainLogic.OpQueue - 1] = blank;
             }
 
-            cycleNumOld = MainLogic.CycleNumCur;
+            cycleNumOld = DataUI.mainLogic.CycleNumCur;
         }
 */
 
-        for (int q = 0; q < MainLogic.OpQueue; q++) {
+        for (int q = 0; q < min(DataUI.mainLogic.OpQueue, DataUI.mainLogic.OperationInfoStationActualSize); q++) {
             //g.setColor(Color.decode(DataUI.colorSchemeCycleCur[opQArr.length%DataUI.colorSchemeCycleCur.length])); //to set highlight
             //g.drawRect(originX - 100, originY - (height * q + height) - 60, 80, height);
             //g.drawString(opQArr[q].op, originX - 95, originY - (height * q) - 62);
@@ -280,7 +282,7 @@ public class Diagram extends JPanel {
 //       / boolean inserted = false;
         g.setColor(Color.BLACK);
         //***---Diagram Logic---***\\
-        if(tick != MainLogic.CycleNumCur){
+        if(tick != DataUI.mainLogic.CycleNumCur){
             boolean inserted = false;
             flushBuffers();
             System.out.println("Buffers flushed");
@@ -288,17 +290,17 @@ public class Diagram extends JPanel {
 
             //updateState();
 
-            for (int i = 0; i < MainLogic.OperationInfoStation.size(); i++) {
-                System.out.println(MainLogic.OperationInfoStation.get(i).state);
+            for (int i = 0; i < DataUI.mainLogic.OperationInfoStation.size(); i++) {
+                System.out.println(DataUI.mainLogic.OperationInfoStation.get(i).state);
                 //Create respective Reservation Station arrays to hold instructions while they execute load on clock cycle
-                if (MainLogic.OperationInfoStation.get(i).state.equals("Issue") || MainLogic.OperationInfoStation.get(i).state.equals("EXE") || MainLogic.OperationInfoStation.get(i).equals("ExeEnd")) { //Hold in RS ExeEnd if CBD is occupied
+                if (DataUI.mainLogic.OperationInfoStation.get(i).state.equals("Issue") || DataUI.mainLogic.OperationInfoStation.get(i).state.equals("EXE") || DataUI.mainLogic.OperationInfoStation.get(i).equals("ExeEnd")) { //Hold in RS ExeEnd if CBD is occupied
                     //Color color = colorSchemeCycleCur[i]%DataUI.colorSchemeCycleCur.length]); //set highlight color of text
-                    switch (MainLogic.OperationInfoStation.get(i).operand) {
+                    switch (DataUI.mainLogic.OperationInfoStation.get(i).operand) {
                         case "LOAD":
                             for (int z = 0; z < ldBuffer; z++) {
                                 //insert into load buffer if there is a blank space
                                 if (ldArr[z] == blank || ldArr[z] == null) {
-                                    ldArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum, MainLogic.OperationInfoStation.get(i).exeStart);
+                                    ldArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operand, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).SourceReg1, DataUI.mainLogic.OperationInfoStation.get(i).SourceReg2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
                                     //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
@@ -314,7 +316,7 @@ public class Diagram extends JPanel {
                             for (int z = 0; z < integerRS; z++) {
                                 //insert into load buffer if there is a blank space
                                 if (intArr[z] == blank || intArr[z] == null) {
-                                    intArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum, MainLogic.OperationInfoStation.get(i).exeStart);
+                                    intArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operand, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).SourceReg1, DataUI.mainLogic.OperationInfoStation.get(i).SourceReg2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
                                     //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
@@ -326,7 +328,7 @@ public class Diagram extends JPanel {
                             for (int z = 0; z < fpAdderRS; z++) {
                                 //insert into load buffer if there is a blank space
                                 if (addArr[z] == blank || addArr[z] == null) {
-                                    addArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum, MainLogic.OperationInfoStation.get(i).exeStart);
+                                    addArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operand, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).SourceReg1, DataUI.mainLogic.OperationInfoStation.get(i).SourceReg2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
                                     //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
@@ -338,7 +340,7 @@ public class Diagram extends JPanel {
                             for (int z = 0; z < fpMultiplierRS; z++) {
                                 //insert into load buffer if there is a blank space
                                 if (mulArr[z] == blank || mulArr[z] == null) {
-                                    mulArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum, MainLogic.OperationInfoStation.get(i).exeStart);
+                                    mulArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operand, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).SourceReg1, DataUI.mainLogic.OperationInfoStation.get(i).SourceReg2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
                                     //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
@@ -350,7 +352,7 @@ public class Diagram extends JPanel {
                             for (int z = 0; z < fpDividerRS; z++) {
                                 //insert into load buffer if there is a blank space
                                 if (divArr[z] == blank || divArr[z] == null) {
-                                    divArr[z] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum, MainLogic.OperationInfoStation.get(i).exeStart);
+                                    divArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operand, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).SourceReg1, DataUI.mainLogic.OperationInfoStation.get(i).SourceReg2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
                                     //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
@@ -373,12 +375,12 @@ public class Diagram extends JPanel {
                 }
 
                 //Place in awaiting RS/registers
-                else if (MainLogic.OperationInfoStation.get(i).state.equals("WB")) {
+                else if (DataUI.mainLogic.OperationInfoStation.get(i).state.equals("WB")) {
                     System.out.println("Instruction is in WB");
 
                     for (int r = 0; r < registers; r++) {
-                        if (!MainLogic.OperationInfoStation.get(i).operand.equals("SAVE") && (regArr[r] == blank || regArr[r] == null)) {
-                            regArr[r] = new Instruction(MainLogic.OperationInfoStation.get(i).operand, MainLogic.OperationInfoStation.get(i).DestReg, MainLogic.OperationInfoStation.get(i).SourceReg1, MainLogic.OperationInfoStation.get(i).SourceReg2, MainLogic.OperationInfoStation.get(i).state, MainLogic.OperationInfoStation.get(i).currentStageCycleNum, MainLogic.OperationInfoStation.get(i).exeStart);
+                        if (!DataUI.mainLogic.OperationInfoStation.get(i).operand.equals("SAVE") && (regArr[r] == blank || regArr[r] == null)) {
+                            regArr[r] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operand, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).SourceReg1, DataUI.mainLogic.OperationInfoStation.get(i).SourceReg2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
                             System.out.println("Writing to register");
                             break;
                         }
@@ -462,7 +464,7 @@ public class Diagram extends JPanel {
 }
 
 /*
-Instruction[] opQArr = new Instruction[MainLogic.OpQueue];
+Instruction[] opQArr = new Instruction[DataUI.mainLogic.OpQueue];
     Instruction[] ldArr = new Instruction[ldBuffer];
     Instruction[] sdArr = new Instruction[sdBuffer];
     Instruction[] intArr = new Instruction[integerRS];

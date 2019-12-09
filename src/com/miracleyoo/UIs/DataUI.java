@@ -68,7 +68,7 @@ public class DataUI {
 
     // Initiate the DataUI window
     JFrame frame = new JFrame("Operands");
-    public MainLogic mainLogic;
+    public static MainLogic mainLogic;
 
 
     // Update the operand model when data are updated
@@ -97,14 +97,14 @@ public class DataUI {
 
 
     private void constructCycleFullData(){
-        for (int i = 0; i<MainLogic.OperationInfoStation.size(); i++){
-            cycleFullData[i][0] = Integer.toHexString((MainLogic.OperationInfoStation.get(i).absoluteIndex * 4)); //PC counter
-            cycleFullData[i][1] = Integer.toString(MainLogic.OperationInfoStation.get(i).absoluteIndex);
-            cycleFullData[i][2] = MainLogic.OperationInfoStation.get(i).inst;
-            cycleFullData[i][3] = Integer.toString(MainLogic.OperationInfoStation.get(i).issue);
-            cycleFullData[i][4] = Integer.toString(MainLogic.OperationInfoStation.get(i).exeStart);
-            cycleFullData[i][5] = Integer.toString(MainLogic.OperationInfoStation.get(i).exeEnd);
-            cycleFullData[i][6] = Integer.toString(MainLogic.OperationInfoStation.get(i).writeBack);
+        for (int i = 0; i<mainLogic.OperationInfoStation.size(); i++){
+            cycleFullData[i][0] = String.format("%04X", mainLogic.OperationInfoStation.get(i).absoluteIndex * 4); //PC counter
+            cycleFullData[i][1] = Integer.toString(mainLogic.OperationInfoStation.get(i).absoluteIndex);
+            cycleFullData[i][2] = mainLogic.OperationInfoStation.get(i).inst;
+            cycleFullData[i][3] = Integer.toString(mainLogic.OperationInfoStation.get(i).issue);
+            cycleFullData[i][4] = Integer.toString(mainLogic.OperationInfoStation.get(i).exeStart);
+            cycleFullData[i][5] = Integer.toString(mainLogic.OperationInfoStation.get(i).exeEnd);
+            cycleFullData[i][6] = Integer.toString(mainLogic.OperationInfoStation.get(i).writeBack);
         }
     }
 
@@ -112,15 +112,8 @@ public class DataUI {
     // Update the data model when data are updated
     private void cycleTableUpdate() {
         constructCycleFullData();
-//        cycleFullData = new String[5][MainLogic.CycleNumCur];
-//        for (int i = 0; i < MainLogic.CycleNumCur; i++) {
-//            for(int j=0; j<=min(i, 4); j++) {
-//                cycleFullData[j][i] = cycleStageNames[i<=4?i-j:4-j];
-//            }
-//        }
         cycleModel.setDataVector(cycleFullData, cycleColumnNames);
         cycleModel.fireTableDataChanged();
-//        CycleTable.setFillsViewportHeight(true);
 
         for (int i = 0; i < cycleColumnNames.length; i++) {
             CycleTable.getColumn(cycleColumnNames[i]).setCellRenderer(cycleTableRender);//new TableUtils.StatusColumnCellRenderer());
@@ -130,25 +123,45 @@ public class DataUI {
         TableUtils.setAllPreferredColumnSize(CycleTable, cycleColumnWidths);
     }
 
-    // Reset all panels and tables
-    void ResetALLData() {
-        operandSlice[0] = 0;
-        operandSlice[1] = 5;
-        MainLogic.CycleNumCur = 0;
-        CycleLabel.setText("Cycles(Preview)");
-        //operandTableUpdate();
-        dataTableUpdate();
-        initRegisterTable();
-        initStatisticsPanel();
-        initCycleTable();
-        //resetTomasulo();
+    private void diagramUpdate(){
+        diagram.setCycleNum(mainLogic.CycleNumCur);
+        GraphPanel.setViewportView(diagram);
+        GraphPanel.revalidate();
+        GraphPanel.repaint();
     }
 
-    //Reset Diagram --> refresh Tomasulo GraphPanel to defaults
-    public void resetTomasulo() {
+    private void regTableUpdate(){
+        for (int i = 0; i < 32; i++) {
+            //32 int and 32 fp registers available
+            registerData[i][0] = "R" + i + "=";
+            registerData[i][1] = String.format("%08d", mainLogic.IntRegs[i].value.intValue()); //write integer register value
+            registerData[i][2] = "F" + i + "=";
+            registerData[i][3] = String.format("%.8f", mainLogic.FloatRegs[i].value.floatValue()); //write fp register value
+        }
+        registerModel.setDataVector(registerData, registerColumnNames);
+        registerModel.fireTableDataChanged();
+
+        TableUtils.setAllMinColumnSize(RegisterTable, registerColumnWidths);
+        TableUtils.setAllPreferredColumnSize(RegisterTable, registerColumnWidths);
+    }
+
+    // Reset all panels and tables
+    void ResetALLData() {
+        mainLogic = new MainLogic();
+        mainLogic.initLabelMap();
+        operandSlice[0] = 0;
+        operandSlice[1] = 5;
+        mainLogic.CycleNumCur = 0;
+        CycleLabel.setText("Cycles(Preview)");
+        cycleFullData = new String[1000][7];
+        constructCycleFullData();
+        dataTableUpdate();
+        regTableUpdate();
+        statisticsPanelUpdate();
+        cycleTableUpdate();
+        updateArchitecture();
         MainLogic.architectureNum = new long[]{6, 6, 5, 4, 4, 3};
         MainLogic.architectureCycle = new long[]{10, 10, 4, 7, 24, 5};
-        updateArchitecture();
     }
 
     //Refreshes diagram when reservation stations have been modified via ArchitectureNumUI
@@ -183,9 +196,9 @@ public class DataUI {
         for (int i = 0; i < 32; i++) {
             //32 int and 32 fp registers available
             registerData[i][0] = "R" + i + "=";
-            registerData[i][1] = String.format("%08d", 0); //write integer register value
+            registerData[i][1] = String.format("%08d", mainLogic.IntRegs[i].value.intValue()); //write integer register value
             registerData[i][2] = "F" + i + "=";
-            registerData[i][3] = String.format("%.8f", 0.0); //write fp register value
+            registerData[i][3] = String.format("%.8f", mainLogic.FloatRegs[i].value.floatValue()); //write fp register value
         }
         registerModel = new DefaultTableModel(registerData, registerColumnNames);
 
@@ -203,14 +216,6 @@ public class DataUI {
         cycleFullData = new String[10000][7];
 
         constructCycleFullData();
-//        cycleColumnWidths = new int[MainLogic.CycleNumCur];
-//        Arrays.fill(cycleColumnWidths, 100);
-//
-//        for (int i = 0; i < 5; i++) {
-//            for(int j=0; j<=i; j++) {
-//                cycleFullData[j][i] = cycleStageNames[i-j];
-//            }
-//        }
         cycleModel = new DefaultTableModel(cycleFullData, cycleColumnNames);
 
         CycleTable.setModel(cycleModel);
@@ -244,32 +249,32 @@ public class DataUI {
         // the background color is used only if the component is opaque
         StatisticsText.setText(
                 "<html><font color="+ colorSchemeMainCur[7]+"><b>Execution</b></font><br>" +
-                        MainLogic.statisticsInfo[0] + " Cycles<br>" +
-                        MainLogic.statisticsInfo[1] + " Instructions<br><br>" +
+                        mainLogic.statisticsInfo[0] + " Cycles<br>" +
+                        mainLogic.statisticsInfo[1] + " Instructions<br><br>" +
                         "<font color="+ colorSchemeMainCur[7]+"><b>Stalls</b></font><br>" +
-                        MainLogic.statisticsInfo[2] + " RAW Stalls<br>" +
-                        MainLogic.statisticsInfo[3] + " Structural Stalls<br>" +
-                        MainLogic.statisticsInfo[4] + " Branch Taken Stalls<br>" +
-                        MainLogic.statisticsInfo[5] + " Branch Mis-prediction Stalls<br><br>" +
+                        mainLogic.statisticsInfo[2] + " RAW Stalls<br>" +
+                        mainLogic.statisticsInfo[3] + " Structural Stalls<br>" +
+                        mainLogic.statisticsInfo[4] + " Branch Taken Stalls<br>" +
+                        mainLogic.statisticsInfo[5] + " Branch Mis-prediction Stalls<br><br>" +
                         "<font color="+ colorSchemeMainCur[7]+"><b>Code Size</b></font><br>" +
-                        MainLogic.statisticsInfo[6] + " Bytes"
+                        mainLogic.statisticsInfo[6] + " Bytes"
         );
     }
 
 
     // Initialize Statistics Panel
-    private void updateStatisticsPanel() {
+    private void statisticsPanelUpdate() {
 
         // sets the background color of this component
         // the background color is used only if the component is opaque
         //Include RS numbers
         StatisticsText.setText(
                 "<html><font color="+ colorSchemeMainCur[7]+"><b>Execution</b></font><br>" +
-                        MainLogic.statisticsInfo[0] + " Cycles<br>" +
-                        MainLogic.statisticsInfo[1] + " Instructions<br><br>" +
+                        mainLogic.statisticsInfo[0] + " Cycles<br>" +
+                        mainLogic.statisticsInfo[1] + " Instructions<br><br>" +
                         "<font color="+ colorSchemeMainCur[7]+"><b>Stalls</b></font><br>" +
-                        MainLogic.statisticsInfo[2] + " RAW Stalls<br>" +
-                        MainLogic.statisticsInfo[3] + " Structural Stalls<br>" +
+                        mainLogic.statisticsInfo[2] + " RAW Stalls<br>" +
+                        mainLogic.statisticsInfo[3] + " Structural Stalls<br>" +
                         //MainLogic.statisticsInfo[4] + " Branch Taken Stalls<br>" +
                         //MainLogic.statisticsInfo[5] + " Branch Mis-prediction Stalls<br><br>" +
                         "<font color="+ colorSchemeMainCur[7]+"><b>Code Size</b></font><br>" //+
@@ -279,21 +284,19 @@ public class DataUI {
 
     // Tomasulo Diagram
     private void initGraphPanel() {
-        //JPanel d = new Diagram(MainLogic.CycleNumCur);
-//        d.setBackground(Color.WHITE);
-        diagram.setSize(new Dimension(Diagram.diagramWidth*10, Diagram.diagramHeight));
+        diagram.setSize(new Dimension(diagram.diagramWidth*10, diagram.diagramHeight));
         diagram.setCycleNum(0);
         diagram.flushBuffers();
         GraphPanel.setViewportView(diagram);
-        //GraphPanel.revalidate();
     }
 
+    /*
     //When Reservation Stations are updated, need to refresh the Tomasulo Graph
     public void updateGraphPanel(){
         GraphPanel.validate();
         GraphPanel.repaint();
     }
-
+     */
 
     // Define the menu bar
     private JMenuBar addMenuBar() {
@@ -343,10 +346,13 @@ public class DataUI {
                     operandFullData = listFlagMap.get("textList").toArray(new Object[0][0]);
                     dataFullData = listFlagMap.get("dataList").toArray(new Object[0][0]);
                     ResetALLData();
+                    initDataTable(dataFullData);
+
                     // TODO: Add a global init function
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
+                mainLogic.initLabelMap();
             }
         });
 
@@ -456,35 +462,19 @@ public class DataUI {
     private void ExeSteps(long stepNum) {
         operandSlice[0] += stepNum;
         operandSlice[1] += stepNum;
-        if(MainLogic.CycleNumCur==0){
+        if (mainLogic.CycleNumCur == 0) {
             CycleLabel.setText("Cycles");
         }
-//        MainLogic.CycleNumCur += stepNum;
+        System.out.println(mainLogic.CycleNumCur);
 
-        System.out.println(MainLogic.CycleNumCur);
-
-        for(int i=0;i<stepNum;i++) {
+        for (int i = 0; i < stepNum; i++) {
             mainLogic.parseStep();
-            //operandTableUpdate();
             cycleTableUpdate();
-            updateStatisticsPanel();
-            //Update graph to show motion of instr.
-//////////////////////////////////////////////////////////////////////
-//////////////////        TEMP       /////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-        diagram.setCycleNum(MainLogic.CycleNumCur);
-        GraphPanel.setViewportView(diagram);
-        GraphPanel.revalidate();
-        GraphPanel.repaint();
-
-//////////////////////////////////////////////////////////////////////
-//////////////////       END TEMP       //////////////////////////////
-//////////////////////////////////////////////////////////////////////
+            regTableUpdate();
+            diagramUpdate();
+            statisticsPanelUpdate();
             System.out.println("Execute step");
         }
-
-
     }
 
     private void SetTableScheme(JTable renderTable, String[] ColorScheme){
@@ -537,17 +527,11 @@ public class DataUI {
         StatisticsText.setForeground(Color.decode(colorSchemeMainCur[6]));
     }
 
-    void test(){
-        Number x=3;
-        int y=5;
-        x=y;
-        System.out.println(x);
-        double z=2.3;
-        x=z;
-        System.out.println(x);
-    }
-
     DataUI(Object[][] inputOperandFieldData, Object[][] inputDataFieldData) {
+        // Initialize Main Logic
+        mainLogic = new MainLogic();
+        mainLogic.initLabelMap();
+
         // Initialize the operand Table
         //initOperandTable(inputOperandFieldData);
 
@@ -574,8 +558,7 @@ public class DataUI {
 //////////////////       END TEMP       //////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-        // Initialize Main Logic
-        mainLogic = new MainLogic();
+
 
         System.out.println("INIT");
 
