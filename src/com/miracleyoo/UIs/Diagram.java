@@ -87,22 +87,33 @@ public class Diagram extends JPanel {
         //Shift instructions down as they are processed through the OpQueue in FIFO manner. In order issue one instruction at a time!
 
         //Push first 10 instructions onto opQArr initially at clk 0
-        for (int o = 0; o < min(DataUI.mainLogic.OpQueue, DataUI.mainLogic.OperationInfoStationActualSize); o++) {
-            //if opQArr has a blank position, push next awaiting instruction
-            if (opQArr[o] == null || opQArr[o] == blank) {
-                //opQArr[o] = new Instruction(DataUI.mainLogic.OperationInfoStation.getFirst().operand, DataUI.mainLogic.OperationInfoStation.getFirst().DestReg, DataUI.mainLogic.OperationInfoStation.getFirst().SourceReg1, DataUI.mainLogic.OperationInfoStation.getFirst().SourceReg2, DataUI.mainLogic.OperationInfoStation.getFirst().state, 0);//instr[instrIndex], "", "", "", 1 , 0);
-                //opQArr[o] = new Instruction(DataUI.mainLogic.OperationInfoFull.getLast().operand, DataUI.mainLogic.OperationInfoFull.getLast().DestReg, DataUI.mainLogic.OperationInfoFull.getLast().SourceReg1, DataUI.mainLogic.OperationInfoFull.getLast().SourceReg2, DataUI.mainLogic.OperationInfoFull.getLast().state, 0);
-                //System.out.println("Instruction added: " + opQArr[o].op + " valO: " + o);
-                opQ[o] = DataUI.mainLogic.OperationInfoStation.get(o).inst;
+        if(!DataUI.mainLogic.isEnd) {
+            for (int o = 0; o < min(DataUI.mainLogic.OpQueue, DataUI.mainLogic.OperationInfoStationActualSize); o++) {
+                //if opQArr has a blank position, push next awaiting instruction
+                if (opQ[o] == null || opQ[o].equals("")) {
+                    String temp = "";
+                    if(DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + o).split(":").length > 1){
+                        temp = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + o).split(":")[1].trim(); //place just the raw instruction in the opQ
+                        opQ[o] = temp.split(";")[0].trim(); //place just the raw instruction in the opQ
+                    }
+                    else{
+                        opQ[o] = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + o).split(";")[0].trim();
+                    }
+
+
+                }
             }
-            break;
+        }
+
+        else{
+            Arrays.fill(opQ, "");
         }
 
 
         for (int q = 0; q < min(DataUI.mainLogic.OpQueue, DataUI.mainLogic.OperationInfoStationActualSize); q++) {
-            if (opQArr[q] != null && opQArr[q] != blank) {
+            if (opQ[q] != null && !opQ[q].equals("")) {
                 //g.drawString(opQArr[q].op, originX - 100 + 5, originY - (height * q) - 60);
-                g.drawString(opQArr[q].op, originX - 100 + 5, originY - (height * q) - 60);
+                g.drawString(opQ[q], originX - 100 + 5, originY - (height * q) - 60);
             }
         }
 
@@ -129,12 +140,6 @@ public class Diagram extends JPanel {
             cycleNumOld = DataUI.mainLogic.CycleNumCur;
         }
 */
-
-        for (int q = 0; q < min(DataUI.mainLogic.OpQueue, DataUI.mainLogic.OperationInfoStationActualSize); q++) {
-            //g.setColor(Color.decode(DataUI.colorSchemeCycleCur[opQArr.length%DataUI.colorSchemeCycleCur.length])); //to set highlight
-            //g.drawRect(originX - 100, originY - (height * q + height) - 60, 80, height);
-            //g.drawString(opQArr[q].op, originX - 95, originY - (height * q) - 62);
-        }
 
 
         //---ldBuffers---\\
@@ -282,14 +287,13 @@ public class Diagram extends JPanel {
         //***---Diagram Logic---***\\
         if (tick != DataUI.mainLogic.CycleNumCur) {
             boolean inserted = false;
-            flushBuffers();
+            flushBuffers(); //Clear buffers and rewrite every clock cycle
             System.out.println("Buffers flushed");
-            //Maybe clear all buffers and rewrite every clock tick depending on states of instructions
 
-            //updateState();
+
 
             for (int i = 0; i < DataUI.mainLogic.OperationInfoStation.size(); i++) {
-                System.out.println(DataUI.mainLogic.OperationInfoStation.get(i).state);
+                //System.out.println(DataUI.mainLogic.OperationInfoStation.get(i).state);
                 //Create respective Reservation Station arrays to hold instructions while they execute load on clock cycle
                 if (DataUI.mainLogic.OperationInfoStation.get(i).state.equals("Issue") || DataUI.mainLogic.OperationInfoStation.get(i).state.equals("EXE") || DataUI.mainLogic.OperationInfoStation.get(i).equals("ExeEnd")) { //Hold in RS ExeEnd if CBD is occupied
                     //Color color = colorSchemeCycleCur[i]%DataUI.colorSchemeCycleCur.length]); //set highlight color of text

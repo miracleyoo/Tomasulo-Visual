@@ -1,5 +1,7 @@
 package com.miracleyoo.Logic;
 
+import com.miracleyoo.UIs.DataUI;
+
 import java.util.*;
 import java.util.Map;
 
@@ -15,7 +17,7 @@ public class MainLogic {
     // How many cycles to proceed when "Execute multiple cycle" button is pressed.
     public static long multiStepNum = 3;
     // All of the instruction lines in this file.
-    public static List<String> InstructionFullList = new ArrayList<>();
+    public static List<String> InstructionFullList = new ArrayList<>(); //holds all instructions after parsing file
     public static Map<String, Number> dataMap = new HashMap<>(); // Counters for data and code
 
 
@@ -39,7 +41,7 @@ public class MainLogic {
     // The current cycle number.
     public int CycleNumCur = 0;
     // The index of the line of instruction which is going to be parsed
-    public int instructionLineCur = 0;
+    public int instructionLineCur = 0; //use this + 10 to display on the OpQueue
     public int totalInstructionNum = 0;
     // The number of Operand queue. Sharing opQueue for int and fp.
     public int OpQueue = 10;//instr.length; //size of instruction array
