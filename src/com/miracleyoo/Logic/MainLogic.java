@@ -699,4 +699,10 @@ public class MainLogic {
         boolean busy = false;
         public int occupyInstId = 0;
     }
+
+    //used for highlighting instructions
+    public class instructionTrack{
+        String s = "";
+        int i;
+    }
 }
