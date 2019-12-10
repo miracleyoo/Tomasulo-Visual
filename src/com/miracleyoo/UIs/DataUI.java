@@ -272,14 +272,12 @@ public class DataUI {
         JMenu mFile = new JMenu("File");
         JMenu mExec = new JMenu("Execute");
         JMenu mConf = new JMenu("Configure");
-        JMenu mWind = new JMenu("Window");
         JMenu mHelp = new JMenu("Help");
 
         // Add menus to menu bar
         mainMenuBar.add(mFile);
         mainMenuBar.add(mExec);
         mainMenuBar.add(mConf);
-        mainMenuBar.add(mWind);
         mainMenuBar.add(mHelp);
 
         // Add menu items to menu mFile
@@ -296,7 +294,7 @@ public class DataUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 FileDialog fd = new FileDialog(new JFrame(), "Choose a file", FileDialog.LOAD);
-                fd.setDirectory("~/Downloads/");
+                fd.setDirectory(System.getProperty("user.dir")+"/asm_code/");
                 fd.setFilenameFilter((dir, name) -> name.endsWith(".s"));
                 fd.setVisible(true);
                 String fileName = fd.getFile();
@@ -395,14 +393,6 @@ public class DataUI {
                 frame.setVisible(true);
             }
         });
-
-        // Add menu items to menu mWind
-        String[] windItemNames = {"Code", "Statistics", "Data", "Registers", "Pipeline", "Cycles", "Terminal"};
-        Map<String, JMenuItem> windItems = new HashMap<>();
-        for (String itemName : windItemNames) {
-            windItems.put(itemName, new JMenuItem(itemName));
-            mWind.add(windItems.get(itemName));
-        }
 
         // Add menu items to menu mHelp
         String[] helpItemNames = {"About Tomasulo Visual"};

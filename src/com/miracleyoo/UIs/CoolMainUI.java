@@ -70,7 +70,8 @@ public class CoolMainUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 FileDialog fd = new FileDialog(new JFrame(), "Choose a file", FileDialog.LOAD);
-                fd.setDirectory("~/Downloads/");
+                System.out.println(System.getProperty("user.dir"));
+                fd.setDirectory(System.getProperty("user.dir")+"/asm_code/");//"~/Downloads/");
                 fd.setFilenameFilter((dir, name) -> name.endsWith(".s"));
                 fd.setVisible(true);
                 String fileName = fd.getFile();
