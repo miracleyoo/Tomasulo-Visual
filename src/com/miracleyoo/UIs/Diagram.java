@@ -135,11 +135,13 @@ public class Diagram extends JPanel {
                         } else {
                             testArr[j].str = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(";")[0].trim();
                         }
-                        //display on GUI
-                        g.setColor(Color.decode(DataUI.colorSchemeCycleCur[testArr[j].absIndex % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
-                        g.fillRect(originX - 100 + 1, originY - (height * j + height) - 60 + 1, 99, height - 1);
-                        g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //whatever the scheme color is for the text
-                        g.drawString(testArr[j].str, originX - 100 + 5, originY - (height * j) - 62);
+                        if(!testArr[j].str.equals("")) {
+                            //display on GUI
+                            g.setColor(Color.decode(DataUI.colorSchemeCycleCur[testArr[j].absIndex % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
+                            g.fillRect(originX - 100 + 1, originY - (height * j + height) - 60 + 1, 99, height - 1);
+                            g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //whatever the scheme color is for the text
+                            g.drawString(testArr[j].str, originX - 100 + 5, originY - (height * j) - 62);
+                        }
                 }
                 }
             }
