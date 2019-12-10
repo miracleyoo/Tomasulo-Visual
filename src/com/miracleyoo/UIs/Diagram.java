@@ -189,7 +189,7 @@ public class Diagram extends JPanel {
         for (int o = 0; o < min(registers, DataUI.mainLogic.wbList.size()); o++) {
                 //if opQArr has a blank position, push next awaiting instruction
                 if (regArr[o] == null || regArr[o].equals("")) {
-                    regArr[o] = DataUI.mainLogic.wbList.get(o);
+                    //regArr[o] = DataUI.mainLogic.wbList.get(o);
                 }
         }
 
@@ -203,8 +203,8 @@ public class Diagram extends JPanel {
         //Highlighted reg
         for(int j = 0; j < min(registers, DataUI.mainLogic.wbList.size()); j++){
             if (rArr[j] == null || rArr[j] == opBlank) {
-                rArr[j].absIndex = DataUI.mainLogic.instructionLineCur + j; //grabbing the index of the instruction
-                rArr[j].str = DataUI.mainLogic.wbList.get(j);
+                rArr[j].absIndex = DataUI.mainLogic.wbList.get(j).absoluteIndex; //grabbing the index of the instruction
+                rArr[j].str = DataUI.mainLogic.wbList.get(j).operation;
                 g.setColor(Color.decode(DataUI.colorSchemeCycleCur[rArr[j].absIndex % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
                 g.fillRect(originX + 50 + 1, originY - (height * j + height) - 60 + 1, 79, height - 1);
                 g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //whatever the scheme color is for the text
