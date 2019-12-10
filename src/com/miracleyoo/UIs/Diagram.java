@@ -186,12 +186,12 @@ public class Diagram extends JPanel {
         g.setFont(normalFont);
 
 
-            for (int o = 0; o < min(registers, DataUI.mainLogic.wbList.size()); o++) {
+        for (int o = 0; o < min(registers, DataUI.mainLogic.wbList.size()); o++) {
                 //if opQArr has a blank position, push next awaiting instruction
                 if (regArr[o] == null || regArr[o].equals("")) {
                     regArr[o] = DataUI.mainLogic.wbList.get(o);
                 }
-            }
+        }
 
         for (int z = 0; z < registers; z++) {
             //paint on diagram
@@ -199,6 +199,20 @@ public class Diagram extends JPanel {
                 g.drawString(regArr[z], originX + 50 + 5, originY - (height * z) - 62);
             }
         }
+
+        //Highlighted reg
+        for(int j = 0; j < min(registers, DataUI.mainLogic.wbList.size()); j++){
+            if (rArr[j] == null || rArr[j] == opBlank) {
+                rArr[j].absIndex = DataUI.mainLogic.instructionLineCur + j; //grabbing the index of the instruction
+                rArr[j].str = DataUI.mainLogic.wbList.get(j);
+                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[rArr[j].absIndex % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
+                g.fillRect(originX + 50 + 1, originY - (height * j + height) - 60 + 1, 79, height - 1);
+                g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //whatever the scheme color is for the text
+                g.drawString(rArr[j].str, originX + 50 + 5, originY - (height * j) - 62);
+            }
+        }
+
+
 
 
         //Place integer FU
@@ -497,6 +511,7 @@ public class Diagram extends JPanel {
         Arrays.fill(regArr, "");
         Arrays.fill(opQ, "");
         Arrays.fill(testArr, opBlank);
+        Arrays.fill(rArr, opBlank);
     }
 
 
