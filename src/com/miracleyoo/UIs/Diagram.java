@@ -90,7 +90,7 @@ public class Diagram extends JPanel {
         g.setFont(normalFont);
         //Push instructions to opQueue --> Instructions stored here until ISSUED to prevent structural hazard
         //Shift instructions down as they are processed through the OpQueue in FIFO manner. In order issue one instruction at a time!
-
+/*
         //Push first 10 instructions onto opQArr initially at clk 0
         if(!DataUI.mainLogic.isEnd) {
             for (int o = 0; o < DataUI.mainLogic.OpQueue; o++) {
@@ -118,7 +118,7 @@ public class Diagram extends JPanel {
                 g.drawString(opQ[q], originX - 100 + 5, originY - (height * q) - 62);
             }
         }
-        
+        */
 
         g.setFont(normalFont);
         if(!DataUI.mainLogic.isEnd) {
@@ -128,14 +128,14 @@ public class Diagram extends JPanel {
                     String temp = "";
 
                     testArr[j].absIndex = DataUI.mainLogic.instructionLineCur + j; //grabbing the index of the instruction
-
-                    if(DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(":").length > 1){
-                        temp = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(":")[1].trim(); //place just the raw instruction in the opQ
-                        testArr[j].str = temp.split(";")[0].trim(); //place just the raw instruction in the opQ;
-                    }
-                    else {
-                        testArr[j].str = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(";")[0].trim();
-                    }
+                    if (DataUI.mainLogic.instructionLineCur + j < DataUI.mainLogic.InstructionFullList.size()){
+                        if (DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(":").length > 1) {
+                            temp = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(":")[1].trim(); //place just the raw instruction in the opQ
+                            testArr[j].str = temp.split(";")[0].trim(); //place just the raw instruction in the opQ;
+                        } else {
+                            testArr[j].str = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(";")[0].trim();
+                        }
+                }
                     //display on GUI
                     g.setColor(Color.decode(DataUI.colorSchemeCycleCur[testArr[j].absIndex % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
                     g.fillRect(originX - 100 + 1, originY - (height * j + height) - 60 + 1, 99, height - 1);

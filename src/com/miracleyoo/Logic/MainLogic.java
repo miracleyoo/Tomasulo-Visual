@@ -72,8 +72,8 @@ public class MainLogic {
     ///////////////////////////////////////////////////////////////////////////
 
     private String[] AddOps = {"ADD", "DADD", "DADDU", "ADDD", "ADDDS", "SUB", "SUBS", "SUBD", "DSUB", "DSUBU", "SUBPS", "SLT", "SLTU", "AND", "OR", "XOR", "CVTDL"};
-    private String[] MulOps = {"DMUL", "DMULU", "MULS", "MULD", "MULPS"};
-    private String[] DivOps = {"DDIV", "DDIVU", "DIVS", "DIVD", "DIVPS"};
+    private String[] MulOps = {"MUL","DMUL", "DMULU", "MULS", "MULD", "MULPS"};
+    private String[] DivOps = {"DIV", "DDIV", "DDIVU", "DIVS", "DIVD", "DIVPS"};
     private String[] IntOps = {"DADDI", "DADDIU", "SLTI", "ANDI", "ORI", "XORI", "DSLL", "DSRL", "DSRA", "DSLLV", "DSRLV", "DSRAV"};
     private String[] SaveOps = {"SB", "SH", "SW", "SD", "SS", "MTC0", "MTC1", "MFC0", "MFC1"};
     private String[] LoadOps = {"LB", "LH", "LW", "LD", "LS", "LBU", "LHU", "LWU"};
