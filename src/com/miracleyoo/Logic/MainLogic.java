@@ -349,7 +349,7 @@ public class MainLogic {
     // Update the OperandsInfoStation(current Operands station infos)
     // 1. Put tempOperandsInfo in the right place
     // 2. Update the Issue value and state of newly placed member
-    private void updateOperandsInfoStation() {
+    private void updateRSInfoWhenIssue() {
         if (OperationInfoStationActualSize >= OpQueue) {
             OperationInfoStationActualSize--;
         }
@@ -635,7 +635,7 @@ public class MainLogic {
 
             issueAvailable = judgeIssue();
             if (issueAvailable) {
-                updateOperandsInfoStation();
+                updateRSInfoWhenIssue();
                 OperationInfoStationActualSize++;
                 instructionLineCur++;
                 totalInstructionNum++;
