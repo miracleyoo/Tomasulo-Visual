@@ -322,11 +322,10 @@ public class Diagram extends JPanel {
             }
         }
 
-//       / boolean inserted = false;
+
         g.setColor(Color.BLACK);
         //***---Diagram Logic---***\\
         if (tick != DataUI.mainLogic.CycleNumCur) {
-            boolean inserted = false;
             flushBuffers(); //Clear buffers and rewrite every clock cycle
             //System.out.println("Buffers flushed");
 
