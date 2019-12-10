@@ -1,7 +1,5 @@
 package com.miracleyoo.Logic;
 
-import com.miracleyoo.utils.InstructionTrack;
-
 import java.util.*;
 import java.util.Map;
 
@@ -351,7 +349,7 @@ public class MainLogic {
     // Update the OperandsInfoStation(current Operands station infos)
     // 1. Put tempOperandsInfo in the right place
     // 2. Update the Issue value and state of newly placed member
-    private void updateRSInfoWhenIssue() {
+    private void updateInstructionInfoWhenIssue() {
         if (OperationInfoStationActualSize >= OpQueue) {
             OperationInfoStationActualSize--;
         }
@@ -393,7 +391,7 @@ public class MainLogic {
 
     // Sequentially check all of the items in the Operands station,
     // And do corresponding operation to them according to state
-    private void checkAllOperandMember() {
+    private void checkAllInstructionMember() {
         for (int i = OperationInfoStationActualSize - 1; i >= 0; i--) {
             switch (OperationInfoStation.get(i).state) {
                 case "Issue":
@@ -637,7 +635,7 @@ public class MainLogic {
 
             issueAvailable = judgeIssue();
             if (issueAvailable) {
-                updateRSInfoWhenIssue();
+                updateInstructionInfoWhenIssue();
                 OperationInfoStationActualSize++;
                 instructionLineCur++;
                 totalInstructionNum++;
@@ -645,7 +643,7 @@ public class MainLogic {
                 statisticsInfo[3]++; //if issue not available, it is due to structural stall
             }
         }
-        checkAllOperandMember();
+        checkAllInstructionMember();
         CycleNumCur++;
         statisticsInfo[0] = CycleNumCur;
         statisticsInfo[1] = totalInstructionNum;
