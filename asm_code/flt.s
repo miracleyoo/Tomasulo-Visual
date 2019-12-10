@@ -7,8 +7,7 @@ E:    .word 4
 G:    .word 10000
 
       .text
-main:
-      l.d f2,A(r0)
+main: l.d f2,A(r0)
       l.d f3,B(r0)
       l.d f4,C(r0)
       l.d f5,D(r0)

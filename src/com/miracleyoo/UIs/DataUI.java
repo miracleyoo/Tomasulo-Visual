@@ -304,13 +304,13 @@ public class DataUI {
                 else
                     System.out.println("You chose " + filePath + fileName);
                 try {
+                    MainLogic.InstructionFullList = new ArrayList<>();
                     String selectedFileName = filePath + fileName;
                     Map<String, List<Object[]>> listFlagMap = ParseFile.parseFile(new File(selectedFileName));
                     operandFullData = listFlagMap.get("textList").toArray(new Object[0][0]);
                     dataFullData = listFlagMap.get("dataList").toArray(new Object[0][0]);
                     ResetALLData();
                     initDataTable(dataFullData);
-
                     // TODO: Add a global init function
                 } catch (IOException ex) {
                     ex.printStackTrace();

@@ -32,7 +32,7 @@ public class ParseFile {
 
         String str;
         while((str = bufferedReader.readLine()) != null) {
-            if(!str.startsWith(";") && !str.isEmpty()){
+            if(!str.startsWith(";") && !str.trim().isEmpty()){
                 if(str.strip().equals(".data")){
                     listFlag = "dataList";
                 }
