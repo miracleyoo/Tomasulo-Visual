@@ -51,7 +51,7 @@
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <minimum-size width="500" height="-1"/>
-            <preferred-size width="500" height="-1"/>
+            <preferred-size width="500" height="200"/>
           </grid>
         </constraints>
         <properties>
@@ -78,7 +78,7 @@
         <constraints>
           <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <minimum-size width="500" height="-1"/>
-            <preferred-size width="500" height="-1"/>
+            <preferred-size width="500" height="500"/>
           </grid>
         </constraints>
         <properties>
@@ -146,7 +146,7 @@
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <minimum-size width="200" height="-1"/>
-            <preferred-size width="200" height="-1"/>
+            <preferred-size width="200" height="300"/>
           </grid>
         </constraints>
         <properties/>

@@ -629,6 +629,9 @@ public class MainLogic {
 
     // The core logic. Called for each cycle update.
     public void parseStep() {
+        if(instructionLineCur>=InstructionFullList.size()-1){
+            isEnd=true;
+        }
         if (!isEnd) {
             boolean issueAvailable;
             parseInstruction(InstructionFullList.get(instructionLineCur));

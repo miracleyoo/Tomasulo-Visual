@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>GitStats - Tomasulo-Visual</title>
+<meta charset='utf-8'>
+<link href='../../../assets/bootstrap/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+<style>
+body { padding-top: 60px; }
+</style>
+<link href='../../../assets/bootstrap/css/bootstrap-responsive.min.css' rel='stylesheet' type='text/css'>
+<script src='../../../assets/jquery.min.js' type='text/javascript'></script>
+<script src='../../../assets/bootstrap/js/bootstrap.min.js' type='text/javascript'></script>
+<script src='../../../assets/highstock.js' type='text/javascript'></script>
+<script src='../../../assets/exporting.js' type='text/javascript'></script>
+<script src='../../../assets/export-csv.js' type='text/javascript'></script>
+</head>
+<body>
+<div class='navbar navbar-fixed-top'>
+<div class='navbar-inner'>
+<div class='container'>
+<a class='btn btn-navbar' data-target='.nav-collapse' data-toggle='collapse'>
+<span class='icon-bar'></span>
+<span class='icon-bar'></span>
+<span class='icon-bar'></span>
+</a>
+<a class='brand' href='../../../index.html'>GitStats - Tomasulo-Visual</a>
+<div class='nav-collapse collapse'>
+<ul class='nav'>
+<li class=''>
+<a href='../../../general.html'>General</a>
+</li>
+<li class=''>
+<a href='../../../activity/by_date.html'>Activity</a>
+</li>
+<li class='active'>
+<a href='../../best_authors.html'>Authors</a>
+</li>
+<li class=''>
+<a href='../../../files/by_date.html'>Files</a>
+</li>
+<li class=''>
+<a href='../../../lines/by_date.html'>Lines</a>
+</li>
+<li class=''>
+<a href='../../../comments/by_date.html'>Comments</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class='container'>
+<div class='tabbable tabs-left'>
+<ul class='nav nav-tabs'>
+<li class='active'>
+<a href='commits_by_date.html'>Commits by date</a>
+</li>
+<li class=''>
+<a href='changed_lines_by_date.html'>Changed lines by date</a>
+</li>
+<li class=''>
+<a href='insertions_by_date.html'>Lines added by date</a>
+</li>
+<li class=''>
+<a href='deletions_by_date.html'>Lines deleted by date</a>
+</li>
+</ul>
+<div class='tab-content'>
+<div class='tab-pane active'>
+<div class='page-header'>
+<h1 class='pagination-centered'>Commits by date</h1>
+</div>
+                <script type="text/javascript">
+        (function() {
+
+          var onload = window.onload;
+          window.onload = function(){
+            if (typeof onload == "function") onload();
+                    var options = { "title": { "text": "" },"legend": { "enabled": true,"layout": "vertical","backgroundColor": "#FFFFFF","align": "left","verticalAlign": "top","x": 100,"y": 70,"floating": true,"shadow": true },"xAxis": { "title": { "text": null } },"yAxis": { "title": { "text": "Lines" },"labels": {  } },"tooltip": { "enabled": true },"credits": { "enabled": false },"plotOptions": { "areaspline": {  } },"chart": { "defaultSeriesType": "line","renderTo": "charts.commits_sum_by_author_by_date" },"subtitle": {  },"series": [{ "name": "VR","type": "spline","data": [ [ 1574379913000,1 ],[ 1574380800000,2 ],[ 1574397629000,2 ],[ 1574537340000,3 ],[ 1574553600000,3 ],[ 1574720732000,4 ],[ 1574722247000,5 ],[ 1574722578000,6 ],[ 1574723495000,7 ],[ 1574726400000,9 ],[ 1574730193000,8 ],[ 1574734494000,9 ],[ 1574899200000,12 ],[ 1574907852000,10 ],[ 1574908085000,11 ],[ 1574908937000,12 ],[ 1575057407000,13 ],[ 1575149165000,14 ],[ 1575155734000,15 ],[ 1575155825000,16 ],[ 1575158243000,17 ],[ 1575158260000,18 ],[ 1575158400000,18 ],[ 1575244800000,18 ],[ 1575417600000,19 ],[ 1575434614000,19 ],[ 1575524431000,20 ],[ 1575524581000,21 ],[ 1575563570000,22 ],[ 1575564992000,23 ],[ 1575565824000,24 ],[ 1575670053000,25 ],[ 1575684040000,26 ],[ 1575733862000,27 ],[ 1575734687000,28 ],[ 1575737414000,29 ],[ 1575743655000,30 ],[ 1575755287000,31 ],[ 1575758833000,32 ],[ 1575763246000,33 ],[ 1575819811000,34 ],[ 1575834128000,35 ],[ 1575919766000,36 ],[ 1575920358000,37 ],[ 1575921342000,38 ],[ 1575922245000,39 ],[ 1575923114000,40 ],[ 1575923127000,41 ],[ 1575923214000,42 ],[ 1575923218000,43 ],[ 1575928563000,44 ],[ 1575928826000,45 ],[ 1575929345000,46 ],[ 1575933103000,47 ],[ 1575933289000,48 ],[ 1575933869000,49 ],[ 1575934142000,50 ],[ 1575934146000,51 ] ] }] };
+        
+        window.chart_charts.commits_sum_by_author_by_date = new Highcharts.StockChart(options);
+
+          };
+                })()
+        </script>
+
+<div id="charts.commits_sum_by_author_by_date"></div>
+<small>
+<center>5 best authors shown</center>
+</small>
+</div>
+</div>
+</div>
+
+
+</div>
+</body>
+</html>

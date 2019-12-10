@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>GitStats - Tomasulo-Visual</title>
+<meta charset='utf-8'>
+<link href='../assets/bootstrap/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+<style>
+body { padding-top: 60px; }
+</style>
+<link href='../assets/bootstrap/css/bootstrap-responsive.min.css' rel='stylesheet' type='text/css'>
+<script src='../assets/jquery.min.js' type='text/javascript'></script>
+<script src='../assets/bootstrap/js/bootstrap.min.js' type='text/javascript'></script>
+<script src='../assets/highstock.js' type='text/javascript'></script>
+<script src='../assets/exporting.js' type='text/javascript'></script>
+<script src='../assets/export-csv.js' type='text/javascript'></script>
+</head>
+<body>
+<div class='navbar navbar-fixed-top'>
+<div class='navbar-inner'>
+<div class='container'>
+<a class='btn btn-navbar' data-target='.nav-collapse' data-toggle='collapse'>
+<span class='icon-bar'></span>
+<span class='icon-bar'></span>
+<span class='icon-bar'></span>
+</a>
+<a class='brand' href='../index.html'>GitStats - Tomasulo-Visual</a>
+<div class='nav-collapse collapse'>
+<ul class='nav'>
+<li class=''>
+<a href='../general.html'>General</a>
+</li>
+<li class='active'>
+<a href='by_date.html'>Activity</a>
+</li>
+<li class=''>
+<a href='../authors/best_authors.html'>Authors</a>
+</li>
+<li class=''>
+<a href='../files/by_date.html'>Files</a>
+</li>
+<li class=''>
+<a href='../lines/by_date.html'>Lines</a>
+</li>
+<li class=''>
+<a href='../comments/by_date.html'>Comments</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class='container'>
+<div class='tabbable tabs-left'>
+<ul class='nav nav-tabs'>
+<li class='active'>
+<a href='by_date.html'>Activity by date</a>
+</li>
+<li class=''>
+<a href='hour_of_day.html'>Hour of day</a>
+</li>
+<li class=''>
+<a href='day_of_week.html'>Day of week</a>
+</li>
+<li class=''>
+<a href='hour_of_week.html'>Hour of week</a>
+</li>
+<li class=''>
+<a href='month_of_year.html'>Month of year</a>
+</li>
+<li class=''>
+<a href='year.html'>Year</a>
+</li>
+<li class=''>
+<a href='year_month.html'>Year and month</a>
+</li>
+</ul>
+<div class='tab-content'>
+<div class='tab-pane active'>
+<div class='page-header pagination-centered'>
+<h1>Activity by date</h1>
+<h3> </h3>
+</div>
+</div>
+                <script type="text/javascript">
+        (function() {
+
+          var onload = window.onload;
+          window.onload = function(){
+            if (typeof onload == "function") onload();
+                    var options = { "title": { "text": "" },"legend": { "enabled": false },"xAxis": { "title": { "text": null } },"yAxis": { "title": { "text": "Commits" },"labels": {  } },"tooltip": { "enabled": true },"credits": { "enabled": false },"plotOptions": { "areaspline": {  } },"chart": { "defaultSeriesType": "line","renderTo": "charts.activity_by_date" },"subtitle": {  },"series": [{ "name": "Commits by date","type": "column","data": [ [ 1571781437000,1 ],[ 1571864710000,1 ],[ 1571864807000,1 ],[ 1571865207000,1 ],[ 1571868793000,1 ],[ 1571881039000,1 ],[ 1571885930000,1 ],[ 1571895133000,1 ],[ 1571933419000,1 ],[ 1571956255000,1 ],[ 1571958327000,1 ],[ 1571958497000,1 ],[ 1571958513000,1 ],[ 1572035252000,1 ],[ 1572039338000,1 ],[ 1572040416000,1 ],[ 1572048000000,0 ],[ 1572050444000,1 ],[ 1572054444000,1 ],[ 1572054550000,1 ],[ 1572134400000,0 ],[ 1572220800000,0 ],[ 1572307200000,0 ],[ 1572393600000,0 ],[ 1572555632000,1 ],[ 1572559454000,1 ],[ 1572566400000,0 ],[ 1572575867000,1 ],[ 1572652800000,0 ],[ 1572739200000,0 ],[ 1572893826000,1 ],[ 1572897934000,1 ],[ 1572912000000,0 ],[ 1572998400000,0 ],[ 1573084800000,0 ],[ 1573171200000,0 ],[ 1573257600000,0 ],[ 1573344000000,0 ],[ 1573430400000,0 ],[ 1573516800000,0 ],[ 1573603200000,0 ],[ 1573689600000,0 ],[ 1573776000000,0 ],[ 1573862400000,0 ],[ 1573948800000,0 ],[ 1574131545000,1 ],[ 1574131615000,1 ],[ 1574194928000,1 ],[ 1574232654000,1 ],[ 1574379913000,1 ],[ 1574397629000,1 ],[ 1574456971000,1 ],[ 1574537340000,1 ],[ 1574553600000,0 ],[ 1574720732000,1 ],[ 1574721415000,1 ],[ 1574722247000,1 ],[ 1574722578000,1 ],[ 1574722651000,1 ],[ 1574722698000,1 ],[ 1574723495000,1 ],[ 1574726400000,0 ],[ 1574730193000,1 ],[ 1574734494000,1 ],[ 1574735605000,1 ],[ 1574735609000,1 ],[ 1574735739000,1 ],[ 1574738859000,1 ],[ 1574739204000,1 ],[ 1574739280000,1 ],[ 1574894310000,1 ],[ 1574898874000,1 ],[ 1574899200000,0 ],[ 1574907852000,1 ],[ 1574908085000,1 ],[ 1574908937000,1 ],[ 1575057407000,1 ],[ 1575100172000,1 ],[ 1575149165000,1 ],[ 1575152201000,1 ],[ 1575152205000,1 ],[ 1575154162000,1 ],[ 1575155734000,1 ],[ 1575155825000,1 ],[ 1575157146000,1 ],[ 1575157166000,1 ],[ 1575158243000,1 ],[ 1575158260000,1 ],[ 1575159555000,1 ],[ 1575159564000,1 ],[ 1575160061000,1 ],[ 1575161904000,1 ],[ 1575164604000,1 ],[ 1575165764000,1 ],[ 1575170875000,1 ],[ 1575174576000,1 ],[ 1575235673000,1 ],[ 1575244800000,0 ],[ 1575245412000,1 ],[ 1575245537000,1 ],[ 1575412876000,1 ],[ 1575413107000,1 ],[ 1575434614000,1 ],[ 1575498529000,1 ],[ 1575498722000,1 ],[ 1575524431000,1 ],[ 1575524581000,1 ],[ 1575563570000,1 ],[ 1575564992000,1 ],[ 1575565824000,1 ],[ 1575670053000,1 ],[ 1575684040000,1 ],[ 1575720218000,1 ],[ 1575720228000,1 ],[ 1575720368000,1 ],[ 1575721126000,1 ],[ 1575723151000,1 ],[ 1575724308000,1 ],[ 1575724680000,1 ],[ 1575733862000,1 ],[ 1575734687000,1 ],[ 1575737414000,1 ],[ 1575743655000,1 ],[ 1575755287000,1 ],[ 1575758833000,1 ],[ 1575763246000,1 ],[ 1575819811000,1 ],[ 1575831662000,1 ],[ 1575831819000,1 ],[ 1575834128000,1 ],[ 1575834230000,1 ],[ 1575856872000,1 ],[ 1575857012000,1 ],[ 1575909351000,1 ],[ 1575911500000,1 ],[ 1575911967000,1 ],[ 1575919766000,1 ],[ 1575920358000,1 ],[ 1575921342000,1 ],[ 1575922245000,1 ],[ 1575922284000,1 ],[ 1575922571000,1 ],[ 1575922931000,1 ],[ 1575923114000,1 ],[ 1575923127000,1 ],[ 1575923145000,1 ],[ 1575923214000,1 ],[ 1575923218000,1 ],[ 1575926373000,1 ],[ 1575926377000,1 ],[ 1575926862000,1 ],[ 1575928545000,1 ],[ 1575928563000,1 ],[ 1575928826000,1 ],[ 1575929345000,1 ],[ 1575932837000,1 ],[ 1575933103000,1 ],[ 1575933289000,1 ],[ 1575933869000,1 ],[ 1575933982000,1 ],[ 1575933991000,1 ],[ 1575934142000,1 ],[ 1575934146000,1 ] ],"dataGrouping": { "units": [ [ "day",[ 1 ] ],[ "week",[ 1 ] ] ],"forced": true } }] };
+        
+        window.chart_charts.activity_by_date = new Highcharts.StockChart(options);
+
+          };
+                })()
+        </script>
+
+<div id="charts.activity_by_date"></div>
+</div>
+</div>
+
+
+</div>
+</body>
+</html>
