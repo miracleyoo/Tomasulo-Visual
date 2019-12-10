@@ -46,9 +46,9 @@ public class Diagram extends JPanel {
     Instruction[] addArr = new Instruction[fpAdderRS];
     Instruction[] mulArr = new Instruction[fpMultiplierRS];
     Instruction[] divArr = new Instruction[fpDividerRS];
-    //Instruction[] regArr = new Instruction[registers];
     String[] regArr = new String[registers];
     InstructionTrack[] testArr = new InstructionTrack[DataUI.mainLogic.OpQueue];
+    InstructionTrack[] rArr = new InstructionTrack[registers];
     InstructionTrack opBlank = new InstructionTrack("", 0);
 
     @Override
@@ -115,54 +115,29 @@ public class Diagram extends JPanel {
 
         for (int q = 0; q < DataUI.mainLogic.OpQueue; q++) {
             if (opQ[q] != null && !opQ[q].equals("")) {
-                //g.drawString(opQArr[q].op, originX - 100 + 5, originY - (height * q) - 60);
                 g.drawString(opQ[q], originX - 100 + 5, originY - (height * q) - 62);
             }
         }
         
-/*
-        //-----TEST CODE-----\\
-        //Place OpQueue -- Note Op Queue is currently implementing both int and fp, THIS MAY NEED TO CHANGE!
-        g.setFont(labelFont);
-        g.drawString("TEST", originX - 200, originY - (height * DataUI.mainLogic.OpQueue + height) - 60);
-        for (int q = 0; q < DataUI.mainLogic.OpQueue; q++) {
-            g.drawRect(originX - 200, originY - (height * q + height) - 60, 100, height);
-        }
+
         g.setFont(normalFont);
-
-
         if(!DataUI.mainLogic.isEnd) {
             for (int j = 0; j < DataUI.mainLogic.OpQueue; j++) {
                 //if opQArr has a blank position, push next awaiting instruction
                 if (testArr[j] == null || testArr[j] == opBlank) {
                     String temp = "";
-                    testArr[j].absIndex = DataUI.mainLogic.instructionLineCur + j;
-                    if(DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(":").length > 1){
-                        temp = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(":")[1].trim(); //place just the raw instruction in the opQ
-                        testArr[j].str = temp.split(";")[0].trim(); //place just the raw instruction in the opQ
-                    }
-                    else{
-                        testArr[j].str = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(";")[0].trim();
-                    }
+                    testArr[j].absIndex = DataUI.mainLogic.instructionLineCur + j; //grabbing the index of the instruction
+                    testArr[j].str = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(";")[0].trim();
+                    g.setColor(Color.decode(DataUI.colorSchemeCycleCur[testArr[j].absIndex % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
+                    g.fillRect(originX - 100 + 1, originY - (height * j + height) - 60 + 1, 99, height - 1);
+                    g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //whatever the scheme color is for the text
+                    g.drawString(testArr[j].str, originX - 100 + 5, originY - (height * j) - 62);
                 }
             }
         }
         else{
             Arrays.fill(testArr, opBlank);
         }
-
-        for (int q = 0; q < DataUI.mainLogic.OpQueue; q++) {
-            System.out.println(testArr[q].str + " " + testArr[q].absIndex);
-            if (testArr[q] != opBlank) {
-                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[testArr[q].absIndex % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
-                g.fillRect(originX - 200, originY - (height * q + height) - 60, 100, height);
-                g.drawString(testArr[q].str, originX - 200 + 5, originY - (height * q) - 62);
-            }
-        }
-
-         */
-
-
 
         //---ldBuffers---\\
         int[] ldBase = {-400, -60};
@@ -368,7 +343,7 @@ public class Diagram extends JPanel {
                                 //insert into load buffer if there is a blank space
                                 if (ldArr[z] == blank || ldArr[z] == null) {
                                     ldArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart, DataUI.mainLogic.OperationInfoStation.get(i).absoluteIndex);
-                                    System.out.println("Load to buffer "  + z + ": " + ldArr[z].index);
+                                    //System.out.println("Load to buffer "  + z + ": " + ldArr[z].index);
                                     break;
                                 }
                             }
@@ -379,7 +354,7 @@ public class Diagram extends JPanel {
                                 //insert into load buffer if there is a blank space
                                 if (sdArr[z] == blank || sdArr[z] == null) {
                                     sdArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart, DataUI.mainLogic.OperationInfoStation.get(i).absoluteIndex);
-                                    System.out.println("Save to buffer "  + z + ": " + sdArr[z].index);
+                                    //System.out.println("Save to buffer "  + z + ": " + sdArr[z].index);
                                     break;
                                 }
                             }
@@ -390,7 +365,7 @@ public class Diagram extends JPanel {
                                 //insert into load buffer if there is a blank space
                                 if (intArr[z] == blank || intArr[z] == null) {
                                     intArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart, DataUI.mainLogic.OperationInfoStation.get(i).absoluteIndex);
-                                    System.out.println("int buffer "  + z + ": " + intArr[z].index);
+                                    //System.out.println("int buffer "  + z + ": " + intArr[z].index);
                                     break;
                                 }
                             }
@@ -446,20 +421,6 @@ public class Diagram extends JPanel {
                             break;
                     }
                 }
-/*
-                //Place in awaiting RS/registers
-                else if (DataUI.mainLogic.OperationInfoStation.get(i).state.equals("WB")) {
-                    System.out.println("Instruction is in WB");
-
-                    for (int r = 0; r < registers; r++) {
-                        if (!DataUI.mainLogic.OperationInfoStation.get(i).op.equals("SAVE") && !DataUI.mainLogic.OperationInfoStation.get(i).op.equals("BRA") && (regArr[r] == blank || regArr[r] == null)) {
-                            regArr[r] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart);
-                            System.out.println("Writing to register");
-                            break;
-                        }
-                    }
-                }
-*/
             }
             tick++;
         }
