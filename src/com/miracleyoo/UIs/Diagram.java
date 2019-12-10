@@ -492,6 +492,18 @@ public class Diagram extends JPanel {
         Arrays.fill(opQ, "");
         Arrays.fill(testArr, "");
     }
+    
+    //used for highlighting instructions
+    public class InstructionTrack{
+        public String s = "";
+        public int absIndex = -1;
+
+        public InstructionTrack(String s, int absIndex){
+            this.s = s;
+            this.absIndex = absIndex;
+        }
+    }
+
 }
 
 /*

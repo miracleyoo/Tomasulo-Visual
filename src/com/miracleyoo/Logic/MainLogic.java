@@ -700,9 +700,4 @@ public class MainLogic {
         public int occupyInstId = 0;
     }
 
-    //used for highlighting instructions
-    public class instructionTrack{
-        String s = "";
-        int i;
-    }
 }
