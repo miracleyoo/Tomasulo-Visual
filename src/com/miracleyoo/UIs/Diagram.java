@@ -1,6 +1,7 @@
 package com.miracleyoo.UIs;
 
 import com.miracleyoo.utils.Instruction;
+import com.miracleyoo.utils.InstructionTrack;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,7 +48,8 @@ public class Diagram extends JPanel {
     Instruction[] divArr = new Instruction[fpDividerRS];
     //Instruction[] regArr = new Instruction[registers];
     String[] regArr = new String[registers];
-    String[] testArr = new String[registers];
+    InstructionTrack[] testArr = new InstructionTrack[DataUI.mainLogic.OpQueue];
+    InstructionTrack opBlank = new InstructionTrack("", 0);
 
     @Override
     public Dimension getPreferredSize() {
@@ -117,6 +119,50 @@ public class Diagram extends JPanel {
                 g.drawString(opQ[q], originX - 100 + 5, originY - (height * q) - 62);
             }
         }
+        
+/*
+        //-----TEST CODE-----\\
+        //Place OpQueue -- Note Op Queue is currently implementing both int and fp, THIS MAY NEED TO CHANGE!
+        g.setFont(labelFont);
+        g.drawString("TEST", originX - 200, originY - (height * DataUI.mainLogic.OpQueue + height) - 60);
+        for (int q = 0; q < DataUI.mainLogic.OpQueue; q++) {
+            g.drawRect(originX - 200, originY - (height * q + height) - 60, 100, height);
+        }
+        g.setFont(normalFont);
+
+
+        if(!DataUI.mainLogic.isEnd) {
+            for (int j = 0; j < DataUI.mainLogic.OpQueue; j++) {
+                //if opQArr has a blank position, push next awaiting instruction
+                if (testArr[j] == null || testArr[j] == opBlank) {
+                    String temp = "";
+                    testArr[j].absIndex = DataUI.mainLogic.instructionLineCur + j;
+                    if(DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(":").length > 1){
+                        temp = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(":")[1].trim(); //place just the raw instruction in the opQ
+                        testArr[j].str = temp.split(";")[0].trim(); //place just the raw instruction in the opQ
+                    }
+                    else{
+                        testArr[j].str = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(";")[0].trim();
+                    }
+                }
+            }
+        }
+        else{
+            Arrays.fill(testArr, opBlank);
+        }
+
+        for (int q = 0; q < DataUI.mainLogic.OpQueue; q++) {
+            System.out.println(testArr[q].str + " " + testArr[q].absIndex);
+            if (testArr[q] != opBlank) {
+                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[testArr[q].absIndex % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
+                g.fillRect(originX - 200, originY - (height * q + height) - 60, 100, height);
+                g.drawString(testArr[q].str, originX - 200 + 5, originY - (height * q) - 62);
+            }
+        }
+
+         */
+
+
 
         //---ldBuffers---\\
         int[] ldBase = {-400, -60};
@@ -490,19 +536,10 @@ public class Diagram extends JPanel {
         Arrays.fill(divArr, blank);
         Arrays.fill(regArr, "");
         Arrays.fill(opQ, "");
-        Arrays.fill(testArr, "");
+        Arrays.fill(testArr, opBlank);
     }
-    
-    //used for highlighting instructions
-    public class InstructionTrack{
-        public String s = "";
-        public int absIndex = -1;
 
-        public InstructionTrack(String s, int absIndex){
-            this.s = s;
-            this.absIndex = absIndex;
-        }
-    }
+
 
 }
 
