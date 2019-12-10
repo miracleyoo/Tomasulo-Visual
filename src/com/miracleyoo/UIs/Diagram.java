@@ -126,8 +126,17 @@ public class Diagram extends JPanel {
                 //if opQArr has a blank position, push next awaiting instruction
                 if (testArr[j] == null || testArr[j] == opBlank) {
                     String temp = "";
+
                     testArr[j].absIndex = DataUI.mainLogic.instructionLineCur + j; //grabbing the index of the instruction
-                    testArr[j].str = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(";")[0].trim();
+
+                    if(DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(":").length > 1){
+                        temp = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(":")[1].trim(); //place just the raw instruction in the opQ
+                        testArr[j].str = temp.split(";")[0].trim(); //place just the raw instruction in the opQ;
+                    }
+                    else {
+                        testArr[j].str = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(";")[0].trim();
+                    }
+                    //display on GUI
                     g.setColor(Color.decode(DataUI.colorSchemeCycleCur[testArr[j].absIndex % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
                     g.fillRect(originX - 100 + 1, originY - (height * j + height) - 60 + 1, 99, height - 1);
                     g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //whatever the scheme color is for the text
