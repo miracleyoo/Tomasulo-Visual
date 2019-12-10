@@ -12,10 +12,11 @@ public class Instruction {
     public String state;
     int x = 0;
     int y = 0;
+    public int index = 0;
 
 
     //creates Instruction object for that includes op, srcRegs, execution time
-    public Instruction(String op, String dest, String src1, String src2, String state, int currentClk, int startTime){
+    public Instruction(String op, String dest, String src1, String src2, String state, int currentClk, int startTime, int index){
         this.op = op;
         this. dest = dest;
         this.src1 = src1;
@@ -24,6 +25,7 @@ public class Instruction {
         this.currentClk = currentClk;
         this.startTime = startTime;
         this.state = state;
+        this.index = index;
         //this.x = x;
         //this.y = y;
     }
