@@ -51,7 +51,7 @@ public class MainLogic {
     public int OperationInfoStationActualSize = 0;
     // The temporal InstructionInfo in
     //List to hold all instructions that have been written back. This is used for Diagram register part
-    public LinkedList<String> wbList = new LinkedList<String>();
+    public LinkedList<InstructionInfo> wbList = new LinkedList<InstructionInfo>();
 
     private static InstructionInfo tempOperationInfo;
     // Operand classify dictionary. Key:Value -> Operand:Class
@@ -72,8 +72,8 @@ public class MainLogic {
     ///////////////////////////////////////////////////////////////////////////
 
     private String[] AddOps = {"ADD", "DADD", "DADDU", "ADDD", "ADDDS", "SUB", "SUBS", "SUBD", "DSUB", "DSUBU", "SUBPS", "SLT", "SLTU", "AND", "OR", "XOR", "CVTDL"};
-    private String[] MulOps = {"DMUL", "DMULU", "MULS", "MULD", "MULPS"};
-    private String[] DivOps = {"DDIV", "DDIVU", "DIVS", "DIVD", "DIVPS"};
+    private String[] MulOps = {"MUL","DMUL", "DMULU", "MULS", "MULD", "MULPS"};
+    private String[] DivOps = {"DIV", "DDIV", "DDIVU", "DIVS", "DIVD", "DIVPS"};
     private String[] IntOps = {"DADDI", "DADDIU", "SLTI", "ANDI", "ORI", "XORI", "DSLL", "DSRL", "DSRA", "DSLLV", "DSRLV", "DSRAV"};
     private String[] SaveOps = {"SB", "SH", "SW", "SD", "SS", "MTC0", "MTC1", "MFC0", "MFC1"};
     private String[] LoadOps = {"LB", "LH", "LW", "LD", "LS", "LBU", "LHU", "LWU"};
@@ -349,7 +349,7 @@ public class MainLogic {
     // Update the OperandsInfoStation(current Operands station infos)
     // 1. Put tempOperandsInfo in the right place
     // 2. Update the Issue value and state of newly placed member
-    private void updateOperandsInfoStation() {
+    private void updateInstructionInfoWhenIssue() {
         if (OperationInfoStationActualSize >= OpQueue) {
             OperationInfoStationActualSize--;
         }
@@ -391,7 +391,7 @@ public class MainLogic {
 
     // Sequentially check all of the items in the Operands station,
     // And do corresponding operation to them according to state
-    private void checkAllOperandMember() {
+    private void checkAllInstructionMember() {
         for (int i = OperationInfoStationActualSize - 1; i >= 0; i--) {
             switch (OperationInfoStation.get(i).state) {
                 case "Issue":
@@ -421,7 +421,7 @@ public class MainLogic {
                             OperationInfoStation.get(i).writeBack = CycleNumCur;
                             OperationInfoStation.get(i).currentStageCycleNum = 1;
                             if(!"BRA".equals(OperationInfoStation.get(i).op) && !"SAVE".equals(OperationInfoStation.get(i).op)){
-                                wbList.addFirst(OperationInfoStation.get(i).operation);
+                                wbList.addFirst(OperationInfoStation.get(i));
                             }
                         }
                     }
@@ -638,7 +638,7 @@ public class MainLogic {
 
             issueAvailable = judgeIssue();
             if (issueAvailable) {
-                updateOperandsInfoStation();
+                updateInstructionInfoWhenIssue();
                 OperationInfoStationActualSize++;
                 instructionLineCur++;
                 totalInstructionNum++;
@@ -646,7 +646,7 @@ public class MainLogic {
                 statisticsInfo[3]++; //if issue not available, it is due to structural stall
             }
         }
-        checkAllOperandMember();
+        checkAllInstructionMember();
         CycleNumCur++;
         statisticsInfo[0] = CycleNumCur;
         statisticsInfo[1] = totalInstructionNum;
@@ -703,9 +703,4 @@ public class MainLogic {
         public int occupyInstId = 0;
     }
 
-    //used for highlighting instructions
-    public class instructionTrack{
-        String s = "";
-        int i;
-    }
 }
