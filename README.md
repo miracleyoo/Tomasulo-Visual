@@ -4,6 +4,8 @@ If you are just learning Tomasulo algorithm, please don't miss this repo, it wil
 
 This is a visualization project of Tomasulo algorithm which make it easier to understand the algorithm. It can read a `*.s` asm file and parse it, and you can execute instructions according to Tomasulo algorithm. This project is mainly for study use and it will not really parse the instruction to binary and it just briefly translate all of the instructions to a set of characterized classes and assign a separate execute function to each class. 
 
+This project is a course project, the course is Umass Amherst ENG668-Computer Architecture. Because we only get one and a half month to develop such a big program, it is inevitable to have some potential bugs inside, and the function is not fully complete. It is only supposed to be used for educational purpose. If you like this project or you want to develop on the top of it, please start [this repo](https://github.com/miracleyoo/Tomasulo-Visual/). Although I will not maintain this repo afterward, I welcome any **pull request** if you have make any further progress.
+
 ## File Structure
 
 `asm_code/`: Sample asm code for test.
@@ -41,6 +43,18 @@ This is a visualization project of Tomasulo algorithm which make it easier to un
                          cycle ++
 ```
 
+## Attention
+
+This project **DO NOT DECODE INSTRUCTIONS TO BINARY**. It only parse the instruction by its string and simulate the execution based on the parsed results. I.E. It is not a full version emulator, it may not work in some cases, in some special asm files, and it is only for the educational use. 
+
+There may still be some bugs, and we do not promise the correctness of the result. Please take it as a reference only. Also, not all of the class type execution function has been implemented, some unimportant types are left empty. If you want to use it seriously, please implement these functions yourself.
+
+Since we do not decode instructions to binary, so it cannot locate, load and save the actual value in the memory. Here we use a virtual memory to simulate the memory access. The virtual memory will be randomly initialized and load and save operation happen here. It is enough for demonstration use. For the same reason, the `.data` part of the input asm file will not really be decoded.
+
+Please use **Math-only asm files** if you want to make your own input `*.s` file, since strings related functions are not considered. When you write branch operation, please make sure the branch destination is a label rather than a register, since program cannot know the actual address.
+
+Although I've said a lot on its disadvantage, it is still easy to use and enough for educational purpose. Have fun!
+
 ## Some screen captures and introduction
 
 At first the welcome page, it will guide the user open a file ends with `*.s` and parse the file and pass it to Data UI.
@@ -75,8 +89,6 @@ Also, the program has two themes! Light and Dark mode are supported. They will c
 
 ## More Detailed Information in Presentation Slides
 ![Dark_Mode_Theme](./Assets/Screen_Capture/Slides.jpg)
-
-
 
 ReadMe authors: **Zhongyang, Vignesh**
 
