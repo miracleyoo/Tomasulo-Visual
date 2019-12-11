@@ -184,26 +184,29 @@ public class Diagram extends JPanel {
 
 
         //Place integer FU
-        int intBase[] = {-300, 60}; //x, y
+        int intBase[] = {-300, 60}; //used to set origin of int FU on Tomasulo graph. X and then Y.
         for (int a = 0; a < integerRS; a++) {
             g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //Set color
+            //place Operation box
             g.drawRect(originX - opBoxWidth + intBase[0], originY - (height * a) + intBase[1], opBoxWidth, height);
+            //Place srcReg boxes
             g.drawRect(originX + intBase[0], originY - (height * a) + intBase[1], operandWidth, height);
             g.drawRect(originX + operandWidth + intBase[0], originY - (height * a) + intBase[1], operandWidth, height);
             g.drawString("IntegerFU", originX + intBase[0] + 5, originY + intBase[1] + 30);
             g.drawRect(originX + intBase[0], originY + intBase[1] + 20, 80, height);
             g.setColor(Color.decode(DataUI.colorSchemeCycleCur[0]));
             g.setStroke(new BasicStroke(5));
-            drawThickLine(g, originX + intBase[0] + 40, originY + intBase[1] + 34, originX + intBase[0] + 40, originY + 100); //to CDB
+            drawThickLine(g, originX + intBase[0] + 40, originY + intBase[1] + 34, originX + intBase[0] + 40, originY + 100); //Arrow to CDB
             g.fillPolygon(new int[]{originX + intBase[0] + 35, originX + intBase[0] + 40, originX + intBase[0] + 45}, new int[]{originY + 99, originY + 109, originY + 99}, 3);
-            drawThickLine(g, originX + intBase[0] + 90, originY + intBase[1] + 17, originX + intBase[0] + 90, originY + 110); //From CDB
+            drawThickLine(g, originX + intBase[0] + 90, originY + intBase[1] + 17, originX + intBase[0] + 90, originY + 110); //Arrow from CDB
             g.fillPolygon(new int[]{originX + intBase[0] + 85, originX + intBase[0] + 90, originX + intBase[0] + 95}, new int[]{originY + intBase[1] + 22, originY + intBase[1] + 12, originY + intBase[1] + 22}, 3);
         }
+
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
         for (int z = 0; z < integerRS; z++) {
-            //paint on diagram
+            //paint corresponding data on Diagram
             if (intArr[z] != null && intArr[z] != blank) {
-                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[intArr[z].index % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
+                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[intArr[z].index % DataUI.colorSchemeCycleCur.length])); //Highlight
                 g.fillRect(originX - opBoxWidth + intBase[0] + 1, originY - (height * z) + intBase[1] + 1, opBoxWidth-1, height - 1);
                 g.fillRect(originX + intBase[0] + 1, originY - (height * z) + intBase[1] + 1, operandWidth - 1, height - 1);
                 g.fillRect(originX + operandWidth + intBase[0] + 1, originY - (height * z) + intBase[1] + 1, operandWidth - 1, height - 1);
@@ -231,7 +234,7 @@ public class Diagram extends JPanel {
         }
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
         for (int z = 0; z < fpAdderRS; z++) {
-            //paint on diagram
+            ////paint corresponding data on Diagram
             if (addArr[z] != blank && addArr[z] != null) {
                 g.setColor(Color.decode(DataUI.colorSchemeCycleCur[addArr[z].index % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
                 g.fillRect(originX - opBoxWidth + addBase[0] + 1, originY - (height * z) + addBase[1] + 1, opBoxWidth-1, height - 1);
@@ -245,7 +248,7 @@ public class Diagram extends JPanel {
         }
 
         //fp multiplier FU
-        int mulBase[] = {0, 60}; //used to set origin of multiplier FU on Tomasulo graph
+        int mulBase[] = {0, 60}; //used to set origin of multiplier FU on Tomasulo graph. X and then Y
         for (int y = 0; y < fpMultiplierRS; y++) {
             g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
             g.drawRect(originX - opBoxWidth + mulBase[0], originY - (height * y) + mulBase[1], opBoxWidth, height);
@@ -261,7 +264,7 @@ public class Diagram extends JPanel {
         }
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
         for (int z = 0; z < fpMultiplierRS; z++) {
-            //paint on diagram
+            //paint corresponding data on Diagram
             if (mulArr[z] != null && mulArr[z] != blank) {
                 g.setColor(Color.decode(DataUI.colorSchemeCycleCur[mulArr[z].index % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
                 g.fillRect(originX - opBoxWidth + mulBase[0] + 1, originY - (height * z) + mulBase[1] + 1, opBoxWidth-1, height - 1);
@@ -275,7 +278,7 @@ public class Diagram extends JPanel {
         }
 
         //fp Div FU
-        int divBase[] = {150, 60};
+        int divBase[] = {150, 60}; //used to set origin of divider FU on Tomasulo graph. X and then Y.
         for (int z = 0; z < fpDividerRS; z++) {
             g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
             g.drawRect(originX - opBoxWidth + divBase[0], originY - (height * z) + divBase[1], opBoxWidth, height);
@@ -291,7 +294,7 @@ public class Diagram extends JPanel {
         }
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
         for (int z = 0; z < fpDividerRS; z++) {
-            //paint on diagram
+            //paint corresponding data on Diagram
             if (divArr[z] != null && divArr[z] != blank) {
                 g.setColor(Color.decode(DataUI.colorSchemeCycleCur[divArr[z].index % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
                 g.fillRect(originX - opBoxWidth + divBase[0] + 1, originY - (height * z) + divBase[1] + 1, opBoxWidth-1, height - 1);
@@ -309,15 +312,10 @@ public class Diagram extends JPanel {
         //***---Diagram Logic---***\\
         if (tick != DataUI.mainLogic.CycleNumCur) {
             flushBuffers(); //Clear buffers and rewrite every clock cycle
-            //System.out.println("Buffers flushed");
-
-
 
             for (int i = 0; i < DataUI.mainLogic.OperationInfoStation.size(); i++) {
-                //System.out.println(DataUI.mainLogic.OperationInfoStation.get(i).state);
                 //Create respective Reservation Station arrays to hold instructions while they execute load on clock cycle
                 if (DataUI.mainLogic.OperationInfoStation.get(i).state.equals("Issue") || DataUI.mainLogic.OperationInfoStation.get(i).state.equals("EXE") || DataUI.mainLogic.OperationInfoStation.get(i).equals("ExeEnd")) { //Hold in RS ExeEnd if CBD is occupied
-                    //Color color = colorSchemeCycleCur[i]%DataUI.colorSchemeCycleCur.length]); //set highlight color of text
                     switch (DataUI.mainLogic.OperationInfoStation.get(i).op) {
                         case "LOAD":
                             for (int z = 0; z < ldBuffer; z++) {
