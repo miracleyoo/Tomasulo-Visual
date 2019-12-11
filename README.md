@@ -4,7 +4,7 @@ If you are just learning Tomasulo algorithm, please don't miss this repo, it wil
 
 This is a visualization project of Tomasulo algorithm which make it easier to understand the algorithm. It can read a `*.s` asm file and parse it, and you can execute instructions according to Tomasulo algorithm. This project is mainly for study use and it will not really parse the instruction to binary and it just briefly translate all of the instructions to a set of characterized classes and assign a separate execute function to each class. 
 
-This project is a course project, the course is Umass Amherst ENG668-Computer Architecture. Because we only get one and a half month to develop such a big program, it is inevitable to have some potential bugs inside, and the function is not fully complete. It is only supposed to be used for educational purpose. If you like this project or you want to develop on the top of it, please start [this repo](https://github.com/miracleyoo/Tomasulo-Visual/). Although I will not maintain this repo afterward, I welcome any **pull request** if you have make any further progress.
+This project is a course project, the course is Umass Amherst ENG668-Computer Architecture. Because we only get one and a half month to develop such a big program, it is inevitable to have some potential bugs inside, and the function is not fully complete. It is only supposed to be used for educational purpose. If you like this project or you want to develop on the top of it, please star [this repo](https://github.com/miracleyoo/Tomasulo-Visual/). Although I will not maintain this repo afterward, I welcome any **pull request** if you have make any further progress.
 
 ## File Structure
 
