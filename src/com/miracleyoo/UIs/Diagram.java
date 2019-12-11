@@ -10,13 +10,11 @@ import java.util.Arrays;
 import static java.lang.StrictMath.min;
 
 public class Diagram extends JPanel {
+    
+    int tick = 0; //Used to update the Diagram only when the execute button has been pressed
 
-    private int cycleNumOld = 0;
-    private int instrIndex = 0; //this will need to change to keep track of instructions
-    int tick = 0;
-
-    Font labelFont = new Font("Arial", Font.BOLD, 10);
-    Font normalFont = new Font("Arial", Font.PLAIN, 9);
+    Font labelFont = new Font("Arial", Font.BOLD, 10); //Font for labels on Diagram
+    Font normalFont = new Font("Arial", Font.PLAIN, 9); //Font for instructions that traverse Diagram
 
 
     //Standardize block widths/heights
@@ -31,13 +29,17 @@ public class Diagram extends JPanel {
     int fpAdderRS = (int) DataUI.mainLogic.architectureNum[3];
     int fpMultiplierRS = (int) DataUI.mainLogic.architectureNum[4];
     int fpDividerRS = (int) DataUI.mainLogic.architectureNum[5];
+    int registers = 10; //# of register slots to display on the daigram
 
-    int registers = 10;
+    //Allows for window scaling while keeping objects in their relative positions
     public int diagramWidth = 600 + 200 + 50 + 50; // Most left: -200; Most right: 200 + 50(rect width)
     public int diagramHeight = 110 + height * DataUI.mainLogic.OpQueue + height + 30; // Most down: -110; Most top: Reg rects top
-    //Allows for window scaling while keeping objects in their relative positions
 
+    //blank Instruction and InstructionTrack templates for init of RS/buffers and flushing
     Instruction blank = new Instruction("", "", "", "", "", 0, 0, -1);
+    InstructionTrack opBlank = new InstructionTrack("", 0);
+
+    //Data strucs to hold the data to display on diagram provided by MainLogic
     Instruction[] opQArr = new Instruction[DataUI.mainLogic.OpQueue];
     String[] opQ = new String[DataUI.mainLogic.OpQueue];
     Instruction[] ldArr = new Instruction[ldBuffer];
@@ -47,9 +49,9 @@ public class Diagram extends JPanel {
     Instruction[] mulArr = new Instruction[fpMultiplierRS];
     Instruction[] divArr = new Instruction[fpDividerRS];
     String[] regArr = new String[registers];
-    InstructionTrack[] testArr = new InstructionTrack[DataUI.mainLogic.OpQueue];
-    InstructionTrack[] rArr = new InstructionTrack[registers];
-    InstructionTrack opBlank = new InstructionTrack("", 0);
+    InstructionTrack[] testArr = new InstructionTrack[DataUI.mainLogic.OpQueue]; //Used for OpQueue highlights
+    InstructionTrack[] rArr = new InstructionTrack[registers]; //Used for register highlights
+
 
     @Override
     public Dimension getPreferredSize() {
@@ -61,6 +63,7 @@ public class Diagram extends JPanel {
         paintComponent((Graphics2D) g);
     }
 
+    //Set thickness of the lines used in the diagram
     private void drawThickLine(Graphics2D g, int x1, int y1, int x2, int y2) {
         g.setStroke(new BasicStroke(3));
         g.drawLine(x1, y1, x2, y2);
@@ -68,89 +71,58 @@ public class Diagram extends JPanel {
     }
 
     public void setCycleNum(int c) {
+        //Diagram is able to keep track of and display current cycle number
         DataUI.mainLogic.CycleNumCur = c;
     }
 
+    //---PAINTCOMPONENTS OF DIAGRAM---
     protected void paintComponent(Graphics2D g) {
         super.paintComponent(g);
-        g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
+        g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //Set diagram color scheme
         int originX = getWidth() / 2 - 25;// getViewport().getSize().width;// getWidth()/2;
         int originY = getHeight() / 2 + 35; //getViewport().getSize().height;//getHeight()/2;
 
-
-
         g.drawString(Integer.toString(DataUI.mainLogic.CycleNumCur), originX, originY); //debugging to keep track of updating diagram in sync with DataUI.mainLogic.CycleNumCur
 
-        //Place OpQueue -- Note Op Queue is currently implementing both int and fp, THIS MAY NEED TO CHANGE!
+        //Place OpQueue -- Holds the instructions that have not been issued
         g.setFont(labelFont);
         g.drawString("OP Queue", originX - 100, originY - (height * DataUI.mainLogic.OpQueue + height) - 60);
         for (int q = 0; q < DataUI.mainLogic.OpQueue; q++) {
             g.drawRect(originX - 100, originY - (height * q + height) - 60, 100, height);
         }
-        g.setFont(normalFont);
-        //Push instructions to opQueue --> Instructions stored here until ISSUED to prevent structural hazard
-        //Shift instructions down as they are processed through the OpQueue in FIFO manner. In order issue one instruction at a time!
-/*
-        //Push first 10 instructions onto opQArr initially at clk 0
-        if(!DataUI.mainLogic.isEnd) {
-            for (int o = 0; o < DataUI.mainLogic.OpQueue; o++) {
-                //if opQArr has a blank position, push next awaiting instruction
-                if (opQ[o] == null || opQ[o].equals("")) {
-                    String temp = "";
-                    if(DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + o).split(":").length > 1){
-                        temp = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + o).split(":")[1].trim(); //place just the raw instruction in the opQ
-                        opQ[o] = temp.split(";")[0].trim(); //place just the raw instruction in the opQ
-                    }
-                    else{
-                        opQ[o] = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + o).split(";")[0].trim();
-                    }
-                }
-            }
-        }
-
-        else{
-            Arrays.fill(opQ, "");
-        }
-
-
-        for (int q = 0; q < DataUI.mainLogic.OpQueue; q++) {
-            if (opQ[q] != null && !opQ[q].equals("")) {
-                g.drawString(opQ[q], originX - 100 + 5, originY - (height * q) - 62);
-            }
-        }
-        */
 
         g.setFont(normalFont);
-        if(!DataUI.mainLogic.isEnd) {
+        if(!DataUI.mainLogic.isEnd) { //Checks if there are valid instructions remaining in InstructionFullList
             for (int j = 0; j < DataUI.mainLogic.OpQueue; j++) {
                 //if opQArr has a blank position, push next awaiting instruction
                 if (testArr[j] == null || testArr[j] == opBlank) {
                     String temp = "";
 
                     testArr[j].absIndex = DataUI.mainLogic.instructionLineCur + j; //grabbing the index of the instruction
-                    if (DataUI.mainLogic.instructionLineCur + j < DataUI.mainLogic.InstructionFullList.size()){
+                    if (DataUI.mainLogic.instructionLineCur + j < DataUI.mainLogic.InstructionFullList.size()){ //Stay within bounds of InstructionFullList
+                        //remove any tags/comments before storing into array
                         if (DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(":").length > 1) {
-                            temp = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(":")[1].trim(); //place just the raw instruction in the opQ
-                            testArr[j].str = temp.split(";")[0].trim(); //place just the raw instruction in the opQ;
+                            temp = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(":")[1].trim();
+                            testArr[j].str = temp.split(";")[0].trim(); //place just the raw instruction in the opQ
                         } else {
-                            testArr[j].str = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(";")[0].trim();
+                            testArr[j].str = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(";")[0].trim(); //place just the raw instruction in the opQ
                         }
                         if(!testArr[j].str.equals("")) {
-                            //display on GUI
-                            g.setColor(Color.decode(DataUI.colorSchemeCycleCur[testArr[j].absIndex % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
+                            //display on GUI if there is a valid value in the array at j
+                            g.setColor(Color.decode(DataUI.colorSchemeCycleCur[testArr[j].absIndex % DataUI.colorSchemeCycleCur.length])); //for highlight
                             g.fillRect(originX - 100 + 1, originY - (height * j + height) - 60 + 1, 99, height - 1);
                             g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //whatever the scheme color is for the text
                             g.drawString(testArr[j].str, originX - 100 + 5, originY - (height * j) - 62);
                         }
-                }
+                    }
                 }
             }
         }
         else{
-            Arrays.fill(testArr, opBlank);
+            Arrays.fill(testArr, opBlank); //fill the OpQ with blanks once MainLogic has reached the end of the InstructionFullList
         }
 
-        //---ldBuffers---\\
+        //---Place ldBuffers---\\
         int[] ldBase = {-400, -60};
         g.setFont(labelFont);
         g.drawString("LD Buffer (From Memory)", originX + ldBase[0], originY - (height * ldBuffer + height) + ldBase[1]);

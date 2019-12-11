@@ -15,7 +15,7 @@ public class Instruction {
     public int index = 0;
 
 
-    //creates Instruction object for that includes op, srcRegs, execution time
+    //creates Instruction object used in Diagram for that includes op, destReg, srcRegs, currentClk, startTime, and absoluteIndex of instruction
     public Instruction(String op, String dest, String src1, String src2, String state, int currentClk, int startTime, int index){
         this.op = op;
         this. dest = dest;
