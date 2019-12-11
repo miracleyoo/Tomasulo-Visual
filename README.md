@@ -73,6 +73,11 @@ Here is the help or information page. You will find basic information about the 
 Also, the program has two themes! Light and Dark mode are supported. They will change smoothly and nothing will be reset. In fact I prefer the dark mode more. The default mode can be changed in the `MainLogic.java` file.
 ![Dark_Mode_Theme](./Assets/Screen_Capture/Dark_Mode_Theme.png)
 
+## More Detailed Information in Presentation Slides
+![Dark_Mode_Theme](./Assets/Screen_Capture/Slides.jpg)
+
+
+
 ReadMe authors: **Zhongyang, Vignesh**
 
 
