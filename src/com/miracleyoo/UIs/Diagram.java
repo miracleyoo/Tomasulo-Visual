@@ -10,7 +10,7 @@ import java.util.Arrays;
 import static java.lang.StrictMath.min;
 
 public class Diagram extends JPanel {
-    
+
     int tick = 0; //Used to update the Diagram only when the execute button has been pressed
 
     Font labelFont = new Font("Arial", Font.BOLD, 10); //Font for labels on Diagram
@@ -122,8 +122,8 @@ public class Diagram extends JPanel {
             Arrays.fill(testArr, opBlank); //fill the OpQ with blanks once MainLogic has reached the end of the InstructionFullList
         }
 
-        //---Place ldBuffers---\\
-        int[] ldBase = {-400, -60};
+        //---Place ldBuffer---\\
+        int[] ldBase = {-400, -60}; //Sets x,y coordinate base values to ensure all ldBuffer components are relative to each other
         g.setFont(labelFont);
         g.drawString("LD Buffer (From Memory)", originX + ldBase[0], originY - (height * ldBuffer + height) + ldBase[1]);
         for (int i = 0; i < ldBuffer; i++) {
@@ -132,17 +132,17 @@ public class Diagram extends JPanel {
 
         g.setFont(normalFont);
         for (int z = 0; z < ldBuffer; z++) {
-            //paint on diagram
+            //paint ld instructions on diagram
             if (ldArr[z] != null && ldArr[z] != blank) {
-                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[ldArr[z].index % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
+                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[ldArr[z].index % DataUI.colorSchemeCycleCur.length])); //for highlight
                 g.fillRect(originX + ldBase[0] + 1, originY - (height * z + height) + ldBase[1] + 1, 49, height-1);
                 g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //whatever the scheme color is for the text
                 g.drawString(ldArr[z].op, originX + ldBase[0] + 5, originY + ldBase[1] - (height * z) - 2);
             }
         }
 
-        //---sdBuffers---\\
-        int[] sdBase = {250, -60};
+        //---Place sdBuffer---\\
+        int[] sdBase = {250, -60}; //Sets x,y coordinate base values to ensure all sdBuffer components are relative to each other
         g.setFont(labelFont);
         g.drawString("SD Buffer (To Memory)", originX + sdBase[0] - 50, originY - (height * sdBuffer + height) + sdBase[1]);
         for (int i = 0; i < sdBuffer; i++) {
@@ -151,16 +151,16 @@ public class Diagram extends JPanel {
 
         g.setFont(normalFont);
         for (int z = 0; z < sdBuffer; z++) {
-            //paint on diagram
+            //paint sd instructions on diagram
             if (sdArr[z] != null && sdArr[z] != blank) {
-                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[sdArr[z].index % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
+                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[sdArr[z].index % DataUI.colorSchemeCycleCur.length])); //for highlight
                 g.fillRect(originX + sdBase[0] + 1, originY - (height * z + height) + sdBase[1] + 1, 49, height-1);
                 g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //whatever the scheme color is for the text
                 g.drawString(sdArr[z].op, originX + sdBase[0] + 5, originY + sdBase[1] - (height * z) - 2);
             }
         }
 
-        //---Registers---\\
+        //---Place Registers---\\
         g.setFont(labelFont);
         g.drawString("Registers", originX + 50, originY - (height * registers + height) - 60);
         for (int q = 0; q < registers; q++) {
@@ -168,27 +168,12 @@ public class Diagram extends JPanel {
         }
         g.setFont(normalFont);
 
-
-        for (int o = 0; o < min(registers, DataUI.mainLogic.wbList.size()); o++) {
-                //if opQArr has a blank position, push next awaiting instruction
-                if (regArr[o] == null || regArr[o].equals("")) {
-                    //regArr[o] = DataUI.mainLogic.wbList.get(o);
-                }
-        }
-
-        for (int z = 0; z < registers; z++) {
-            //paint on diagram
-            if (regArr[z] != null && !regArr[z].equals("")) {
-                g.drawString(regArr[z], originX + 50 + 5, originY - (height * z) - 62);
-            }
-        }
-
-        //Highlighted reg
+        //Highlight and paint instructions in registers on Diagram
         for(int j = 0; j < min(registers, DataUI.mainLogic.wbList.size()); j++){
             if (rArr[j] == null || rArr[j] == opBlank) {
                 rArr[j].absIndex = DataUI.mainLogic.wbList.get(j).absoluteIndex; //grabbing the index of the instruction
-                rArr[j].str = DataUI.mainLogic.wbList.get(j).operation;
-                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[rArr[j].absIndex % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
+                rArr[j].str = DataUI.mainLogic.wbList.get(j).operation; //Grabbing the string of instruction
+                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[rArr[j].absIndex % DataUI.colorSchemeCycleCur.length])); //Highlight
                 g.fillRect(originX + 50 + 1, originY - (height * j + height) - 60 + 1, 79, height - 1);
                 g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //whatever the scheme color is for the text
                 g.drawString(rArr[j].str, originX + 50 + 5, originY - (height * j) - 62);
@@ -201,7 +186,7 @@ public class Diagram extends JPanel {
         //Place integer FU
         int intBase[] = {-300, 60}; //x, y
         for (int a = 0; a < integerRS; a++) {
-            g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
+            g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //Set color
             g.drawRect(originX - opBoxWidth + intBase[0], originY - (height * a) + intBase[1], opBoxWidth, height);
             g.drawRect(originX + intBase[0], originY - (height * a) + intBase[1], operandWidth, height);
             g.drawRect(originX + operandWidth + intBase[0], originY - (height * a) + intBase[1], operandWidth, height);
