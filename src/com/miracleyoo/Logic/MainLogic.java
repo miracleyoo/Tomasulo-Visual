@@ -1,3 +1,24 @@
+/*
+Main workflow here:
+Initialize data structures and dictionaries
+        ↓
+        Parse the next instruction
+        ↓
+        Judge whether it can be issued now
+        ↓
+        Update the Information for the newly issued instruction (like issue cycle)
+        ↓
+        Sequentially check all of the instructions in the Operands station now,
+        And do corresponding operation to them according to state
+        ↓               ↓                   ↓               ↓
+        | check can exe | check can exeEnd |  check can WB |  check can end |
+        ↓                                   ↓               ↓
+        ↓                                 ExeOps          EndOps
+        ↓
+        OpsNOP / OpsADD / OpsSUB / OpsMUL / OpsDIV / ......
+        ↓
+        cycle ++
+*/
 package com.miracleyoo.Logic;
 
 import java.util.*;

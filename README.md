@@ -6,9 +6,40 @@ This is a visualization project of Tomasulo algorithm which make it easier to un
 
 ## File Structure
 
-`asm_code`: Sample asm code for test.
-`Assets`: UI related images and screen captures.
-`src/com/miracleyoo/Logic/MainLogic.java`: Main logic. All of the important global variables are placed here and you can go into the code to read the very detailed comment of every variable. 
+`asm_code/`: Sample asm code for test.
+`Assets/`: UI related images and screen captures.
+`src/com/miracleyoo/Logic/MainLogic.java`: Main logic. All of the important global variables are placed here and you can go into the code to read the very detailed comment of every variable. Also, the whole logic and related functions under the `Execute step` can be find here.
+`src/com/miracleyoo/UIs/CoolMainUI.java`: The welcome page. It is boarder-less, image-based and mouse-movable. It will guide you to select a file to execute. More detailed introduction can be find below in the screen capture's explanation.
+`src/com/miracleyoo/UIs/DataUI.java`: The most important UI, we mostly work here and it will show us a cycle table, register table, tomasulo dynamic chart, statistics and data table.
+`src/com/miracleyoo/UIs/Diagram.java`: Tomasulo Dynamic Chart's implementation. All manually draw graphic components.
+`src/com/miracleyoo/UIs/ArchitectureCycleUI.java`: UI that takes the input of cycle numbers of each type of function unit.
+`src/com/miracleyoo/UIs/ArchitectureNumUI.java`: UI that takes the input of exact numbers of each type of function unit.
+`src/com/miracleyoo/UIs/MultiStepsUI.java`: UI that takes the "multi" of "multi step".
+`src/com/miracleyoo/UIs/InfoUI.java`: UI that shows the info of program and authors.
+
+## Main Logic Workflow
+
+```
+
+          Initialize data structures and dictionaries
+                            ↓
+                Parse the next instruction
+                            ↓
+               Judge whether it can be issued now
+                            ↓
+  Update the Information for the newly issued instruction (like issue cycle)
+                            ↓
+  Sequentially check all of the instructions in the Operands station now,
+         And do corresponding operation to them according to state
+          ↓               ↓                   ↓               ↓
+ | check can exe | check can exeEnd |  check can WB |  check can end |
+          ↓                                   ↓               ↓
+          ↓                                 ExeOps          EndOps
+          ↓
+  OpsNOP / OpsADD / OpsSUB / OpsMUL / OpsDIV / ......
+                            ↓
+                         cycle ++
+```
 
 ## Some screen captures and introduction
 
