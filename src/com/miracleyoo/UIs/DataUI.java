@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 
@@ -294,7 +295,7 @@ public class DataUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 FileDialog fd = new FileDialog(new JFrame(), "Choose a file", FileDialog.LOAD);
-                fd.setDirectory(System.getProperty("user.dir")+"/asm_code/");
+                fd.setDirectory(Paths.get(System.getProperty("user.dir"), "asm_code").toString());
                 fd.setFilenameFilter((dir, name) -> name.endsWith(".s"));
                 fd.setVisible(true);
                 String fileName = fd.getFile();

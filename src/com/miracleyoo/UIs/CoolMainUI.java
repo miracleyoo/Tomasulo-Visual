@@ -21,6 +21,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -71,7 +73,7 @@ public class CoolMainUI {
             public void actionPerformed(ActionEvent e) {
                 FileDialog fd = new FileDialog(new JFrame(), "Choose a file", FileDialog.LOAD);
                 System.out.println(System.getProperty("user.dir"));
-                fd.setDirectory(System.getProperty("user.dir")+"/asm_code/");//"~/Downloads/");
+                fd.setDirectory(Paths.get(System.getProperty("user.dir"), "asm_code").toString());//"~/Downloads/");
                 fd.setFilenameFilter((dir, name) -> name.endsWith(".s"));
                 fd.setVisible(true);
                 String fileName = fd.getFile();
