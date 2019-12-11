@@ -4,6 +4,12 @@ If you are just learning Tomasulo algorithm, please don't miss this repo, it wil
 
 This is a visualization project of Tomasulo algorithm which make it easier to understand the algorithm. It can read a `*.s` asm file and parse it, and you can execute instructions according to Tomasulo algorithm. This project is mainly for study use and it will not really parse the instruction to binary and it just briefly translate all of the instructions to a set of characterized classes and assign a separate execute function to each class. 
 
+## File Structure
+
+`asm_code`: Sample asm code for test.
+`Assets`: UI related images and screen captures.
+`src/com/miracleyoo/Logic/MainLogic.java`: Main logic. All of the important global variables are placed here and you can go into the code to read the very detailed comment of every variable. 
+
 ## Some screen captures and introduction
 
 At first the welcome page, it will guide the user open a file ends with `*.s` and parse the file and pass it to Data UI.
