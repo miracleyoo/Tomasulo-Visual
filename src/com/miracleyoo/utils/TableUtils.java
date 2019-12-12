@@ -53,26 +53,26 @@ public class TableUtils {
 
             Color background_color = Color.WHITE;
             if(tableModel.getValueAt(row, col) != null) {
-//                background_color = Color.decode(DataUI.colorSchemeCycleCur[Integer.parseInt((String)tableModel.
-//                        getValueAt(row, 1))%DataUI.colorSchemeCycleCur.length]);
+                background_color = Color.decode(DataUI.colorSchemeCycleCur[Integer.parseInt((String)tableModel.
+                        getValueAt(row, 1))%DataUI.colorSchemeCycleCur.length]);
 
-                switch ((String) tableModel.getValueAt(row, col)) {
-                    case "IF":
-                        background_color = Color.decode(DataUI.colorSchemeCycleCur[0]);
-                        break;
-                    case "ID":
-                        background_color = Color.decode(DataUI.colorSchemeCycleCur[1]);
-                        break;
-                    case "EX":
-                        background_color = Color.decode(DataUI.colorSchemeCycleCur[2]);
-                        break;
-                    case "MEM":
-                        background_color = Color.decode(DataUI.colorSchemeCycleCur[3]);
-                        break;
-                    case "WB":
-                        background_color = Color.decode(DataUI.colorSchemeCycleCur[4]);
-                        break;
-                }
+//                switch ((String) tableModel.getValueAt(row, col)) {
+//                    case "IF":
+//                        background_color = Color.decode(DataUI.colorSchemeCycleCur[0]);
+//                        break;
+//                    case "ID":
+//                        background_color = Color.decode(DataUI.colorSchemeCycleCur[1]);
+//                        break;
+//                    case "EX":
+//                        background_color = Color.decode(DataUI.colorSchemeCycleCur[2]);
+//                        break;
+//                    case "MEM":
+//                        background_color = Color.decode(DataUI.colorSchemeCycleCur[3]);
+//                        break;
+//                    case "WB":
+//                        background_color = Color.decode(DataUI.colorSchemeCycleCur[4]);
+//                        break;
+//                }
             }
             else{
                 background_color = Color.decode(DataUI.colorSchemeMainCur[0]);
