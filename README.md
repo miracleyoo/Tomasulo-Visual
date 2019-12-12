@@ -106,8 +106,13 @@ Here is the help or information page. You will find basic information about the 
 Also, the program has two themes! Light and Dark mode are supported. They will change smoothly and nothing will be reset. In fact I prefer the dark mode more. The default mode can be changed in the `MainLogic.java` file.
 ![Dark_Mode_Theme](./Assets/Screen_Capture/Dark_Mode_Theme.png)
 
-## More Detailed Information in Presentation Slides
-![Dark_Mode_Theme](./Assets/Screen_Capture/Slides.jpg)
+## The tomasulo our-of-order CPU emulator
+
+This work is supposed to be part of the main logic for the Tomasulo Visual project. It is located in `emulator` branch of this project. It was rewritten from edumips64 5-stage pipeline to run in out-of-order. You can find the code in `branch:emulator@org.edumips64` without original GUI for Tomasulo CPU is not compatible with old GUI. The converted version tried to emulate the actual hardware behavior and preserve all instructions to work like the actual hardware.
+
+Current version has already converted all instructions with register renaming, register types regards to their function units. There are also reservation stations, common data bus and a set of integer registers and floating-point registers. The instruction issue, wait operand, execution and write process are actually finished, but did not have a chance to get integrated with the GUI.
+
+Most of the CPU design is in the TomasuloCPU.java file, and other components are in the same directory with respective names. If everyone wants to take over the emulator part, I suggest starting by writing tests for confirm which part is working and which does not and then fix them. The integration actually requires more work on understanding or GUI elements get their data from, which is out of the scope of this guide. 
 
 ##GUI description
 The GUI portion of the project is essentially complete, 
@@ -126,8 +131,7 @@ in turn allows it to be displayed appropriately on the diagram GUI. The code has
 commented and shows where the paintComponent portion is and where the logic portion begins, 
 along with any relevant variables, etc.
 
+## More Detailed Information in Presentation Slides
+![Dark_Mode_Theme](./Assets/Screen_Capture/Slides.jpg)
 
-ReadMe authors: **Zhongyang, Vignesh**
-
-
-
+ReadMe authors: **Zhongyang, Vignesh, Hao**

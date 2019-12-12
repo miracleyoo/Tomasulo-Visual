@@ -7,7 +7,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import javax.xml.crypto.Data;
 import java.awt.*;
 
 public class TableUtils {
@@ -15,7 +14,6 @@ public class TableUtils {
         // The column model of the table
         TableColumnModel cm = table.getColumnModel();
         // Get the i-th column
-
         TableColumn column = cm.getColumn(i);
         column.setPreferredWidth(preferedWidth);
         column.setMaxWidth(maxWidth);
@@ -47,7 +45,6 @@ public class TableUtils {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
 
             //To highlight table components for the cycle graph, see below
-
             //Cells are by default rendered as a JLabel.
             JLabel l = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
 
@@ -55,35 +52,30 @@ public class TableUtils {
             DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
 
             Color background_color = Color.WHITE;
-//            String[] tempColorScheme = DataUI.colorSchemeCycleCur;//DataUI.DarkMode? DataUI.colorSchemeCycleDark:DataUI.colorSchemeCycleLight;
             if(tableModel.getValueAt(row, col) != null) {
-                background_color = Color.decode(DataUI.colorSchemeCycleCur[Integer.parseInt((String)tableModel.getValueAt(row, 1))%DataUI.colorSchemeCycleCur.length]);
+//                background_color = Color.decode(DataUI.colorSchemeCycleCur[Integer.parseInt((String)tableModel.
+//                        getValueAt(row, 1))%DataUI.colorSchemeCycleCur.length]);
 
-//                switch ((String) tableModel.getValueAt(row, col)) {
-//                    case "IF":
-//                        background_color = Color.decode(DataUI.colorSchemeCycleCur[0]);
-//                        break;
-//                    case "ID":
-//                        background_color = Color.decode(DataUI.colorSchemeCycleCur[1]);
-//                        break;
-//                    case "EX":
-//                        background_color = Color.decode(DataUI.colorSchemeCycleCur[2]);
-//                        break;
-//                    case "MEM":
-//                        background_color = Color.decode(DataUI.colorSchemeCycleCur[3]);
-//                        break;
-//                    case "WB":
-//                        background_color = Color.decode(DataUI.colorSchemeCycleCur[4]);
-//                        break;
-//                }
+                switch ((String) tableModel.getValueAt(row, col)) {
+                    case "IF":
+                        background_color = Color.decode(DataUI.colorSchemeCycleCur[0]);
+                        break;
+                    case "ID":
+                        background_color = Color.decode(DataUI.colorSchemeCycleCur[1]);
+                        break;
+                    case "EX":
+                        background_color = Color.decode(DataUI.colorSchemeCycleCur[2]);
+                        break;
+                    case "MEM":
+                        background_color = Color.decode(DataUI.colorSchemeCycleCur[3]);
+                        break;
+                    case "WB":
+                        background_color = Color.decode(DataUI.colorSchemeCycleCur[4]);
+                        break;
+                }
             }
             else{
-//                if(DataUI.DarkMode){
                 background_color = Color.decode(DataUI.colorSchemeMainCur[0]);
-//                }
-//                else {
-//                    background_color = Color.decode(DataUI.colorSchemeMainLight[1]);
-//                }
             }
             l.setBackground(background_color);
 
