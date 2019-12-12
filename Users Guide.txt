@@ -1,0 +1,28 @@
+#--Users Guide--
+
+1) On program startup, the first screen will prompt you to choose a .s file to read. 
+Press on "select a *.s file to start" and choose an appropropriate file to run from the popup window. 
+
+2) Once a proper .s file has been selected, the main GUI will open.
+
+3) Simply pressing "Execute 1 Step" or "Execute multi Steps" (default 3 clocks) at the bottom will allow 
+user to run the program with default parameter values.
+
+4) "File" dropdown menu: 
+	"Open" will allow a new .s file to be selected.
+	"Reset" will reset the GUI to defualts and start execution from clock 0.
+	"Exit" closes the program.
+
+5) "Execute" dropdown menu shows:
+	"Single Cycle" executes 1 clock cycle. Same function as pressing "Execute 1 Step"
+	"Multi Cycles" executes multiple clock cycles (3 default). Same as pressing "Execute multi Steps"
+	"Run to" executes until the end of the .s program.
+
+6) "Configure" dropdown menu shows:
+	"Architecture Number" allows changing buffer/reservation station numbers.
+	"Architecture Cycle" allows changing the number of clock cycles required for execution for various operations.
+	"Multi-step" allows changing the number of clock cycles executed when "Execute multi Steps" is clicked.
+	"Change Scheme" changes the GUI between two color schemes.
+
+7) "Help" dropdown menu shows:
+	"About Tomasulo Visual" shows general author and project info.
