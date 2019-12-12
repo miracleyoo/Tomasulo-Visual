@@ -30,9 +30,9 @@ This project is a course project, the course is Umass Amherst ENG668-Computer Ar
 6) "Configure" dropdown menu shows:
 
 	- "Architecture Number" allows changing buffer/reservation station numbers.
-        - "Architecture Cycle" allows changing the number of clock cycles required for execution for various operations	
-        - "Multi-step" allows changing the number of clock cycles executed when "Execute multi Steps" is clicked.
-        - "Change Scheme" changes the GUI between two color schemes.
+	- "Architecture Cycle" allows changing the number of clock cycles required for execution for various operations	
+	- "Multi-step" allows changing the number of clock cycles executed when "Execute multi Steps" is clicked.
+	- "Change Scheme" changes the GUI between two color schemes.
 
 7) "Help" dropdown menu shows:
 	
