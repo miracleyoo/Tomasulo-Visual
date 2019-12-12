@@ -18,9 +18,7 @@ This project is a course project, the course is Umass Amherst ENG668-Computer Ar
 4. "File" dropdown menu: 
 
 	- "Open" will allow a new .s file to be selected.
-          
 	- "Reset" will reset the GUI to defualts and start execution from clock 0.
-          
 	- "Exit" closes the program.
 
 5. "Execute" dropdown menu shows:
@@ -32,16 +30,13 @@ This project is a course project, the course is Umass Amherst ENG668-Computer Ar
 6) "Configure" dropdown menu shows:
 
 	- "Architecture Number" allows changing buffer/reservation station numbers.
-	
-          - "Architecture Cycle" allows changing the number of clock cycles required for execution for various operations.
-	
-          - "Multi-step" allows changing the number of clock cycles executed when "Execute multi Steps" is clicked.
-	
-          - "Change Scheme" changes the GUI between two color schemes.
+        - "Architecture Cycle" allows changing the number of clock cycles required for execution for various operations	
+        - "Multi-step" allows changing the number of clock cycles executed when "Execute multi Steps" is clicked.
+        - "Change Scheme" changes the GUI between two color schemes.
 
 7) "Help" dropdown menu shows:
 	
-          "About Tomasulo Visual" shows general author and project info.
+      "About Tomasulo Visual" shows general author and project info.
 
 ## File Structure
 
