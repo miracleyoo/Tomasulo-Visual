@@ -310,6 +310,7 @@ public class Diagram extends JPanel {
 
         g.setColor(Color.BLACK);
         //***---Diagram Logic---***\\
+        //Classify instruction type on each execute cycle and place within the appropriate buffer/RS array
         if (tick != DataUI.mainLogic.CycleNumCur) {
             flushBuffers(); //Clear buffers and rewrite every clock cycle
 
@@ -322,7 +323,6 @@ public class Diagram extends JPanel {
                                 //insert into load buffer if there is a blank space
                                 if (ldArr[z] == blank || ldArr[z] == null) {
                                     ldArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart, DataUI.mainLogic.OperationInfoStation.get(i).absoluteIndex);
-                                    //System.out.println("Load to buffer "  + z + ": " + ldArr[z].index);
                                     break;
                                 }
                             }
@@ -330,10 +330,9 @@ public class Diagram extends JPanel {
 
                         case "SAVE":
                             for (int z = 0; z < sdBuffer; z++) {
-                                //insert into load buffer if there is a blank space
+                                //insert into save buffer if there is a blank space
                                 if (sdArr[z] == blank || sdArr[z] == null) {
                                     sdArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart, DataUI.mainLogic.OperationInfoStation.get(i).absoluteIndex);
-                                    //System.out.println("Save to buffer "  + z + ": " + sdArr[z].index);
                                     break;
                                 }
                             }
@@ -341,10 +340,9 @@ public class Diagram extends JPanel {
 
                         case "INT":
                             for (int z = 0; z < integerRS; z++) {
-                                //insert into load buffer if there is a blank space
+                                //insert into int RS if there is a blank space
                                 if (intArr[z] == blank || intArr[z] == null) {
                                     intArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart, DataUI.mainLogic.OperationInfoStation.get(i).absoluteIndex);
-                                    //System.out.println("int buffer "  + z + ": " + intArr[z].index);
                                     break;
                                 }
                             }
@@ -353,10 +351,9 @@ public class Diagram extends JPanel {
 
                         case "ADD":
                             for (int z = 0; z < fpAdderRS; z++) {
-                                //insert into load buffer if there is a blank space
+                                //insert into Add RS if there is a blank space
                                 if (addArr[z] == blank || addArr[z] == null) {
                                     addArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart, DataUI.mainLogic.OperationInfoStation.get(i).absoluteIndex);
-                                    //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
                             }
@@ -365,10 +362,9 @@ public class Diagram extends JPanel {
 
                         case "MUL":
                             for (int z = 0; z < fpMultiplierRS; z++) {
-                                //insert into load buffer if there is a blank space
+                                //insert into mul RS if there is a blank space
                                 if (mulArr[z] == blank || mulArr[z] == null) {
                                     mulArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart, DataUI.mainLogic.OperationInfoStation.get(i).absoluteIndex);
-                                    //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
                             }
@@ -377,10 +373,9 @@ public class Diagram extends JPanel {
 
                         case "DIV":
                             for (int z = 0; z < fpDividerRS; z++) {
-                                //insert into load buffer if there is a blank space
+                                //insert into div RS if there is a blank space
                                 if (divArr[z] == blank || divArr[z] == null) {
                                     divArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart, DataUI.mainLogic.OperationInfoStation.get(i).absoluteIndex);
-                                    //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
                             }
@@ -388,7 +383,7 @@ public class Diagram extends JPanel {
                             break;
 
                         case "BRA":
-                            //---WIP---
+                            //if Branch
                             break;
 
                         case "NOP":
@@ -406,14 +401,15 @@ public class Diagram extends JPanel {
 
 
         //---Connecting Wires---
-        g.setColor((Color.decode(DataUI.colorSchemeMainCur[6])));
-        g.setStroke(new BasicStroke(3));
+        g.setColor((Color.decode(DataUI.colorSchemeMainCur[6]))); //follow dataUI color scheme
+        g.setStroke(new BasicStroke(3)); //wire width
 
+        //CBD wires
         g.setFont(labelFont);
         g.drawString("Common Data Bus", originX - 400, originY + 120);
         g.setFont(normalFont);
         g.setColor(Color.decode(DataUI.colorSchemeCycleCur[0]));
-        drawThickLine(g, originX + ldBase[0] + 25, originY + ldBase[1] + 2, originX + ldBase[0] + 25, originY + 105);
+        drawThickLine(g, originX + ldBase[0] + 25, originY + ldBase[1] + 2, originX + ldBase[0] + 25, originY + 105); //Vertical arrow from ld Buffer to CBD
         g.fillPolygon(new int[]{originX + ldBase[0] + 20, originX + ldBase[0] + 25, originX + ldBase[0] + 30}, new int[]{originY + 100, originY + 110, originY + 100}, 3);
         drawThickLine(g, originX + ldBase[0], originY + 110, originX + sdBase[0] + 100, originY + 110); //CBD horizontal line
         drawThickLine(g, originX + sdBase[0] + 100, originY + sdBase[1] - registers * height + 5, originX + sdBase[0] + 100, originY + 110); //CBD vertical line going up to store data
@@ -467,6 +463,7 @@ public class Diagram extends JPanel {
     }
 
     public void flushBuffers() {
+        //Function to flush all buffers
         Arrays.fill(opQArr, blank);
         Arrays.fill(ldArr, blank);
         Arrays.fill(sdArr, blank);
