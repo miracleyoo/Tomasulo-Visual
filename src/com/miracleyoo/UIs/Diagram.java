@@ -11,15 +11,13 @@ import static java.lang.StrictMath.min;
 
 public class Diagram extends JPanel {
 
-    private int cycleNumOld = 0;
-    private int instrIndex = 0; //this will need to change to keep track of instructions
-    int tick = 0;
+    int tick = 0; //Used to update the Diagram only when the execute button has been pressed
 
-    Font labelFont = new Font("Arial", Font.BOLD, 10);
-    Font normalFont = new Font("Arial", Font.PLAIN, 9);
+    Font labelFont = new Font("Arial", Font.BOLD, 10); //Font for labels on Diagram
+    Font normalFont = new Font("Arial", Font.PLAIN, 9); //Font for instructions that traverse Diagram
 
 
-    //Standardize block widths/heights
+    //Standardize block widths/heights on display
     static int height = 12;
     static int opBoxWidth = 30;
     static int operandWidth = 50;
@@ -31,13 +29,17 @@ public class Diagram extends JPanel {
     int fpAdderRS = (int) DataUI.mainLogic.architectureNum[3];
     int fpMultiplierRS = (int) DataUI.mainLogic.architectureNum[4];
     int fpDividerRS = (int) DataUI.mainLogic.architectureNum[5];
+    int registers = 10; //# of register slots to display on the daigram
 
-    int registers = 10;
+    //Allows for window scaling while keeping objects in their relative positions
     public int diagramWidth = 600 + 200 + 50 + 50; // Most left: -200; Most right: 200 + 50(rect width)
     public int diagramHeight = 110 + height * DataUI.mainLogic.OpQueue + height + 30; // Most down: -110; Most top: Reg rects top
-    //Allows for window scaling while keeping objects in their relative positions
 
+    //blank Instruction and InstructionTrack templates for init of RS/buffers and flushing
     Instruction blank = new Instruction("", "", "", "", "", 0, 0, -1);
+    InstructionTrack opBlank = new InstructionTrack("", 0);
+
+    //Data strucs to hold the data to display on diagram provided by MainLogic
     Instruction[] opQArr = new Instruction[DataUI.mainLogic.OpQueue];
     String[] opQ = new String[DataUI.mainLogic.OpQueue];
     Instruction[] ldArr = new Instruction[ldBuffer];
@@ -47,9 +49,9 @@ public class Diagram extends JPanel {
     Instruction[] mulArr = new Instruction[fpMultiplierRS];
     Instruction[] divArr = new Instruction[fpDividerRS];
     String[] regArr = new String[registers];
-    InstructionTrack[] testArr = new InstructionTrack[DataUI.mainLogic.OpQueue];
-    InstructionTrack[] rArr = new InstructionTrack[registers];
-    InstructionTrack opBlank = new InstructionTrack("", 0);
+    InstructionTrack[] testArr = new InstructionTrack[DataUI.mainLogic.OpQueue]; //Used for OpQueue highlights
+    InstructionTrack[] rArr = new InstructionTrack[registers]; //Used for register highlights
+
 
     @Override
     public Dimension getPreferredSize() {
@@ -61,6 +63,7 @@ public class Diagram extends JPanel {
         paintComponent((Graphics2D) g);
     }
 
+    //Set thickness of the lines used in the diagram
     private void drawThickLine(Graphics2D g, int x1, int y1, int x2, int y2) {
         g.setStroke(new BasicStroke(3));
         g.drawLine(x1, y1, x2, y2);
@@ -68,90 +71,59 @@ public class Diagram extends JPanel {
     }
 
     public void setCycleNum(int c) {
+        //Diagram is able to keep track of and display current cycle number
         DataUI.mainLogic.CycleNumCur = c;
     }
 
+    //---PAINTCOMPONENTS OF DIAGRAM---
     protected void paintComponent(Graphics2D g) {
         super.paintComponent(g);
-        g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
+        g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //Set diagram color scheme
         int originX = getWidth() / 2 - 25;// getViewport().getSize().width;// getWidth()/2;
         int originY = getHeight() / 2 + 35; //getViewport().getSize().height;//getHeight()/2;
 
-
-
         g.drawString(Integer.toString(DataUI.mainLogic.CycleNumCur), originX, originY); //debugging to keep track of updating diagram in sync with DataUI.mainLogic.CycleNumCur
 
-        //Place OpQueue -- Note Op Queue is currently implementing both int and fp, THIS MAY NEED TO CHANGE!
+        //Place OpQueue -- Holds the instructions that have not been issued
         g.setFont(labelFont);
         g.drawString("OP Queue", originX - 100, originY - (height * DataUI.mainLogic.OpQueue + height) - 60);
         for (int q = 0; q < DataUI.mainLogic.OpQueue; q++) {
             g.drawRect(originX - 100, originY - (height * q + height) - 60, 100, height);
         }
-        g.setFont(normalFont);
-        //Push instructions to opQueue --> Instructions stored here until ISSUED to prevent structural hazard
-        //Shift instructions down as they are processed through the OpQueue in FIFO manner. In order issue one instruction at a time!
-/*
-        //Push first 10 instructions onto opQArr initially at clk 0
-        if(!DataUI.mainLogic.isEnd) {
-            for (int o = 0; o < DataUI.mainLogic.OpQueue; o++) {
-                //if opQArr has a blank position, push next awaiting instruction
-                if (opQ[o] == null || opQ[o].equals("")) {
-                    String temp = "";
-                    if(DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + o).split(":").length > 1){
-                        temp = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + o).split(":")[1].trim(); //place just the raw instruction in the opQ
-                        opQ[o] = temp.split(";")[0].trim(); //place just the raw instruction in the opQ
-                    }
-                    else{
-                        opQ[o] = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + o).split(";")[0].trim();
-                    }
-                }
-            }
-        }
-
-        else{
-            Arrays.fill(opQ, "");
-        }
-
-
-        for (int q = 0; q < DataUI.mainLogic.OpQueue; q++) {
-            if (opQ[q] != null && !opQ[q].equals("")) {
-                g.drawString(opQ[q], originX - 100 + 5, originY - (height * q) - 62);
-            }
-        }
-        */
 
         g.setFont(normalFont);
-        if(!DataUI.mainLogic.isEnd) {
+        if(!DataUI.mainLogic.isEnd) { //Checks if there are valid instructions remaining in InstructionFullList
             for (int j = 0; j < DataUI.mainLogic.OpQueue; j++) {
                 //if opQArr has a blank position, push next awaiting instruction
                 if (testArr[j] == null || testArr[j] == opBlank) {
                     String temp = "";
 
                     testArr[j].absIndex = DataUI.mainLogic.instructionLineCur + j; //grabbing the index of the instruction
-                    if (DataUI.mainLogic.instructionLineCur + j < DataUI.mainLogic.InstructionFullList.size()){
+                    if (DataUI.mainLogic.instructionLineCur + j < DataUI.mainLogic.InstructionFullList.size()){ //Stay within bounds of InstructionFullList
+                        //remove any tags/comments before storing into array
                         if (DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(":").length > 1) {
-                            temp = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(":")[1].trim(); //place just the raw instruction in the opQ
-                            testArr[j].str = temp.split(";")[0].trim(); //place just the raw instruction in the opQ;
+                            temp = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(":")[1].trim();
+                            testArr[j].str = temp.split(";")[0].trim(); //place just the raw instruction in the opQ
                         } else {
-                            testArr[j].str = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(";")[0].trim();
+                            testArr[j].str = DataUI.mainLogic.InstructionFullList.get(DataUI.mainLogic.instructionLineCur + j).split(";")[0].trim(); //place just the raw instruction in the opQ
                         }
                         if(!testArr[j].str.equals("")) {
-                            //display on GUI
-                            g.setColor(Color.decode(DataUI.colorSchemeCycleCur[testArr[j].absIndex % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
+                            //display on GUI if there is a valid value in the array at j
+                            g.setColor(Color.decode(DataUI.colorSchemeCycleCur[testArr[j].absIndex % DataUI.colorSchemeCycleCur.length])); //for highlight
                             g.fillRect(originX - 100 + 1, originY - (height * j + height) - 60 + 1, 99, height - 1);
                             g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //whatever the scheme color is for the text
                             g.drawString(testArr[j].str, originX - 100 + 5, originY - (height * j) - 62);
                         }
-                }
+                    }
                 }
             }
         }
         else{
-            Arrays.fill(testArr, opBlank);
+            Arrays.fill(testArr, opBlank); //fill the OpQ with blanks once MainLogic has reached the end of the InstructionFullList
         }
 
-        //---ldBuffers---\\
-        int[] ldBase = {-400, -60};
+        //---Place ldBuffer---\\
+        int[] ldBase = {-400, -60}; //Sets x,y coordinate base values to ensure all ldBuffer components are relative to each other
         g.setFont(labelFont);
         g.drawString("LD Buffer (From Memory)", originX + ldBase[0], originY - (height * ldBuffer + height) + ldBase[1]);
         for (int i = 0; i < ldBuffer; i++) {
@@ -160,17 +132,17 @@ public class Diagram extends JPanel {
 
         g.setFont(normalFont);
         for (int z = 0; z < ldBuffer; z++) {
-            //paint on diagram
+            //paint ld instructions on diagram
             if (ldArr[z] != null && ldArr[z] != blank) {
-                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[ldArr[z].index % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
+                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[ldArr[z].index % DataUI.colorSchemeCycleCur.length])); //for highlight
                 g.fillRect(originX + ldBase[0] + 1, originY - (height * z + height) + ldBase[1] + 1, 49, height-1);
                 g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //whatever the scheme color is for the text
                 g.drawString(ldArr[z].op, originX + ldBase[0] + 5, originY + ldBase[1] - (height * z) - 2);
             }
         }
 
-        //---sdBuffers---\\
-        int[] sdBase = {250, -60};
+        //---Place sdBuffer---\\
+        int[] sdBase = {250, -60}; //Sets x,y coordinate base values to ensure all sdBuffer components are relative to each other
         g.setFont(labelFont);
         g.drawString("SD Buffer (To Memory)", originX + sdBase[0] - 50, originY - (height * sdBuffer + height) + sdBase[1]);
         for (int i = 0; i < sdBuffer; i++) {
@@ -179,16 +151,16 @@ public class Diagram extends JPanel {
 
         g.setFont(normalFont);
         for (int z = 0; z < sdBuffer; z++) {
-            //paint on diagram
+            //paint sd instructions on diagram
             if (sdArr[z] != null && sdArr[z] != blank) {
-                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[sdArr[z].index % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
+                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[sdArr[z].index % DataUI.colorSchemeCycleCur.length])); //for highlight
                 g.fillRect(originX + sdBase[0] + 1, originY - (height * z + height) + sdBase[1] + 1, 49, height-1);
                 g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //whatever the scheme color is for the text
                 g.drawString(sdArr[z].op, originX + sdBase[0] + 5, originY + sdBase[1] - (height * z) - 2);
             }
         }
 
-        //---Registers---\\
+        //---Place Registers---\\
         g.setFont(labelFont);
         g.drawString("Registers", originX + 50, originY - (height * registers + height) - 60);
         for (int q = 0; q < registers; q++) {
@@ -196,27 +168,12 @@ public class Diagram extends JPanel {
         }
         g.setFont(normalFont);
 
-
-        for (int o = 0; o < min(registers, DataUI.mainLogic.wbList.size()); o++) {
-                //if opQArr has a blank position, push next awaiting instruction
-                if (regArr[o] == null || regArr[o].equals("")) {
-                    //regArr[o] = DataUI.mainLogic.wbList.get(o);
-                }
-        }
-
-        for (int z = 0; z < registers; z++) {
-            //paint on diagram
-            if (regArr[z] != null && !regArr[z].equals("")) {
-                g.drawString(regArr[z], originX + 50 + 5, originY - (height * z) - 62);
-            }
-        }
-
-        //Highlighted reg
+        //Highlight and paint instructions in registers on Diagram
         for(int j = 0; j < min(registers, DataUI.mainLogic.wbList.size()); j++){
             if (rArr[j] == null || rArr[j] == opBlank) {
                 rArr[j].absIndex = DataUI.mainLogic.wbList.get(j).absoluteIndex; //grabbing the index of the instruction
-                rArr[j].str = DataUI.mainLogic.wbList.get(j).operation;
-                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[rArr[j].absIndex % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
+                rArr[j].str = DataUI.mainLogic.wbList.get(j).operation; //Grabbing the string of instruction
+                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[rArr[j].absIndex % DataUI.colorSchemeCycleCur.length])); //Highlight
                 g.fillRect(originX + 50 + 1, originY - (height * j + height) - 60 + 1, 79, height - 1);
                 g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //whatever the scheme color is for the text
                 g.drawString(rArr[j].str, originX + 50 + 5, originY - (height * j) - 62);
@@ -227,26 +184,29 @@ public class Diagram extends JPanel {
 
 
         //Place integer FU
-        int intBase[] = {-300, 60}; //x, y
+        int intBase[] = {-300, 60}; //used to set origin of int FU on Tomasulo graph. X and then Y.
         for (int a = 0; a < integerRS; a++) {
-            g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
+            g.setColor(Color.decode(DataUI.colorSchemeMainCur[6])); //Set color
+            //place Operation box
             g.drawRect(originX - opBoxWidth + intBase[0], originY - (height * a) + intBase[1], opBoxWidth, height);
+            //Place srcReg boxes
             g.drawRect(originX + intBase[0], originY - (height * a) + intBase[1], operandWidth, height);
             g.drawRect(originX + operandWidth + intBase[0], originY - (height * a) + intBase[1], operandWidth, height);
             g.drawString("IntegerFU", originX + intBase[0] + 5, originY + intBase[1] + 30);
             g.drawRect(originX + intBase[0], originY + intBase[1] + 20, 80, height);
             g.setColor(Color.decode(DataUI.colorSchemeCycleCur[0]));
             g.setStroke(new BasicStroke(5));
-            drawThickLine(g, originX + intBase[0] + 40, originY + intBase[1] + 34, originX + intBase[0] + 40, originY + 100); //to CDB
+            drawThickLine(g, originX + intBase[0] + 40, originY + intBase[1] + 34, originX + intBase[0] + 40, originY + 100); //Arrow to CDB
             g.fillPolygon(new int[]{originX + intBase[0] + 35, originX + intBase[0] + 40, originX + intBase[0] + 45}, new int[]{originY + 99, originY + 109, originY + 99}, 3);
-            drawThickLine(g, originX + intBase[0] + 90, originY + intBase[1] + 17, originX + intBase[0] + 90, originY + 110); //From CDB
+            drawThickLine(g, originX + intBase[0] + 90, originY + intBase[1] + 17, originX + intBase[0] + 90, originY + 110); //Arrow from CDB
             g.fillPolygon(new int[]{originX + intBase[0] + 85, originX + intBase[0] + 90, originX + intBase[0] + 95}, new int[]{originY + intBase[1] + 22, originY + intBase[1] + 12, originY + intBase[1] + 22}, 3);
         }
+
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
         for (int z = 0; z < integerRS; z++) {
-            //paint on diagram
+            //paint corresponding data on Diagram
             if (intArr[z] != null && intArr[z] != blank) {
-                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[intArr[z].index % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
+                g.setColor(Color.decode(DataUI.colorSchemeCycleCur[intArr[z].index % DataUI.colorSchemeCycleCur.length])); //Highlight
                 g.fillRect(originX - opBoxWidth + intBase[0] + 1, originY - (height * z) + intBase[1] + 1, opBoxWidth-1, height - 1);
                 g.fillRect(originX + intBase[0] + 1, originY - (height * z) + intBase[1] + 1, operandWidth - 1, height - 1);
                 g.fillRect(originX + operandWidth + intBase[0] + 1, originY - (height * z) + intBase[1] + 1, operandWidth - 1, height - 1);
@@ -274,7 +234,7 @@ public class Diagram extends JPanel {
         }
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
         for (int z = 0; z < fpAdderRS; z++) {
-            //paint on diagram
+            ////paint corresponding data on Diagram
             if (addArr[z] != blank && addArr[z] != null) {
                 g.setColor(Color.decode(DataUI.colorSchemeCycleCur[addArr[z].index % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
                 g.fillRect(originX - opBoxWidth + addBase[0] + 1, originY - (height * z) + addBase[1] + 1, opBoxWidth-1, height - 1);
@@ -288,7 +248,7 @@ public class Diagram extends JPanel {
         }
 
         //fp multiplier FU
-        int mulBase[] = {0, 60}; //used to set origin of multiplier FU on Tomasulo graph
+        int mulBase[] = {0, 60}; //used to set origin of multiplier FU on Tomasulo graph. X and then Y
         for (int y = 0; y < fpMultiplierRS; y++) {
             g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
             g.drawRect(originX - opBoxWidth + mulBase[0], originY - (height * y) + mulBase[1], opBoxWidth, height);
@@ -304,7 +264,7 @@ public class Diagram extends JPanel {
         }
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
         for (int z = 0; z < fpMultiplierRS; z++) {
-            //paint on diagram
+            //paint corresponding data on Diagram
             if (mulArr[z] != null && mulArr[z] != blank) {
                 g.setColor(Color.decode(DataUI.colorSchemeCycleCur[mulArr[z].index % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
                 g.fillRect(originX - opBoxWidth + mulBase[0] + 1, originY - (height * z) + mulBase[1] + 1, opBoxWidth-1, height - 1);
@@ -318,7 +278,7 @@ public class Diagram extends JPanel {
         }
 
         //fp Div FU
-        int divBase[] = {150, 60};
+        int divBase[] = {150, 60}; //used to set origin of divider FU on Tomasulo graph. X and then Y.
         for (int z = 0; z < fpDividerRS; z++) {
             g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
             g.drawRect(originX - opBoxWidth + divBase[0], originY - (height * z) + divBase[1], opBoxWidth, height);
@@ -334,7 +294,7 @@ public class Diagram extends JPanel {
         }
         g.setColor(Color.decode(DataUI.colorSchemeMainCur[6]));
         for (int z = 0; z < fpDividerRS; z++) {
-            //paint on diagram
+            //paint corresponding data on Diagram
             if (divArr[z] != null && divArr[z] != blank) {
                 g.setColor(Color.decode(DataUI.colorSchemeCycleCur[divArr[z].index % DataUI.colorSchemeCycleCur.length])); //need to insert absoluteValue of instruction here
                 g.fillRect(originX - opBoxWidth + divBase[0] + 1, originY - (height * z) + divBase[1] + 1, opBoxWidth-1, height - 1);
@@ -350,24 +310,19 @@ public class Diagram extends JPanel {
 
         g.setColor(Color.BLACK);
         //***---Diagram Logic---***\\
+        //Classify instruction type on each execute cycle and place within the appropriate buffer/RS array
         if (tick != DataUI.mainLogic.CycleNumCur) {
             flushBuffers(); //Clear buffers and rewrite every clock cycle
-            //System.out.println("Buffers flushed");
-
-
 
             for (int i = 0; i < DataUI.mainLogic.OperationInfoStation.size(); i++) {
-                //System.out.println(DataUI.mainLogic.OperationInfoStation.get(i).state);
                 //Create respective Reservation Station arrays to hold instructions while they execute load on clock cycle
                 if (DataUI.mainLogic.OperationInfoStation.get(i).state.equals("Issue") || DataUI.mainLogic.OperationInfoStation.get(i).state.equals("EXE") || DataUI.mainLogic.OperationInfoStation.get(i).equals("ExeEnd")) { //Hold in RS ExeEnd if CBD is occupied
-                    //Color color = colorSchemeCycleCur[i]%DataUI.colorSchemeCycleCur.length]); //set highlight color of text
                     switch (DataUI.mainLogic.OperationInfoStation.get(i).op) {
                         case "LOAD":
                             for (int z = 0; z < ldBuffer; z++) {
                                 //insert into load buffer if there is a blank space
                                 if (ldArr[z] == blank || ldArr[z] == null) {
                                     ldArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart, DataUI.mainLogic.OperationInfoStation.get(i).absoluteIndex);
-                                    //System.out.println("Load to buffer "  + z + ": " + ldArr[z].index);
                                     break;
                                 }
                             }
@@ -375,10 +330,9 @@ public class Diagram extends JPanel {
 
                         case "SAVE":
                             for (int z = 0; z < sdBuffer; z++) {
-                                //insert into load buffer if there is a blank space
+                                //insert into save buffer if there is a blank space
                                 if (sdArr[z] == blank || sdArr[z] == null) {
                                     sdArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart, DataUI.mainLogic.OperationInfoStation.get(i).absoluteIndex);
-                                    //System.out.println("Save to buffer "  + z + ": " + sdArr[z].index);
                                     break;
                                 }
                             }
@@ -386,10 +340,9 @@ public class Diagram extends JPanel {
 
                         case "INT":
                             for (int z = 0; z < integerRS; z++) {
-                                //insert into load buffer if there is a blank space
+                                //insert into int RS if there is a blank space
                                 if (intArr[z] == blank || intArr[z] == null) {
                                     intArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart, DataUI.mainLogic.OperationInfoStation.get(i).absoluteIndex);
-                                    //System.out.println("int buffer "  + z + ": " + intArr[z].index);
                                     break;
                                 }
                             }
@@ -398,10 +351,9 @@ public class Diagram extends JPanel {
 
                         case "ADD":
                             for (int z = 0; z < fpAdderRS; z++) {
-                                //insert into load buffer if there is a blank space
+                                //insert into Add RS if there is a blank space
                                 if (addArr[z] == blank || addArr[z] == null) {
                                     addArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart, DataUI.mainLogic.OperationInfoStation.get(i).absoluteIndex);
-                                    //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
                             }
@@ -410,10 +362,9 @@ public class Diagram extends JPanel {
 
                         case "MUL":
                             for (int z = 0; z < fpMultiplierRS; z++) {
-                                //insert into load buffer if there is a blank space
+                                //insert into mul RS if there is a blank space
                                 if (mulArr[z] == blank || mulArr[z] == null) {
                                     mulArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart, DataUI.mainLogic.OperationInfoStation.get(i).absoluteIndex);
-                                    //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
                             }
@@ -422,10 +373,9 @@ public class Diagram extends JPanel {
 
                         case "DIV":
                             for (int z = 0; z < fpDividerRS; z++) {
-                                //insert into load buffer if there is a blank space
+                                //insert into div RS if there is a blank space
                                 if (divArr[z] == blank || divArr[z] == null) {
                                     divArr[z] = new Instruction(DataUI.mainLogic.OperationInfoStation.get(i).operation, DataUI.mainLogic.OperationInfoStation.get(i).DestReg, DataUI.mainLogic.OperationInfoStation.get(i).s1, DataUI.mainLogic.OperationInfoStation.get(i).s2, DataUI.mainLogic.OperationInfoStation.get(i).state, DataUI.mainLogic.OperationInfoStation.get(i).currentStageCycleNum, DataUI.mainLogic.OperationInfoStation.get(i).exeStart, DataUI.mainLogic.OperationInfoStation.get(i).absoluteIndex);
-                                    //System.out.println("Load to buffer: "  + z + " " + ldArr[z].op);
                                     break;
                                 }
                             }
@@ -433,7 +383,7 @@ public class Diagram extends JPanel {
                             break;
 
                         case "BRA":
-                            //---WIP---
+                            //if Branch
                             break;
 
                         case "NOP":
@@ -451,14 +401,15 @@ public class Diagram extends JPanel {
 
 
         //---Connecting Wires---
-        g.setColor((Color.decode(DataUI.colorSchemeMainCur[6])));
-        g.setStroke(new BasicStroke(3));
+        g.setColor((Color.decode(DataUI.colorSchemeMainCur[6]))); //follow dataUI color scheme
+        g.setStroke(new BasicStroke(3)); //wire width
 
+        //CBD wires
         g.setFont(labelFont);
         g.drawString("Common Data Bus", originX - 400, originY + 120);
         g.setFont(normalFont);
         g.setColor(Color.decode(DataUI.colorSchemeCycleCur[0]));
-        drawThickLine(g, originX + ldBase[0] + 25, originY + ldBase[1] + 2, originX + ldBase[0] + 25, originY + 105);
+        drawThickLine(g, originX + ldBase[0] + 25, originY + ldBase[1] + 2, originX + ldBase[0] + 25, originY + 105); //Vertical arrow from ld Buffer to CBD
         g.fillPolygon(new int[]{originX + ldBase[0] + 20, originX + ldBase[0] + 25, originX + ldBase[0] + 30}, new int[]{originY + 100, originY + 110, originY + 100}, 3);
         drawThickLine(g, originX + ldBase[0], originY + 110, originX + sdBase[0] + 100, originY + 110); //CBD horizontal line
         drawThickLine(g, originX + sdBase[0] + 100, originY + sdBase[1] - registers * height + 5, originX + sdBase[0] + 100, originY + 110); //CBD vertical line going up to store data
@@ -512,6 +463,7 @@ public class Diagram extends JPanel {
     }
 
     public void flushBuffers() {
+        //Function to flush all buffers
         Arrays.fill(opQArr, blank);
         Arrays.fill(ldArr, blank);
         Arrays.fill(sdArr, blank);
