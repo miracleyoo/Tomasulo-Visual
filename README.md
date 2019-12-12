@@ -109,6 +109,24 @@ Also, the program has two themes! Light and Dark mode are supported. They will c
 ## More Detailed Information in Presentation Slides
 ![Dark_Mode_Theme](./Assets/Screen_Capture/Slides.jpg)
 
+##GUI description
+The GUI portion of the project is essentially complete, 
+aside from some potentially unknown bugs at the time of writing this.
+
+A mainlogic object is created within the DataUI class and as the mainlogic values update, 
+the corresponding GUI components fetch and refresh data display values via the DataUI class,  
+updating the values shown on the GUI every execute/clock cycle.
+
+On the Diagram class:
+The Diagram is composed of two major portions: The paintComponent portion and 
+the diagram logic portion. The paintComponent portion is what creates the rectangles, 
+polygons, strings, etc. that are placed on the Tomasulo graph/diagram on the GUI. 
+The logic portion is what updates instructions held within the buffers/registers which 
+in turn allows it to be displayed appropriately on the diagram GUI. The code has been 
+commented and shows where the paintComponent portion is and where the logic portion begins, 
+along with any relevant variables, etc.
+
+
 ReadMe authors: **Zhongyang, Vignesh**
 
 
