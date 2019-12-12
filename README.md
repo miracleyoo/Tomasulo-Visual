@@ -26,10 +26,8 @@ This project is a course project, the course is Umass Amherst ENG668-Computer Ar
 5. "Execute" dropdown menu shows:
 
 	- "Single Cycle" executes 1 clock cycle. Same function as pressing "Execute 1 Step"
-	
-          - "Multi Cycles" executes multiple clock cycles (3 default). Same as pressing "Execute multi Steps"
-	
-          - "Run to" executes until the end of the .s program.
+	- "Multi Cycles" executes multiple clock cycles (3 default). Same as pressing "Execute multi Steps"
+	- "Run to" executes until the end of the .s program.
 
 6) "Configure" dropdown menu shows:
 
