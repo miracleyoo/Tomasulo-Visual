@@ -115,6 +115,7 @@ Current version has already converted all instructions with register renaming, r
 Most of the CPU design is in the TomasuloCPU.java file, and other components are in the same directory with respective names. If everyone wants to take over the emulator part, I suggest starting by writing tests for confirm which part is working and which does not and then fix them. The integration actually requires more work on understanding or GUI elements get their data from, which is out of the scope of this guide. 
 
 ##GUI description
+
 The GUI portion of the project is essentially complete, 
 aside from some potentially unknown bugs at the time of writing this.
 
